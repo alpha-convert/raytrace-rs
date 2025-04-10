@@ -16,6 +16,7 @@ mod intersectable;
 mod sphere;
 mod ray;
 mod light;
+mod color;
 
 
 fn main() {
@@ -32,7 +33,7 @@ fn main() {
 
     let canvas = window.into_canvas().build().unwrap();
 
-    let camera_pos = Vector3::new(0.0, 0.0, 100.0);
+    let camera_pos = Vector3::new(0.0, 0.0, 50.0);
     let camera_dir= Unit::new_normalize(Vector3::new(0.0, 0.0, -1.0));
     let camera_down_dir = Unit::new_normalize(Vector3::new(0.0, -1.0, 0.0));
     let camera_right_dir = Unit::new_normalize(Vector3::new(1.0, 0.0, 0.0));
@@ -40,13 +41,16 @@ fn main() {
     let world_screen_width = 192.0;
     let world_screen_height= 108.0;
 
-    let sphere0 = Box::new(Sphere::new(Vector3::new(0.0, 0.0, -20.0), 10.0,Color::RED));
-    let sphere1 = Box::new(Sphere::new(Vector3::new(20.0, 0.0, -110.0), 10.0,Color::BLUE));
+    let sphere0 = Box::new(Sphere::new(Vector3::new(0.0, 0.0, -30.0), 20.0,Color::RED));
+    let sphere1 = Box::new(Sphere::new(Vector3::new(50.0, 0.0, -110.0), 10.0,Color::BLUE));
 
     let objects : Vec<Box<dyn Intersectable>> = vec![sphere0,sphere1];
 
     let scene = Scene::new(objects);
-    let renderer = Renderer::new(window_width as u64, window_height as u64, canvas, camera_pos, camera_dir, camera_down_dir, camera_right_dir, screen_dist, world_screen_width, world_screen_height);
+
+    let samples_per_pixel = 10;
+
+    let renderer = Renderer::new(window_width as u64, window_height as u64, canvas, camera_pos, camera_dir, camera_down_dir, camera_right_dir, screen_dist, world_screen_width, world_screen_height, samples_per_pixel);
     // let mut renderer = Renderer::new(canvas,window_width as u64,window_height as u64);
 
     renderer.render(&scene);
