@@ -11,5 +11,10 @@ impl Scene {
         Scene { objects: objects }
 
     }
+}
 
+impl Intersectable for Scene {
+    fn intersect(&self, ray : &crate::ray::Ray) -> Option<crate::intersectable::Intersection> {
+        self.objects.intersect(ray)
+    }
 }

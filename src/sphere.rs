@@ -16,7 +16,7 @@ impl Sphere {
 }
 
 impl Intersectable for Sphere {
-    fn intersect<'r>(&self, ray: &'r Ray) -> Option<Intersection<'r>> {
+    fn intersect(&self, ray: &Ray) -> Option<Intersection> {
         let oc = ray.origin() - self.center;
 
         let b = oc.dot(ray.dir());
@@ -44,6 +44,6 @@ impl Intersectable for Sphere {
         let point = ray.origin() + ray.dir().scale(d);
         let normal = Unit::new_normalize(point - self.center); // can also divide by the radius...
 
-        Some(Intersection::new(point,d, ray, normal))
+        Some(Intersection::new(point,d,  normal))
     }
 }

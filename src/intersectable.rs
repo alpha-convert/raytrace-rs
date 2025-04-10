@@ -5,17 +5,15 @@ use sdl2::pixels::Color;
 
 use crate::ray::Ray;
 
-pub struct Intersection<'r> {
+pub struct Intersection {
     point : Vector3<f64>,
     dist : f64,
-    ray : &'r Ray,
     normal : Unit<Vector3<f64>>
 }
 
-impl<'r> Intersection<'r> {
-    pub fn new(point : Vector3<f64>, dist: f64, ray : &'r Ray, normal : Unit<Vector3<f64>>) -> Self {
-        assert!(ray.origin() + ray.dir().scale(dist) == point);
-        Intersection { point: point, dist: dist, ray: ray, normal: normal }
+impl Intersection {
+    pub fn new(point : Vector3<f64>, dist: f64, normal : Unit<Vector3<f64>>) -> Self {
+        Intersection { point: point, dist: dist, normal: normal }
 
     }
 
@@ -23,17 +21,14 @@ impl<'r> Intersection<'r> {
         &self.normal
     }
 
-    pub fn dist(&self) -> f64 {
-        self.dist
-    }
 }
 
 pub trait Intersectable {
-    fn intersect<'r>(&self, ray : &'r Ray) -> Option<Intersection<'r>>;
+    fn intersect(&self, ray : &Ray) -> Option<Intersection>;
 }
 
-impl<T : Intersectable> Intersectable for &Vec<T> {
-    fn intersect<'r>(&self, ray : &'r Ray) -> Option<Intersection<'r>> {
+impl<T : Intersectable> Intersectable for Vec<T> {
+    fn intersect(&self, ray : &Ray) -> Option<Intersection> {
         let mut closest = None;
         for obj in self.iter() {
             match obj.intersect(&ray) {
@@ -56,7 +51,7 @@ impl<T : Intersectable> Intersectable for &Vec<T> {
 
 // TODO: for some reason I can't do this as <T : Intersectable> Box<T>... unclear why.
 impl Intersectable for Box<dyn Intersectable> {
-    fn intersect<'r>(&self, ray : &'r Ray) -> Option<Intersection<'r>> {
+    fn intersect(&self, ray : &Ray) -> Option<Intersection> {
         (**self).intersect(ray)
     }
 }

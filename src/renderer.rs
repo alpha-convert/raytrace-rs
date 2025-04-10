@@ -14,9 +14,6 @@ pub struct Renderer {
 
     //Camera data
     pub camera_pos : Vector3<f64>,
-    pub camera_dir : Unit<Vector3<f64>>,
-    camera_down_dir : Unit<Vector3<f64>>,
-    camera_right_dir : Unit<Vector3<f64>>,
 
     //World-position screen data
     screen_00 : Vector3<f64>, //world space location of coords (0,0) in pixel space. (i.e) the screen
@@ -58,9 +55,9 @@ impl Renderer {
             window_height: window_height,
             canvas: RefCell::new(canvas),
             camera_pos,
-            camera_dir: camera_fwd,
-            camera_down_dir: camera_down,
-            camera_right_dir: camera_right,
+            // camera_dir: camera_fwd,
+            // camera_down_dir: camera_down,
+            // camera_right_dir: camera_right,
             screen_00: screen00,
             screen_delta_u,
             screen_delta_v, 
@@ -89,21 +86,14 @@ impl Renderer {
 
                 let mut px_color = Color::new(0.0,0.0,0.0);
 
-                for _ in (0..self.samples_per_pixel) {
+                for _ in 0..self.samples_per_pixel {
                     let (du,dv) = Renderer::sample_uv();
                     let screen_point = 
                         self.screen_00 + self.screen_delta_u.scale(x_idx as f64 + du) + self.screen_delta_v.scale(y_idx as f64 + dv);
 
                     let ray = Ray::through_points(self.camera_pos,screen_point);
 
-                    let objs : &Vec<Box<dyn Intersectable>> = &scene.objects;
-
-                    if let Some(inter) = objs.intersect(&ray) {
-                        px_color = px_color + Renderer::shade(&inter).scale(self.sample_weight);
-                    } else {
-                        px_color = px_color + Color::white().scale(self.sample_weight)
-                    }
-                    
+                    px_color = px_color + self.trace(&ray, scene).scale(self.sample_weight);
                 }
                 
                  canvas.set_draw_color(px_color);
@@ -116,7 +106,16 @@ impl Renderer {
         canvas.present();
     }
 
-    fn shade<'r>(inter : &Intersection<'r>) -> Color {
+    fn trace(&self, ray : &Ray, scene : &Scene) -> Color {
+        if let Some(inter) = scene.intersect(&ray) {
+            Renderer::shade(&inter)
+        } else {
+            Color::white()
+        }
+
+    }
+
+    fn shade(inter : &Intersection) -> Color {
         let r = inter.normal().x.abs();
         let g = inter.normal().y.abs();
         let b = inter.normal().z.abs();

@@ -51,7 +51,7 @@ fn main() {
 
     let scene = Scene::new(objects);
 
-    let samples_per_pixel = 10;
+    let samples_per_pixel = 1;
 
     let renderer = Renderer::new(window_width as u64, window_height as u64, canvas, camera_pos, camera_dir, camera_down_dir, camera_right_dir, screen_dist, world_screen_width, world_screen_height, samples_per_pixel);
     // let mut renderer = Renderer::new(canvas,window_width as u64,window_height as u64);
