@@ -2,6 +2,7 @@ extern crate sdl2;
 
 use nalgebra::{Unit, Vector3};
 use intersectable::Intersectable;
+use plane::Plane;
 use renderer::Renderer;
 use scene::Scene;
 use sdl2::event::Event;
@@ -14,6 +15,7 @@ mod scene;
 mod renderer;
 mod intersectable;
 mod sphere;
+mod plane;
 mod ray;
 mod light;
 mod color;
@@ -41,10 +43,11 @@ fn main() {
     let world_screen_width = 192.0;
     let world_screen_height= 108.0;
 
+    let ground = Box::new(Plane::new(Vector3::new(0.0, -20.0, 0.0),Unit::new_normalize(Vector3::new(0.0, 1.0, -0.05))));
     let sphere0 = Box::new(Sphere::new(Vector3::new(0.0, 0.0, -30.0), 20.0,Color::RED));
     let sphere1 = Box::new(Sphere::new(Vector3::new(50.0, 0.0, -110.0), 10.0,Color::BLUE));
 
-    let objects : Vec<Box<dyn Intersectable>> = vec![sphere0,sphere1];
+    let objects : Vec<Box<dyn Intersectable>> = vec![ground,sphere0,sphere1];
 
     let scene = Scene::new(objects);
 
