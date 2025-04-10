@@ -1,1 +1,1 @@
-Building a Raytracer in Rust. Vaguely following [Raytracing in One Weekend](raytracing.github.io)
+Building a Raytracer in Rust. Vaguely following [Raytracing in One Weekend](http://raytracing.github.io)
