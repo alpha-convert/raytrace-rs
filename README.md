@@ -1,0 +1,1 @@
+Building a Raytracer in Rust. Vaguely following [Raytracing in One Weekend](raytracing.github.io)
