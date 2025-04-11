@@ -1,9 +1,8 @@
 use std::ops::{Deref, DerefMut};
 
 use nalgebra::{Unit, Vector3};
-use sdl2::pixels::Color;
 
-use crate::ray::Ray;
+use crate::geom::ray::Ray;
 
 pub struct Intersection {
     point : Vector3<f64>,
@@ -22,7 +21,7 @@ impl Intersection {
     }
 
     pub fn point(&self) -> &Vector3<f64> {
-        &self.normal
+        &self.point
     }
 
 }

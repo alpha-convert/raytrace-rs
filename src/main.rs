@@ -1,7 +1,7 @@
 extern crate sdl2;
 
 use nalgebra::{Unit, Vector3};
-use intersectable::Intersectable;
+use geom::intersectable::Intersectable;
 use shape::plane::Plane;
 use renderer::Renderer;
 use scene::Scene;
@@ -13,11 +13,9 @@ use std::time::Duration;
 
 mod scene;
 mod renderer;
-mod intersectable;
 mod shape;
-mod ray;
-mod light;
-mod color;
+mod geom;
+mod lighting;
 mod util;
 
 
@@ -53,7 +51,7 @@ fn main() {
     let scene = Scene::new(objects);
 
     let recursion_depth = 50;
-    let samples_per_pixel = 30;
+    let samples_per_pixel = 20;
 
     let renderer = Renderer::new(recursion_depth, window_width as u64, window_height as u64, canvas, camera_pos, camera_dir, camera_down_dir, camera_right_dir, screen_dist, world_screen_width, world_screen_height, samples_per_pixel);
     // let mut renderer = Renderer::new(canvas,window_width as u64,window_height as u64);

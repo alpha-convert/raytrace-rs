@@ -1,12 +1,12 @@
 use std::cell::RefCell;
 
-use nalgebra::{Unit, UnitVector3, Vector2, Vector3};
+use nalgebra::{Unit, Vector3};
 use rand::Rng;
 use sdl2::{render::Canvas, video::Window};
-use rayon::prelude;
+// use rayon::prelude;
 
-use itertools::Itertools;
-use crate::{color::{self, Color}, intersectable::{Intersectable, Intersection}, ray::Ray, scene::Scene, util};
+// use itertools::Itertools;
+use crate::{lighting::color::Color, geom::intersectable::Intersectable, geom::ray::Ray, scene::Scene, util};
 
 pub struct Renderer {
     //Metadata

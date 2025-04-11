@@ -1,7 +1,7 @@
 use nalgebra::{Unit, Vector3};
 use sdl2::pixels::Color;
 
-use crate::{intersectable::{Intersectable, Intersection}, ray::Ray};
+use crate::{geom::intersectable::{Intersectable, Intersection}, geom::ray::Ray};
 
 pub struct Sphere {
     center: Vector3<f64>,
@@ -31,17 +31,8 @@ impl Intersectable for Sphere {
         let mut dist = h - discriminant.sqrt();
 
         if dist <= dist_min || dist >= dist_max {
-            if dist > 0.0 && dist <= dist_min {
-                assert!(false);
-            }
             dist = h + discriminant.sqrt();
             if dist <= dist_min || dist >= dist_max {
-                if dist > 0.0 && dist <= dist_min {
-                    assert!(false);
-                }
-                // if dist <= dist_min {
-                    // println!("Sphere culled: dist1:{}, dist2:{}",h - discriminant.sqrt(), h + discriminant.sqrt());
-                // }
                 return None
             }
         }

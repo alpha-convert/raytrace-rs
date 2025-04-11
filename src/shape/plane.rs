@@ -1,6 +1,6 @@
 use nalgebra::{Unit, Vector3};
 
-use crate::{intersectable::{Intersectable, Intersection}, ray::Ray};
+use crate::{geom::intersectable::{Intersectable, Intersection}, geom::ray::Ray};
 
 pub struct Plane {
     pt : Vector3<f64>,
