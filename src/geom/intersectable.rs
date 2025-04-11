@@ -1,4 +1,5 @@
 use std::ops::{Deref, DerefMut};
+use std::sync::Arc;
 
 use nalgebra::{Unit, Vector3};
 
@@ -37,7 +38,7 @@ impl<'o,'r> Intersection<'o,'r> {
 
 }
 
-pub trait Intersectable {
+pub trait Intersectable : Send + Sync {
     // It might be more efficient to pass in a &mut Option<Intersectoin>, but that's ugly.
     fn intersect<'o,'r>(&'o self, ray : &'r Ray, dist_min : f64, dist_max : f64) -> Option<Intersection<'o,'r>>;
 }
@@ -65,7 +66,7 @@ impl<T : Intersectable> Intersectable for Vec<T> {
 }
 
 // TODO: for some reason I can't do this as <T : Intersectable> Box<T>... unclear why.
-impl Intersectable for Box<dyn Intersectable> {
+impl Intersectable for Arc<dyn Intersectable> {
     fn intersect<'o,'r>(&'o self, ray : &'r Ray, dist_min : f64, dist_max : f64) -> Option<Intersection<'o,'r>> {
         (**self).intersect(ray,dist_min,dist_max)
     }

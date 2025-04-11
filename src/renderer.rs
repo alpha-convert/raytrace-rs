@@ -3,10 +3,10 @@ use std::cell::RefCell;
 use nalgebra::{Unit, Vector3};
 use rand::Rng;
 use sdl2::{render::Canvas, video::Window};
-// use rayon::prelude;
+use rayon::{iter::{IntoParallelIterator, ParallelIterator}, prelude};
 
 // use itertools::Itertools;
-use crate::{lighting::color::Color, geom::intersectable::Intersectable, geom::ray::Ray, scene::Scene, util};
+use crate::{geom::{intersectable::Intersectable, ray::Ray}, lighting::color::Color, par_buffer::ParBuffer, scene::Scene, util};
 
 pub struct Renderer {
     //Metadata
@@ -15,7 +15,7 @@ pub struct Renderer {
     //Canvas data
     window_width : u64,
     window_height : u64,
-    canvas : RefCell<Canvas<Window>>,
+    // canvas : RefCell<Canvas<Window>>,
 
     //Camera data
     pub camera_pos : Vector3<f64>,
@@ -34,7 +34,6 @@ impl Renderer {
     pub fn new( recursion_depth : u64,
                 window_width: u64,
                 window_height : u64,
-                canvas : Canvas<Window>,
 
                 camera_pos : Vector3<f64>,
                 camera_fwd : Unit<Vector3<f64>>,    
@@ -60,7 +59,7 @@ impl Renderer {
             recursion_depth : recursion_depth,
             window_width: window_width,
             window_height: window_height,
-            canvas: RefCell::new(canvas),
+            // canvas: RefCell::new(canvas),
             camera_pos,
             // camera_dir: camera_fwd,
             // camera_down_dir: camera_down,
@@ -82,13 +81,13 @@ impl Renderer {
         (du,dv)
     }
 
-    pub fn render(&self, scene : &Scene) {
-        let mut canvas = self.canvas.borrow_mut();
-        canvas.set_draw_color(Color::new(0.0, 0.0,0.0));
-        canvas.clear();
+    pub fn render(&self, scene : &Scene, canvas : &mut Canvas<Window>) {
 
-        for x_idx in 0..self.window_width {
-            for y_idx in 0..self.window_height {
+        let mut buffer = ParBuffer::new(self.window_height as usize, self.window_width as usize);
+
+        (0..self.window_height).into_par_iter().for_each(|y_idx| {
+            let mut row = buffer.lock_row(y_idx as usize);
+            for x_idx in 0..self.window_width {
 
                 let mut px_color = Color::new(0.0,0.0,0.0);
 
@@ -101,21 +100,21 @@ impl Renderer {
 
                     let ray = Ray::through_points(self.camera_pos,screen_point);
 
-                    px_color = px_color + self.trace(&ray, scene, self.recursion_depth).scale(self.sample_weight);
+                    px_color = px_color + Self::trace(&ray, scene, self.recursion_depth).scale(self.sample_weight);
                 }
-                
-                 canvas.set_draw_color(px_color);
-                 canvas.draw_point((x_idx as i32,y_idx as i32)).expect("Should be able to draw a point.");
-                
+
+                *row.get_mut(x_idx as usize).unwrap() = px_color;
 
             }
-        }
+        });
+
+        buffer.blit(canvas);
 
         canvas.present();
     }
 
 
-    fn trace(&self, ray : &Ray, scene : &Scene, depth : u64) -> Color {
+    fn trace(ray : &Ray, scene : &Scene, depth : u64) -> Color {
         if depth <= 0 {
             Color::black()
         } else {
@@ -124,7 +123,7 @@ impl Renderer {
                 match inter.material().scatter(&inter) {
                     None => Color::black(),
                     Some((attenuation,bounce_ray)) => {
-                        return self.trace(&bounce_ray, scene, depth - 1) * attenuation
+                        return Self::trace(&bounce_ray, scene, depth - 1) * attenuation
                     }
                 }
 

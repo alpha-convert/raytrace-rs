@@ -1,13 +1,15 @@
+use std::sync::Arc;
+
 use nalgebra::{Unit, UnitVector3, Vector3};
 
 use crate::geom::{intersectable::{Intersectable, Intersection}, ray::Ray};
 
 pub struct Scene {
-        pub objects : Vec<Box<dyn Intersectable>>,
+        pub objects : Vec<Arc<dyn Intersectable>>,
 }
 
 impl Scene {
-    pub fn new(objects : Vec<Box<dyn Intersectable>>) -> Self {
+    pub fn new(objects : Vec<Arc<dyn Intersectable>>) -> Self {
         Scene { objects: objects }
 
     }

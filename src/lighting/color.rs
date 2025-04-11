@@ -7,6 +7,12 @@ pub struct Color {
     v : Vector3<f64>
 }
 
+impl Default for Color {
+    fn default() -> Self {
+        Self::black()
+    }
+}
+
 impl Color {
     pub fn new(r : f64, g : f64, b : f64) -> Self {
         assert!(0.0 <= r && r <= 1.0);
