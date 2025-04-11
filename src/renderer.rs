@@ -1,12 +1,17 @@
 use std::cell::RefCell;
 
-use nalgebra::{Unit, Vector2, Vector3};
+use nalgebra::{Unit, UnitVector3, Vector2, Vector3};
 use rand::Rng;
 use sdl2::{render::Canvas, video::Window};
+use rayon::prelude;
 
-use crate::{color::Color, intersectable::{Intersectable, Intersection}, ray::Ray, scene::Scene};
+use itertools::Itertools;
+use crate::{color::{self, Color}, intersectable::{Intersectable, Intersection}, ray::Ray, scene::Scene, util};
 
 pub struct Renderer {
+    //Metadata
+    recursion_depth : u64,
+
     //Canvas data
     window_width : u64,
     window_height : u64,
@@ -26,12 +31,13 @@ pub struct Renderer {
 }
 
 impl Renderer {
-    pub fn new(window_width: u64,
+    pub fn new( recursion_depth : u64,
+                window_width: u64,
                 window_height : u64,
                 canvas : Canvas<Window>,
 
                 camera_pos : Vector3<f64>,
-                camera_fwd : Unit<Vector3<f64>>,
+                camera_fwd : Unit<Vector3<f64>>,    
                 camera_down : Unit<Vector3<f64>>,
                 camera_right : Unit<Vector3<f64>>,
                 screen_dist : f64,
@@ -51,6 +57,7 @@ impl Renderer {
         let sample_weight = 1.0 / (samples_per_pixel as f64);
 
         Renderer { 
+            recursion_depth : recursion_depth,
             window_width: window_width,
             window_height: window_height,
             canvas: RefCell::new(canvas),
@@ -80,20 +87,21 @@ impl Renderer {
         canvas.set_draw_color(Color::new(0.0, 0.0,0.0));
         canvas.clear();
 
-
         for x_idx in 0..self.window_width {
             for y_idx in 0..self.window_height {
 
                 let mut px_color = Color::new(0.0,0.0,0.0);
 
+                // Compute pixel color by an average
                 for _ in 0..self.samples_per_pixel {
                     let (du,dv) = Renderer::sample_uv();
+                    // let (du,dv) = (0.0,0.0);
                     let screen_point = 
                         self.screen_00 + self.screen_delta_u.scale(x_idx as f64 + du) + self.screen_delta_v.scale(y_idx as f64 + dv);
 
                     let ray = Ray::through_points(self.camera_pos,screen_point);
 
-                    px_color = px_color + self.trace(&ray, scene).scale(self.sample_weight);
+                    px_color = px_color + self.trace(&ray, scene, self.recursion_depth).scale(self.sample_weight);
                 }
                 
                  canvas.set_draw_color(px_color);
@@ -106,20 +114,28 @@ impl Renderer {
         canvas.present();
     }
 
-    fn trace(&self, ray : &Ray, scene : &Scene) -> Color {
-        if let Some(inter) = scene.intersect(&ray) {
-            Renderer::shade(&inter)
+
+    fn trace(&self, ray : &Ray, scene : &Scene, depth : u64) -> Color {
+        if depth <= 0 {
+            Color::black()
         } else {
-            Color::white()
+            if let Some(inter) = scene.intersect(&ray,0.001,f64::MAX) {
+                let normal = inter.normal();
+                let bounce_dir = util::random_on_hemisphere(normal);
+                let bounce_ray = Ray::new(*inter.point(),bounce_dir);
+                return self.trace(&bounce_ray, scene, depth - 1).scale(0.5)
+            } else {
+                let a = 0.5 * (ray.dir().y + 1.0);
+                Color::white().scale(1.0-a) + Color::new(0.7,0.2,0.4).scale(a)
+            }
         }
-
     }
 
-    fn shade(inter : &Intersection) -> Color {
-        let r = inter.normal().x.abs();
-        let g = inter.normal().y.abs();
-        let b = inter.normal().z.abs();
+    // fn shade(inter : &Intersection) -> Color {
+    //     let r = inter.normal().x.abs();
+    //     let g = inter.normal().y.abs();
+    //     let b = inter.normal().z.abs();
 
-        Color::new(r, g, b)
-    }
+    //     Color::new(r, g, b)
+    // }
 }

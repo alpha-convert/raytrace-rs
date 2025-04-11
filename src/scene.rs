@@ -14,7 +14,7 @@ impl Scene {
 }
 
 impl Intersectable for Scene {
-    fn intersect(&self, ray : &crate::ray::Ray) -> Option<crate::intersectable::Intersection> {
-        self.objects.intersect(ray)
+    fn intersect(&self, ray : &crate::ray::Ray, dist_min : f64, dist_max : f64) -> Option<crate::intersectable::Intersection> {
+        self.objects.intersect(ray, dist_min, dist_max)
     }
 }

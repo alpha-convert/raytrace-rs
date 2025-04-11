@@ -1,5 +1,6 @@
 use nalgebra::{Unit, UnitVector3, Vector3};
 
+#[derive(Debug)]
 pub struct Ray {
     origin : Vector3<f64>,
     // Always normalized
@@ -7,7 +8,7 @@ pub struct Ray {
 }
 
 impl Ray {
-    fn new(origin : Vector3<f64>, dir : UnitVector3<f64>) -> Self {
+    pub fn new(origin : Vector3<f64>, dir : UnitVector3<f64>) -> Self {
         Ray { origin : origin , dir: dir }
     }
     
@@ -21,5 +22,9 @@ impl Ray {
 
     pub fn dir(&self) -> &Vector3<f64> {
         &self.dir
+    }
+
+    pub fn at(&self, t : f64) -> Vector3<f64> {
+        self.origin + self.dir.scale(t)
     }
 }

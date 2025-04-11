@@ -14,13 +14,15 @@ impl Plane {
 }
 
 impl Intersectable for Plane {
-    fn intersect(&self, ray : &Ray) -> Option<Intersection> {
+    fn intersect(&self, ray : &Ray, dist_min : f64, dist_max : f64) -> Option<Intersection> {
         let denom = self.normal.dot(ray.dir());
-        if denom.abs() > 0.0 {
+        if denom.abs() > 1e-8 {
             let t = (self.pt - ray.origin()).dot(&self.normal) / denom;
-            if t >= 0.0 {
+            if t >= dist_min && t <= dist_max {
                 let point = ray.origin() + ray.dir().scale(t);
                 return Some(Intersection::new(point,t,self.normal))
+            } else {
+                // println!("Culled Plane: t={}, min={}, denom={}", t, dist_min, denom);
             }
         }
         None

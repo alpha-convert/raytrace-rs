@@ -21,17 +21,22 @@ impl Intersection {
         &self.normal
     }
 
+    pub fn point(&self) -> &Vector3<f64> {
+        &self.normal
+    }
+
 }
 
 pub trait Intersectable {
-    fn intersect(&self, ray : &Ray) -> Option<Intersection>;
+    // It might be more efficient to pass in a &mut Option<Intersectoin>, but that's ugly.
+    fn intersect(&self, ray : &Ray, dist_min : f64, dist_max : f64) -> Option<Intersection>;
 }
 
 impl<T : Intersectable> Intersectable for Vec<T> {
-    fn intersect(&self, ray : &Ray) -> Option<Intersection> {
+    fn intersect(&self, ray : &Ray, dist_min : f64, dist_max : f64) -> Option<Intersection> {
         let mut closest = None;
         for obj in self.iter() {
-            match obj.intersect(&ray) {
+            match obj.intersect(&ray,dist_min,dist_max) {
                 None => (),
                 Some(inter) => 
                     match closest {
@@ -51,7 +56,7 @@ impl<T : Intersectable> Intersectable for Vec<T> {
 
 // TODO: for some reason I can't do this as <T : Intersectable> Box<T>... unclear why.
 impl Intersectable for Box<dyn Intersectable> {
-    fn intersect(&self, ray : &Ray) -> Option<Intersection> {
-        (**self).intersect(ray)
+    fn intersect(&self, ray : &Ray, dist_min : f64, dist_max : f64) -> Option<Intersection> {
+        (**self).intersect(ray,dist_min,dist_max)
     }
 }
