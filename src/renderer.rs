@@ -6,7 +6,7 @@ use sdl2::{render::Canvas, video::Window};
 use rayon::{iter::{IntoParallelIterator, ParallelIterator}, prelude};
 
 // use itertools::Itertools;
-use crate::{geom::{intersectable::Intersectable, ray::Ray}, lighting::color::Color, par_buffer::ParBuffer, scene::Scene, util};
+use crate::{geom::{intersectable::Intersectable, ray::Ray}, lighting::color::Color, sys::par_buffer::ParBuffer, scene::Scene, util};
 
 pub struct Renderer {
     //Metadata
@@ -91,10 +91,8 @@ impl Renderer {
 
                 let mut px_color = Color::new(0.0,0.0,0.0);
 
-                // Compute pixel color by an average
                 for _ in 0..self.samples_per_pixel {
                     let (du,dv) = Renderer::sample_uv();
-                    // let (du,dv) = (0.0,0.0);
                     let screen_point = 
                         self.screen_00 + self.screen_delta_u.scale(x_idx as f64 + du) + self.screen_delta_v.scale(y_idx as f64 + dv);
 

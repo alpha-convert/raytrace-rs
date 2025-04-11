@@ -4,6 +4,8 @@ use sdl2::{render::Canvas, video::Window};
 
 use crate::lighting::color::Color;
 
+use super::render_surface::RenderSurface;
+
 pub struct ParBuffer {
     rows : usize,
     cols : usize,
@@ -27,14 +29,15 @@ impl ParBuffer {
     }
 
     // This takes a &mut self because we want to make sure we only do this when we're done.
-    pub fn blit(&mut self, canvas : &mut Canvas<Window>)
+    pub fn blit<T : RenderSurface>(&mut self, surf : &mut T)
     {
         for y in 0..self.rows {
             let row = self.data.get(y).unwrap().lock().unwrap();
             for x in 0..self.cols {
                 let color = row.get(x).unwrap();
-                canvas.set_draw_color(*color);
-                canvas.draw_point((x as i32,y as i32)).unwrap();
+
+                surf.draw_point(x as u64, y as u64, color.gamma());
+
             }
         }
     }

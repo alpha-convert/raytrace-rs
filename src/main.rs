@@ -20,7 +20,7 @@ mod shape;
 mod geom;
 mod lighting;
 mod util;
-mod par_buffer;
+mod sys;
 
 
 fn main() {
@@ -58,7 +58,7 @@ fn main() {
     let scene = Scene::new(objects);
 
     let recursion_depth = 50;
-    let samples_per_pixel = 30;
+    let samples_per_pixel = 300;
 
     let renderer = Renderer::new(recursion_depth, window_width as u64, window_height as u64, camera_pos, camera_dir, camera_down_dir, camera_right_dir, screen_dist, world_screen_width, world_screen_height, samples_per_pixel);
     // let mut renderer = Renderer::new(canvas,window_width as u64,window_height as u64);

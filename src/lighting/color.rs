@@ -7,6 +7,17 @@ pub struct Color {
     v : Vector3<f64>
 }
 
+pub struct GammaColor {
+    v : Vector3<f64>
+}
+
+impl From<Color> for GammaColor {
+    fn from(c : Color) -> Self {
+        let v = c.v;
+        GammaColor { v: Vector3::new(v.x.sqrt(), v.y.sqrt(), v.z.sqrt()) }
+    }
+}
+
 impl Default for Color {
     fn default() -> Self {
         Self::black()
@@ -20,6 +31,10 @@ impl Color {
         assert!(0.0 <= b && b <= 1.0);
 
         Color { v: Vector3::new(r, g, b) }
+    }
+    
+    pub fn gamma(self) -> GammaColor {
+        From::from(self)
     }
 
     pub fn scale(&self, f : f64) -> Self {
@@ -50,10 +65,10 @@ impl Mul for Color {
     }
 }
 
-impl Into<sdl2::pixels::Color> for Color {
+impl Into<sdl2::pixels::Color> for GammaColor {
     fn into(self) -> sdl2::pixels::Color {
         // Apply gamma correction (as floats) at this point, before mapping into u8 space.
-        sdl2::pixels::Color::RGB((self.v.x.sqrt() * 256.0).floor() as u8, (self.v.y.sqrt() * 256.0).floor() as u8, (self.v.z.sqrt() * 256.0).floor() as u8)
+        sdl2::pixels::Color::RGB((self.v.x * 256.0).floor() as u8, (self.v.y * 256.0).floor() as u8, (self.v.z * 256.0).floor() as u8)
     }
 }
 
