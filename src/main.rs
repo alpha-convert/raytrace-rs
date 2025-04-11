@@ -1,5 +1,8 @@
 extern crate sdl2;
 
+use lighting::color::Color;
+use lighting::lambertian::Lambertian;
+use lighting::metal::Metal;
 use nalgebra::{Unit, Vector3};
 use geom::intersectable::Intersectable;
 use shape::plane::Plane;
@@ -7,7 +10,6 @@ use renderer::Renderer;
 use scene::Scene;
 use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
-use sdl2::pixels::Color;
 use shape::sphere::Sphere;
 use std::time::Duration;
 
@@ -42,11 +44,14 @@ fn main() {
     let world_screen_width = 96.0;
     let world_screen_height= 54.0;
 
-    let ground = Box::new(Plane::new(Vector3::new(0.0, -11.0, 0.0),Unit::new_normalize(Vector3::new(0.0, 1.0, -0.05))));
-    let sphere0 = Box::new(Sphere::new(Vector3::new(0.0, 0.0, -30.0), 20.0,Color::RED));
-    // let sphere1 = Box::new(Sphere::new(Vector3::new(50.0, 0.0, -110.0), 10.0,Color::BLUE));
+    let point8lambert = Lambertian::new(Color::new(0.8,0.8,0.8));
+    let point8metal = Metal::new(Color::new(0.8, 0.8, 0.8));
 
-    let objects : Vec<Box<dyn Intersectable>> = vec![ground,sphere0];
+    let ground = Box::new(Plane::new(Vector3::new(0.0, -11.0, 0.0),Unit::new_normalize(Vector3::new(0.0, 1.0, -0.05)),Box::new(point8lambert)));
+    let sphere0 = Box::new(Sphere::new(Vector3::new(0.0, 0.0, -30.0), 20.0,Box::new(point8lambert)));
+    let sphere1 = Box::new(Sphere::new(Vector3::new(50.0, 0.0, -40.0), 15.0,Box::new(point8metal)));
+
+    let objects : Vec<Box<dyn Intersectable>> = vec![ground,sphere0,sphere1];
 
     let scene = Scene::new(objects);
 

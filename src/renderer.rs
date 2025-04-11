@@ -120,13 +120,17 @@ impl Renderer {
             Color::black()
         } else {
             if let Some(inter) = scene.intersect(&ray,0.001,f64::MAX) {
-                let normal = inter.normal();
-                let bounce_dir = util::random_on_hemisphere(normal);
-                let bounce_ray = Ray::new(*inter.point(),bounce_dir);
-                return self.trace(&bounce_ray, scene, depth - 1).scale(0.5)
+
+                match inter.material().scatter(&inter) {
+                    None => Color::black(),
+                    Some((attenuation,bounce_ray)) => {
+                        return self.trace(&bounce_ray, scene, depth - 1) * attenuation
+                    }
+                }
+
             } else {
                 let a = 0.5 * (ray.dir().y + 1.0);
-                Color::white().scale(1.0-a) + Color::new(0.7,0.2,0.4).scale(a)
+                Color::white().scale(1.0-a) + Color::new(0.3,0.1,0.3).scale(a)
             }
         }
     }

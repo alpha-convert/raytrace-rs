@@ -1,4 +1,4 @@
-use nalgebra::{Unit, UnitVector3, Vector3};
+use nalgebra::{Unit, UnitVector3, Vector, Vector3};
 use rand::Rng;
 
 pub fn random_vec3(lo : f64, hi:f64) -> Vector3<f64> {
@@ -25,4 +25,14 @@ pub fn random_on_hemisphere(normal : &UnitVector3<f64>) -> UnitVector3<f64> {
     } else {
         -rand
     }
+}
+
+const EPS : f64 = 1e-8;
+
+pub fn is_small(v : Vector3<f64>) -> bool {
+    v.x.abs() < EPS && v.y.abs() < EPS && v.z.abs() < EPS
+}
+
+pub fn reflect(v : &Vector3<f64>, about : &UnitVector3<f64>) -> Vector3<f64> {
+    return *v - about.scale(2.0*v.dot(about));
 }

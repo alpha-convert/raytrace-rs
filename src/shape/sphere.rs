@@ -1,22 +1,21 @@
 use nalgebra::{Unit, Vector3};
-use sdl2::pixels::Color;
 
-use crate::{geom::intersectable::{Intersectable, Intersection}, geom::ray::Ray};
+use crate::{geom::{intersectable::{Intersectable, Intersection}, ray::Ray}, lighting::material::Material};
 
 pub struct Sphere {
     center: Vector3<f64>,
     radius: f64,
-    color: Color,
+    material: Box<dyn Material>
 }
 
 impl Sphere {
-    pub fn new(center : Vector3<f64>, radius: f64, color: Color) -> Self {
-        Sphere { center: center, radius: radius, color: color }
+    pub fn new(center : Vector3<f64>, radius: f64, material : Box<dyn Material>) -> Self {
+        Sphere { center: center, radius: radius, material : material }
     }
 }
 
 impl Intersectable for Sphere {
-    fn intersect(&self, ray: &Ray, dist_min : f64, dist_max : f64) -> Option<Intersection> {
+    fn intersect<'o,'r>(&'o self, ray: &'r Ray, dist_min : f64, dist_max : f64) -> Option<Intersection<'o,'r>> {
         let oc = self.center - ray.origin();
 
         let h = ray.dir().dot(&oc);
@@ -40,6 +39,6 @@ impl Intersectable for Sphere {
         let point = ray.at(dist);
         let normal = Unit::new_normalize(point - self.center); // can also divide by the radius...
 
-        Some(Intersection::new(point,dist,  normal))
+        Some(Intersection::new(point,dist,normal,&self.material,&ray))
     }
 }

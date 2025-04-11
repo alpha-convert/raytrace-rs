@@ -1,6 +1,6 @@
 use nalgebra::{Unit, UnitVector3, Vector3};
 
-use crate::geom::intersectable::Intersectable;
+use crate::geom::{intersectable::{Intersectable, Intersection}, ray::Ray};
 
 pub struct Scene {
         pub objects : Vec<Box<dyn Intersectable>>,
@@ -14,7 +14,7 @@ impl Scene {
 }
 
 impl Intersectable for Scene {
-    fn intersect(&self, ray : &crate::geom::ray::Ray, dist_min : f64, dist_max : f64) -> Option<crate::geom::intersectable::Intersection> {
+    fn intersect<'o,'r>(&'o self, ray : &'r Ray, dist_min : f64, dist_max : f64) -> Option<Intersection<'o,'r>> {
         self.objects.intersect(ray, dist_min, dist_max)
     }
 }

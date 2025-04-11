@@ -1,7 +1,8 @@
-use std::ops::Add;
+use std::{collections::VecDeque, ops::{Add, Mul}};
 
 use nalgebra::{UnitVector3, Vector3};
 
+#[derive(Debug,Clone,Copy)]
 pub struct Color {
     v : Vector3<f64>
 }
@@ -35,8 +36,17 @@ impl Add for Color {
     }
 }
 
+impl Mul for Color {
+    type Output = Color;
+
+    fn mul(self, rhs: Self) -> Self::Output {
+        Color { v : Vector3::new(self.v.x * rhs.v.x, self.v.y * rhs.v.y, self.v.z*rhs.v.z)}
+    }
+}
+
 impl Into<sdl2::pixels::Color> for Color {
     fn into(self) -> sdl2::pixels::Color {
+        // Apply gamma correction (as floats) at this point, before mapping into u8 space.
         sdl2::pixels::Color::RGB((self.v.x.sqrt() * 256.0).floor() as u8, (self.v.y.sqrt() * 256.0).floor() as u8, (self.v.z.sqrt() * 256.0).floor() as u8)
     }
 }
