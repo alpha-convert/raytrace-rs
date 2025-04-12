@@ -8,17 +8,28 @@ use crate::lighting::material::Material;
 use super::interval::Interval;
 
 pub struct Intersection<'o> {
-    point : Vector3<f64>,
-    dist : f64,
-    normal : Unit<Vector3<f64>>,
-    material : &'o Box<dyn Material>,
-    ray_in : Ray
+    point: Vector3<f64>,
+    dist: f64,
+    normal: Unit<Vector3<f64>>,
+    material: &'o Box<dyn Material>,
+    ray_in: Ray,
 }
 
 impl<'o> Intersection<'o> {
-    pub fn new(point : Vector3<f64>, dist: f64, normal : Unit<Vector3<f64>>, material : &'o Box<dyn Material>, ray_in : Ray) -> Self {
-        Intersection { point: point, dist: dist, normal: normal, material : material, ray_in }
-
+    pub fn new(
+        point: Vector3<f64>,
+        dist: f64,
+        normal: Unit<Vector3<f64>>,
+        material: &'o Box<dyn Material>,
+        ray_in: Ray,
+    ) -> Self {
+        Intersection {
+            point: point,
+            dist: dist,
+            normal: normal,
+            material: material,
+            ray_in,
+        }
     }
 
     pub fn dist(&self) -> f64 {
@@ -44,14 +55,12 @@ impl<'o> Intersection<'o> {
     pub fn ray_in(&self) -> Ray {
         self.ray_in
     }
-
 }
 
-pub trait Intersectable : Send + Sync {
+pub trait Intersectable: Send + Sync {
     // It might be more efficient to pass in a &mut Option<Intersectoin>, but that's ugly.
-    fn intersect<'o>(&'o self, ray : Ray, i : Interval) -> Option<Intersection<'o>>;
+    fn intersect<'o>(&'o self, ray: Ray, i: Interval) -> Option<Intersection<'o>>;
 }
-
 
 // impl Intersectable for Arc<dyn Intersectable> {
 //     fn intersect<'o>(&'o self, ray : Ray, i : Interval) -> Option<Intersection<'o>> {
