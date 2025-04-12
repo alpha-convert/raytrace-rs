@@ -6,6 +6,7 @@ use crate::lighting::color::Color;
 
 use super::render_surface::RenderSurface;
 
+/// A 2d matrix of colors, locked row by row.
 pub struct ParBuffer {
     rows : usize,
     cols : usize,
@@ -23,7 +24,6 @@ impl<'a> BufRow<'a> {
 }
 
 impl ParBuffer {
-
     pub fn new(rows : usize, cols : usize) -> Self
     {
         let single_row = vec![Color::black();cols];

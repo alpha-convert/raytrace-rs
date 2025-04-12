@@ -1,5 +1,6 @@
 use std::{collections::VecDeque, ops::{Add, AddAssign, Mul}};
 
+use image::Rgb;
 use nalgebra::{UnitVector3, Vector3};
 
 #[derive(Debug,Clone,Copy)]
@@ -75,6 +76,15 @@ impl Into<sdl2::pixels::Color> for GammaColor {
     fn into(self) -> sdl2::pixels::Color {
         // Apply gamma correction (as floats) at this point, before mapping into u8 space.
         sdl2::pixels::Color::RGB((self.v.x * 256.0).floor() as u8, (self.v.y * 256.0).floor() as u8, (self.v.z * 256.0).floor() as u8)
+    }
+}
+
+impl Into<Rgb<u8>> for GammaColor {
+    fn into(self) -> Rgb<u8> {
+        let r = (self.v.x * 256.0).floor() as u8;
+        let g = (self.v.y * 256.0).floor() as u8;
+        let b = (self.v.z * 256.0).floor() as u8;
+        image::Rgb([r,g,b])
     }
 }
 
