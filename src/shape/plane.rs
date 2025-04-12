@@ -15,8 +15,8 @@ impl Plane {
 }
 
 impl Intersectable for Plane {
-    fn intersect<'o,'r>(&'o self, ray : &'r Ray, dist_min : f64, dist_max : f64) -> Option<Intersection<'o,'r>> {
-        let denom = self.normal.dot(ray.dir());
+    fn intersect<'o>(&'o self, ray : Ray, dist_min : f64, dist_max : f64) -> Option<Intersection<'o>> {
+        let denom = self.normal.dot(&ray.dir());
         if denom.abs() > 1e-8 {
             let t = (self.pt - ray.origin()).dot(&self.normal) / denom;
             if t >= dist_min && t <= dist_max {

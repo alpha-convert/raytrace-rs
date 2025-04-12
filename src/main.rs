@@ -45,7 +45,7 @@ fn main() {
     let world_screen_height= 54.0;
 
     let point8lambert = Lambertian::new(Color::new(0.8,0.8,0.8));
-    let point8metal = Metal::new(Color::new(0.8, 0.8, 0.8));
+    let point8metal = Metal::new(Color::new(0.8, 0.8, 0.8),0.01);
 
     let ground = Arc::new(Plane::new(Vector3::new(0.0, -11.0, 0.0),Unit::new_normalize(Vector3::new(0.0, 1.0, -0.05)),Box::new(point8lambert)));
     let sphere0 = Arc::new(Sphere::new(Vector3::new(0.0, 0.0, -30.0), 20.0,Box::new(point8lambert)));
@@ -56,7 +56,7 @@ fn main() {
     let scene = Scene::new(objects);
 
     let recursion_depth = 50;
-    let samples_per_pixel = 1;
+    let samples_per_pixel = 300;
 
     let renderer = Renderer::new(recursion_depth, window_width as usize, window_height as usize, camera_pos, camera_dir, camera_down_dir, camera_right_dir, screen_dist, world_screen_width, world_screen_height, samples_per_pixel);
     // let mut renderer = Renderer::new(canvas,window_width as u64,window_height as u64);
