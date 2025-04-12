@@ -5,6 +5,8 @@ use nalgebra::{Unit, Vector3};
 use crate::geom::ray::Ray;
 use crate::lighting::material::Material;
 
+use super::interval::Interval;
+
 pub struct Intersection<'o> {
     point : Vector3<f64>,
     dist : f64,
@@ -43,34 +45,45 @@ impl<'o> Intersection<'o> {
 
 pub trait Intersectable : Send + Sync {
     // It might be more efficient to pass in a &mut Option<Intersectoin>, but that's ugly.
-    fn intersect<'o,'r>(&'o self, ray : Ray, dist_min : f64, dist_max : f64) -> Option<Intersection<'o>>;
+    fn intersect<'o>(&'o self, ray : Ray, i : Interval) -> Option<Intersection<'o>>;
+    fn intersect_bb(&self, ray : Ray, i : Interval) -> bool;
 }
 
 impl<T : Intersectable> Intersectable for Vec<T> {
-    fn intersect<'o,'r>(&'o self, ray : Ray, dist_min : f64, dist_max : f64) -> Option<Intersection<'o>> {
+    fn intersect<'o,'r>(&'o self, ray : Ray, i : Interval) -> Option<Intersection<'o>> {
         let mut closest = None;
         for obj in self.iter() {
-            match obj.intersect(ray,dist_min,dist_max) {
-                None => (),
-                Some(inter) => 
-                    match closest {
-                        None => { closest.replace(inter); },
-                        Some(ref inter2) => {
-                            if inter.dist < inter2.dist {
-                                closest.replace(inter);
+            if obj.intersect_bb(ray, i) {
+                match obj.intersect(ray,i) {
+                    None => (),
+                    Some(inter) => {
+                        match closest {
+                            None => { closest.replace(inter); },
+                            Some(ref inter2) => {
+                                if inter.dist < inter2.dist {
+                                    closest.replace(inter);
+                                }
                             }
                         }
-
                     }
+                }
             }
         }
         closest
     }
+
+    fn intersect_bb(&self, ray : Ray, i : Interval) -> bool {
+        true
+    }
+
 }
 
-// TODO: for some reason I can't do this as <T : Intersectable> Box<T>... unclear why.
 impl Intersectable for Arc<dyn Intersectable> {
-    fn intersect<'o>(&'o self, ray : Ray, dist_min : f64, dist_max : f64) -> Option<Intersection<'o>> {
-        (**self).intersect(ray,dist_min,dist_max)
+    fn intersect<'o>(&'o self, ray : Ray, i : Interval) -> Option<Intersection<'o>> {
+        (**self).intersect(ray,i)
+    }
+
+    fn intersect_bb(&self, ray : Ray, i : Interval) -> bool {
+        (**self).intersect_bb(ray,i)
     }
 }

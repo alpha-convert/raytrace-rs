@@ -2,6 +2,8 @@ use nalgebra::{Unit, Vector3};
 
 use crate::{geom::{intersectable::{Intersectable, Intersection}, ray::Ray}, lighting::material::Material};
 
+use super::interval::Interval;
+
 pub struct Plane {
     pt : Vector3<f64>,
     normal : Unit<Vector3<f64>>,
@@ -15,11 +17,11 @@ impl Plane {
 }
 
 impl Intersectable for Plane {
-    fn intersect<'o>(&'o self, ray : Ray, dist_min : f64, dist_max : f64) -> Option<Intersection<'o>> {
+    fn intersect<'o>(&'o self, ray : Ray, i : Interval) -> Option<Intersection<'o>> {
         let denom = self.normal.dot(&ray.dir());
         if denom.abs() > 1e-8 {
             let t = (self.pt - ray.origin()).dot(&self.normal) / denom;
-            if t >= dist_min && t <= dist_max {
+            if i.contains(t) {
                 let point = ray.origin() + ray.dir().scale(t);
                 return Some(Intersection::new(point,t,self.normal, &self.material, ray))
             } else {
@@ -27,5 +29,9 @@ impl Intersectable for Plane {
             }
         }
         None
+    }
+    
+    fn intersect_bb(&self, ray : Ray, i : Interval) -> bool {
+        true
     }
 }

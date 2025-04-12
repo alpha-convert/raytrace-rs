@@ -4,7 +4,7 @@ use rand::Rng;
 use rayon::iter::{IntoParallelIterator, ParallelIterator};
 
 // use itertools::Itertools;
-use crate::{geom::{intersectable::Intersectable, ray::Ray}, lighting::color::Color};
+use crate::{geom::{intersectable::Intersectable, interval::Interval, ray::Ray}, lighting::color::Color};
 
 use super::{par_buffer::ParBuffer, render_surface::RenderSurface, scene::Scene};
 
@@ -114,7 +114,7 @@ impl Renderer {
         if depth <= 0 {
             Color::black()
         } else {
-            if let Some(inter) = scene.intersect(ray,0.001,f64::MAX) {
+            if let Some(inter) = scene.intersect(ray,Interval::new(0.001,f64::MAX)) {
 
                 match inter.material().scatter(&inter) {
                     None => Color::black(),
