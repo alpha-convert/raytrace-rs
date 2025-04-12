@@ -1,12 +1,10 @@
-use std::cell::RefCell;
 
 use nalgebra::{Unit, Vector3};
 use rand::Rng;
-use sdl2::{render::Canvas, video::Window};
-use rayon::{iter::{IntoParallelIterator, ParallelIterator}, prelude};
+use rayon::iter::{IntoParallelIterator, ParallelIterator};
 
 // use itertools::Itertools;
-use crate::{geom::{intersectable::Intersectable, ray::Ray}, lighting::color::Color, scene::Scene, sys::{par_buffer::ParBuffer, render_surface::RenderSurface}, util};
+use crate::{geom::{intersectable::Intersectable, ray::Ray}, lighting::color::Color, scene::Scene, sys::{par_buffer::ParBuffer, render_surface::RenderSurface}};
 
 pub struct Renderer {
     //Metadata
@@ -81,7 +79,7 @@ impl Renderer {
         (du,dv)
     }
 
-    pub fn render(&self, scene : &Scene, mut surf : &mut impl RenderSurface) {
+    pub fn render(&self, scene : &Scene, surf : &mut impl RenderSurface) {
 
         let buffer = ParBuffer::new(self.window_height as usize, self.window_width as usize);
 

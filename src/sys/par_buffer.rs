@@ -1,6 +1,5 @@
-use std::{default, sync::{Arc, Mutex, MutexGuard}};
+use std::sync::{Mutex, MutexGuard};
 
-use sdl2::{render::Canvas, video::Window};
 
 use crate::lighting::color::Color;
 

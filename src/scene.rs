@@ -1,6 +1,5 @@
 use std::sync::Arc;
 
-use nalgebra::{Unit, UnitVector3, Vector3};
 
 use crate::geom::{intersectable::{Intersectable, Intersection}, ray::Ray};
 

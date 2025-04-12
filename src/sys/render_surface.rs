@@ -1,7 +1,7 @@
-use image::{ImageBuffer, Pixel, RgbImage};
+use image::RgbImage;
 use sdl2::{render::Canvas, video::Window};
 
-use crate::lighting::color::{Color, GammaColor};
+use crate::lighting::color::GammaColor;
 
 pub trait RenderSurface {
     fn draw_point(&mut self,x : u64, y : u64, color : GammaColor);

@@ -1,4 +1,4 @@
-use nalgebra::{Unit, UnitVector3, Vector, Vector3};
+use nalgebra::{Unit, UnitVector3, Vector3};
 use rand::Rng;
 
 pub fn random_vec3(lo : f64, hi:f64) -> Vector3<f64> {

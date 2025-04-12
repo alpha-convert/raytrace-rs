@@ -1,4 +1,4 @@
-use std::{collections::VecDeque, ops::{Add, AddAssign, Mul}};
+use std::ops::{Add, AddAssign, Mul};
 
 use image::Rgb;
 use nalgebra::{UnitVector3, Vector3};

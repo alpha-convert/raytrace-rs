@@ -1,6 +1,5 @@
-use nalgebra::Unit;
 
-use crate::{geom::{intersectable::Intersection, ray::Ray}, util::{self, is_small, reflect}};
+use crate::{geom::{intersectable::Intersection, ray::Ray}, util::{reflect}};
 
 use super::{color::Color, material::Material};
 
