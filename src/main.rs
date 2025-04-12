@@ -64,7 +64,8 @@ fn main() {
     // let mut renderer = Renderer::new(canvas,window_width as u64,window_height as u64);
 
     canvas.clear();
-    renderer.render(&scene, &mut canvas);
+    let buf = renderer.render(&scene, &mut canvas);
+    buf.blit_to(&mut canvas);
     canvas.present();
 
     // canvas.present();

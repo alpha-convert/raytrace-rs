@@ -79,7 +79,7 @@ impl Renderer {
         (du,dv)
     }
 
-    pub fn render(&self, scene : &Scene, surf : &mut impl RenderSurface) {
+    pub fn render(&self, scene : &Scene, surf : &mut impl RenderSurface) -> ParBuffer {
 
         let buffer = ParBuffer::new(self.window_height as usize, self.window_width as usize);
 
@@ -103,7 +103,8 @@ impl Renderer {
             }
         });
 
-        buffer.blit_to(surf);
+        // buffer.blit_to(surf);
+        buffer
     }
 
 

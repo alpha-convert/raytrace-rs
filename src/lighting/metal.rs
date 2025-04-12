@@ -1,5 +1,5 @@
 
-use crate::{geom::{intersectable::Intersection, ray::Ray}, util::{reflect}};
+use crate::{geom::{intersectable::Intersection, ray::Ray}, util::reflect};
 
 use super::{color::Color, material::Material};
 
