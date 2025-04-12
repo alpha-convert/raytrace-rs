@@ -21,6 +21,7 @@ impl Axis {
 }
 
 
+#[derive(Debug,Default,Clone)]
 // Axis-aligned bounding box represented by the intervals in space it covers.
 pub struct AABB {
     x : Interval,
@@ -29,10 +30,6 @@ pub struct AABB {
 }
 
 impl AABB {
-    fn new(x : Interval, y : Interval, z : Interval) -> Self {
-        AABB { x: x, y: y, z: z }
-    }
-
     pub fn from_points(v1 : Vector3<f64>, v2 : Vector3<f64>) -> Self {
         let x = if v1.x <= v2.x { Interval::new(v1.x, v2.x) } else { Interval::new(v2.x,v1.x) };
         let y = if v1.y <= v2.y { Interval::new(v1.y, v2.y) } else { Interval::new(v2.y,v1.y) };
@@ -40,7 +37,24 @@ impl AABB {
         AABB { x: x, y: y, z: z }
     }
 
-    pub fn idx(&self, a : Axis) -> Interval {
+    pub fn union(bb1 : AABB, bb2 : AABB) -> Self {
+        let x = Interval::union(bb1.x,bb2.x);
+        let y = Interval::union(bb1.y,bb2.y);
+        let z = Interval::union(bb1.z,bb2.z);
+        AABB { x: x, y: y, z: z }
+    }
+
+    pub fn union_all<I>(bbs : I) -> Self
+        where I : IntoIterator<Item = AABB>
+    {
+        let mut bb = AABB::default();
+        for b in bbs.into_iter() {
+            bb = AABB::union(bb,b )
+        };
+        bb
+    }
+
+    fn idx(&self, a : Axis) -> Interval {
         match a {
             Axis::X => self.x,
             Axis::Y => self.y,

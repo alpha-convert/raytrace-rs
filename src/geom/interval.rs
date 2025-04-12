@@ -2,7 +2,7 @@ use std::cmp::min;
 
 use nalgebra::Vector3;
 
-#[derive(Debug,Copy,Clone)]
+#[derive(Debug,Copy,Clone,Default)]
 pub struct Interval {
     pub min : f64,
     pub max : f64

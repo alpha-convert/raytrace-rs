@@ -21,6 +21,8 @@ impl Sphere {
 
 impl Intersectable for Sphere {
     fn intersect<'o>(&'o self, ray: Ray, i : Interval) -> Option<Intersection<'o>> {
+        if !self.bbox.intersect(ray, i) {return None }
+
         let oc = self.center - ray.origin();
 
         let h = ray.dir().dot(&oc);
@@ -48,7 +50,4 @@ impl Intersectable for Sphere {
         Some(Intersection::new(point,dist,normal,&self.material,ray))
     }
     
-    fn intersect_bb(&self, ray : Ray, i : Interval) -> bool {
-        self.bbox.intersect(ray, i)
-    }
 }

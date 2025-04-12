@@ -30,8 +30,4 @@ impl Intersectable for Plane {
         }
         None
     }
-    
-    fn intersect_bb(&self, ray : Ray, i : Interval) -> bool {
-        true
-    }
 }
