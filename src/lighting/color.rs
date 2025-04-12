@@ -1,4 +1,4 @@
-use std::{collections::VecDeque, ops::{Add, Mul}};
+use std::{collections::VecDeque, ops::{Add, AddAssign, Mul}};
 
 use nalgebra::{UnitVector3, Vector3};
 
@@ -54,6 +54,12 @@ impl Add for Color {
     type Output = Color;
     fn add(self, rhs: Self) -> Self::Output {
         Color {v : self.v.add(rhs.v)}
+    }
+}
+
+impl AddAssign for Color {
+    fn add_assign(&mut self, rhs: Self) {
+        *self = *self + rhs;
     }
 }
 

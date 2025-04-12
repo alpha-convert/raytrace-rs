@@ -12,6 +12,16 @@ pub struct ParBuffer {
     data : Vec<Mutex<Vec<Color>>>
 }
 
+pub struct BufRow<'a> {
+    data : MutexGuard<'a,Vec<Color>>
+}
+
+impl<'a> BufRow<'a> {
+    pub fn set(&mut self, j : usize, c : Color) {
+        *(self.data.get_mut(j).unwrap()) = c;
+    }
+}
+
 impl ParBuffer {
 
     pub fn new(rows : usize, cols : usize) -> Self
@@ -24,20 +34,17 @@ impl ParBuffer {
         ParBuffer { rows, cols, data }
     }
 
-    pub fn lock_row(&self, i : usize) -> MutexGuard<'_,Vec<Color>> {
-        self.data.get(i).unwrap().lock().unwrap()
+    pub fn lock_row(&self, i : usize) -> BufRow {
+        BufRow { data : self.data.get(i).unwrap().lock().unwrap() }
     }
 
-    // This takes a &mut self because we want to make sure we only do this when we're done.
-    pub fn blit<T : RenderSurface>(&mut self, surf : &mut T)
+    pub fn blit_to<T : RenderSurface>(self, surf : &mut T)
     {
         for y in 0..self.rows {
             let row = self.data.get(y).unwrap().lock().unwrap();
             for x in 0..self.cols {
                 let color = row.get(x).unwrap();
-
                 surf.draw_point(x as u64, y as u64, color.gamma());
-
             }
         }
     }

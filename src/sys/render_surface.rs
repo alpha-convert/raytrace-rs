@@ -9,5 +9,6 @@ pub trait RenderSurface {
 impl RenderSurface for Canvas<Window> {
     fn draw_point(&mut self,x : u64, y : u64, color : GammaColor) {
         self.set_draw_color(color);
+        self.draw_point((x as i32,y as i32)).unwrap();
     }
 }

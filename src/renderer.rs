@@ -6,15 +6,15 @@ use sdl2::{render::Canvas, video::Window};
 use rayon::{iter::{IntoParallelIterator, ParallelIterator}, prelude};
 
 // use itertools::Itertools;
-use crate::{geom::{intersectable::Intersectable, ray::Ray}, lighting::color::Color, sys::par_buffer::ParBuffer, scene::Scene, util};
+use crate::{geom::{intersectable::Intersectable, ray::Ray}, lighting::color::Color, scene::Scene, sys::{par_buffer::ParBuffer, render_surface::RenderSurface}, util};
 
 pub struct Renderer {
     //Metadata
     recursion_depth : u64,
 
     //Canvas data
-    window_width : u64,
-    window_height : u64,
+    window_width : usize,
+    window_height : usize,
     // canvas : RefCell<Canvas<Window>>,
 
     //Camera data
@@ -32,8 +32,8 @@ pub struct Renderer {
 
 impl Renderer {
     pub fn new( recursion_depth : u64,
-                window_width: u64,
-                window_height : u64,
+                window_width: usize,
+                window_height : usize,
 
                 camera_pos : Vector3<f64>,
                 camera_fwd : Unit<Vector3<f64>>,    
@@ -81,9 +81,9 @@ impl Renderer {
         (du,dv)
     }
 
-    pub fn render(&self, scene : &Scene, canvas : &mut Canvas<Window>) {
+    pub fn render(&self, scene : &Scene, mut surf : &mut impl RenderSurface) {
 
-        let mut buffer = ParBuffer::new(self.window_height as usize, self.window_width as usize);
+        let buffer = ParBuffer::new(self.window_height as usize, self.window_width as usize);
 
         (0..self.window_height).into_par_iter().for_each(|y_idx| {
             let mut row = buffer.lock_row(y_idx as usize);
@@ -93,22 +93,19 @@ impl Renderer {
 
                 for _ in 0..self.samples_per_pixel {
                     let (du,dv) = Renderer::sample_uv();
-                    let screen_point = 
-                        self.screen_00 + self.screen_delta_u.scale(x_idx as f64 + du) + self.screen_delta_v.scale(y_idx as f64 + dv);
+                    let screen_point = self.screen_00 + self.screen_delta_u.scale(x_idx as f64 + du) + self.screen_delta_v.scale(y_idx as f64 + dv);
 
                     let ray = Ray::through_points(self.camera_pos,screen_point);
 
                     px_color = px_color + Self::trace(&ray, scene, self.recursion_depth).scale(self.sample_weight);
                 }
 
-                *row.get_mut(x_idx as usize).unwrap() = px_color;
+                row.set(x_idx, px_color);
 
             }
         });
 
-        buffer.blit(canvas);
-
-        canvas.present();
+        buffer.blit_to(surf);
     }
 
 

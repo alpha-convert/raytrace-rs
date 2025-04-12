@@ -58,15 +58,15 @@ fn main() {
     let scene = Scene::new(objects);
 
     let recursion_depth = 50;
-    let samples_per_pixel = 300;
+    let samples_per_pixel = 1;
 
-    let renderer = Renderer::new(recursion_depth, window_width as u64, window_height as u64, camera_pos, camera_dir, camera_down_dir, camera_right_dir, screen_dist, world_screen_width, world_screen_height, samples_per_pixel);
+    let renderer = Renderer::new(recursion_depth, window_width as usize, window_height as usize, camera_pos, camera_dir, camera_down_dir, camera_right_dir, screen_dist, world_screen_width, world_screen_height, samples_per_pixel);
     // let mut renderer = Renderer::new(canvas,window_width as u64,window_height as u64);
 
-    renderer.render(&scene,&mut canvas);
+    canvas.clear();
+    renderer.render(&scene, &mut canvas);
+    canvas.present();
 
-    // canvas.set_draw_color(Color::RGB(0, 255, 255));
-    // canvas.clear();
     // canvas.present();
     let mut event_pump = sdl_context.event_pump().unwrap();
     'running: loop {
@@ -83,7 +83,6 @@ fn main() {
             }
         }
 
-        // canvas.present();
         ::std::thread::sleep(Duration::new(0, 1_000_000_000u32 / 60));
     }
 }
