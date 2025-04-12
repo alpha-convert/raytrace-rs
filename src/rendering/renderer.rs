@@ -4,7 +4,9 @@ use rand::Rng;
 use rayon::iter::{IntoParallelIterator, ParallelIterator};
 
 // use itertools::Itertools;
-use crate::{geom::{intersectable::Intersectable, ray::Ray}, lighting::color::Color, scene::Scene, sys::{par_buffer::ParBuffer, render_surface::RenderSurface}};
+use crate::{geom::{intersectable::Intersectable, ray::Ray}, lighting::color::Color};
+
+use super::{par_buffer::ParBuffer, render_surface::RenderSurface, scene::Scene};
 
 pub struct Renderer {
     //Metadata
@@ -79,7 +81,7 @@ impl Renderer {
         (du,dv)
     }
 
-    pub fn render(&self, scene : &Scene, surf : &mut impl RenderSurface) -> ParBuffer {
+    pub fn render(&self, scene : &Scene) -> ParBuffer {
 
         let buffer = ParBuffer::new(self.window_height as usize, self.window_width as usize);
 

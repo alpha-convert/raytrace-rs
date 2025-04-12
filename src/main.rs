@@ -5,22 +5,20 @@ use lighting::lambertian::Lambertian;
 use lighting::metal::Metal;
 use nalgebra::{Unit, Vector3};
 use geom::intersectable::Intersectable;
+use rendering::renderer::Renderer;
+use rendering::scene::Scene;
 use shape::plane::Plane;
-use renderer::Renderer;
-use scene::Scene;
 use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
 use shape::sphere::Sphere;
 use std::sync::Arc;
 use std::time::Duration;
 
-mod scene;
-mod renderer;
 mod shape;
 mod geom;
 mod lighting;
 mod util;
-mod sys;
+mod rendering;
 
 
 fn main() {
@@ -63,8 +61,7 @@ fn main() {
     let renderer = Renderer::new(recursion_depth, window_width as usize, window_height as usize, camera_pos, camera_dir, camera_down_dir, camera_right_dir, screen_dist, world_screen_width, world_screen_height, samples_per_pixel);
     // let mut renderer = Renderer::new(canvas,window_width as u64,window_height as u64);
 
-    canvas.clear();
-    let buf = renderer.render(&scene, &mut canvas);
+    let mut buf = renderer.render(&scene);
     buf.blit_to(&mut canvas);
     canvas.present();
 

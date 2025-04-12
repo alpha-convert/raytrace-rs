@@ -37,7 +37,7 @@ impl ParBuffer {
         BufRow { data : self.data.get(i).unwrap().lock().unwrap() }
     }
 
-    pub fn blit_to<T : RenderSurface>(self, surf : &mut T)
+    pub fn blit_to<T : RenderSurface>(&mut self, surf : &mut T)
     {
         for y in 0..self.rows {
             let row = self.data.get(y).unwrap().lock().unwrap();
