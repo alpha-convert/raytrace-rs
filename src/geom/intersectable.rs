@@ -1,4 +1,6 @@
 
+use std::sync::Arc;
+
 use nalgebra::{Unit, Vector2, Vector3};
 
 use crate::geom::ray::Ray;
@@ -6,21 +8,21 @@ use crate::lighting::material::Material;
 
 use super::interval::Interval;
 
-pub struct Intersection<'o> {
+pub struct Intersection {
     point: Vector3<f64>,
     dist: f64,
     normal: Unit<Vector3<f64>>,
-    material: &'o Box<dyn Material>,
+    material: Arc<dyn Material>,
     ray_in: Ray,
     uv: Vector2<f64>,
 }
 
-impl<'o> Intersection<'o> {
+impl Intersection {
     pub fn new(
         point: Vector3<f64>,
         dist: f64,
         normal: Unit<Vector3<f64>>,
-        material: &'o Box<dyn Material>,
+        material: Arc<dyn Material>,
         ray_in: Ray,
         uv: Vector2<f64>,
     ) -> Self {
@@ -54,8 +56,8 @@ impl<'o> Intersection<'o> {
         &mut self.point
     }
 
-    pub fn material(&self) -> &'o Box<dyn Material> {
-        self.material
+    pub fn material(&self) -> Arc<dyn Material> {
+        self.material.clone()
     }
 
     pub fn ray_in(&self) -> Ray {
@@ -65,7 +67,7 @@ impl<'o> Intersection<'o> {
 
 pub trait Intersectable: Send + Sync {
     // It might be more efficient to pass in a &mut Option<Intersectoin>, but that's ugly.
-    fn intersect<'o>(&'o self, ray: Ray, i: Interval) -> Option<Intersection<'o>>;
+    fn intersect(&self, ray: Ray, i: Interval) -> Option<Intersection>;
 }
 
 // impl Intersectable for Arc<dyn Intersectable> {

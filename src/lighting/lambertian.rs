@@ -19,16 +19,15 @@ pub struct Lambertian {
 }
 
 impl Lambertian {
-    pub fn new_solid(albedo: Color) -> Self {
-        let tex = Arc::new(SolidColor::new(albedo));
-        Lambertian { tex }
+    pub fn new(tex : Arc<dyn Texture>) -> Self {
+        Lambertian { tex: tex }
     }
 }
 
 impl Material for Lambertian {
-    fn scatter<'o>(
-        &'o self,
-        inter: &crate::geom::intersectable::Intersection<'o>,
+    fn scatter(
+        &self,
+        inter: &crate::geom::intersectable::Intersection,
     ) -> Option<(Color, Ray)> {
         let normal = inter.normal();
         let mut bounce_dir = *normal + *util::random_unit_vec3();

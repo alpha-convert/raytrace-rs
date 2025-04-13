@@ -15,7 +15,7 @@ impl Scene {
 }
 
 impl Intersectable for Scene {
-    fn intersect<'o, 'r>(&'o self, ray: Ray, i: Interval) -> Option<Intersection<'o>> {
+    fn intersect(&self, ray: Ray, i: Interval) -> Option<Intersection> {
         let mut closest = None;
         for obj in self.objects.iter() {
             match obj.intersect(ray, i) {
