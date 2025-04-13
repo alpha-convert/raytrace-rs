@@ -1,9 +1,6 @@
-use std::iter::Map;
 
-use nalgebra::{UnitVector3, Vector, Vector3};
 use serde::Deserialize;
 
-use crate::lighting::color::Color;
 
 #[derive(Deserialize, Debug)]
 pub struct SceneDesc {

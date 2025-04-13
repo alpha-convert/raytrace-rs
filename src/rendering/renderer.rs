@@ -8,7 +8,7 @@ use crate::{
     lighting::color::Color,
 };
 
-use super::{par_buffer::ParBuffer, render_surface::RenderSurface, scene::Scene};
+use super::{par_buffer::ParBuffer, scene::Scene};
 
 pub struct Renderer {
     //Metadata

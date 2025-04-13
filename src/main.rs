@@ -9,11 +9,8 @@ use lighting::metal::Metal;
 use nalgebra::{Unit, Vector3};
 use rendering::renderer::Renderer;
 use rendering::scene::Scene;
-use scenedesc::SceneDesc;
 use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
-use std::fs::File;
-use std::sync::Arc;
 use std::time::Duration;
 
 mod geom;

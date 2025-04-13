@@ -1,6 +1,4 @@
-use std::cmp::min;
 
-use nalgebra::Vector3;
 
 #[derive(Debug, Copy, Clone, Default)]
 pub struct Interval {
