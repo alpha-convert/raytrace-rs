@@ -1,5 +1,3 @@
-use std::sync::Arc;
-
 use crate::geom::{
     intersectable::{Intersectable, Intersection},
     interval::Interval,
@@ -7,11 +5,11 @@ use crate::geom::{
 };
 
 pub struct Scene {
-    pub objects: Vec<Arc<dyn Intersectable>>,
+    pub objects: Vec<Box<dyn Intersectable>>,
 }
 
 impl Scene {
-    pub fn new(objects: Vec<Arc<dyn Intersectable>>) -> Self {
+    pub fn new(objects: Vec<Box<dyn Intersectable>>) -> Self {
         Scene { objects: objects }
     }
 }

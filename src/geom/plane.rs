@@ -43,6 +43,7 @@ impl Intersectable for Plane {
                     self.normal,
                     &self.material,
                     ray,
+                    todo!()
                 ));
             } else {
                 // println!("Culled Plane: t={}, min={}, denom={}", t, dist_min, denom);

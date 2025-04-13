@@ -1,3 +1,5 @@
+use std::sync::Arc;
+
 use nalgebra::Unit;
 
 use crate::{
@@ -5,16 +7,17 @@ use crate::{
     util::{self, is_small},
 };
 
-use super::{color::Color, material::Material};
+use super::{color::Color, material::Material, texture::{solidcolor::SolidColor, Texture}};
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Clone)]
 pub struct Lambertian {
-    albedo: Color,
+    tex : Arc<dyn Texture>
 }
 
 impl Lambertian {
-    pub fn new(albedo: Color) -> Self {
-        Lambertian { albedo }
+    pub fn new_solid(albedo: Color) -> Self {
+        let tex = Arc::new(SolidColor::new(albedo));
+        Lambertian { tex }
     }
 }
 
@@ -29,6 +32,7 @@ impl Material for Lambertian {
             bounce_dir = *normal;
         }
         let bounce_ray = Ray::new(inter.point(), Unit::new_normalize(bounce_dir));
-        Some((self.albedo, bounce_ray))
+        let albedo = self.tex.color_at(&inter.uv(), &inter.point());
+        Some((albedo, bounce_ray))
     }
 }

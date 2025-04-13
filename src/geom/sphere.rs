@@ -59,6 +59,6 @@ impl Intersectable for Sphere {
         let point = ray.at(dist);
         let normal = Unit::new_normalize(point - self.center); // can also divide by the radius...
 
-        Some(Intersection::new(point, dist, normal, &self.material, ray))
+        Some(Intersection::new(point, dist, normal, &self.material, ray, todo!()))
     }
 }

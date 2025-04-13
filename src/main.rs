@@ -9,8 +9,10 @@ use lighting::metal::Metal;
 use nalgebra::{Unit, Vector3};
 use rendering::renderer::Renderer;
 use rendering::scene::Scene;
+use scenedesc::SceneDesc;
 use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
+use std::fs::File;
 use std::sync::Arc;
 use std::time::Duration;
 
@@ -18,8 +20,11 @@ mod geom;
 mod lighting;
 mod rendering;
 mod util;
+mod scenedesc;
 
 fn main() {
+
+
     let sdl_context = sdl2::init().unwrap();
     let video_subsystem = sdl_context.video().unwrap();
 
@@ -42,26 +47,26 @@ fn main() {
     let world_screen_width = 96.0;
     let world_screen_height = 54.0;
 
-    let point8lambert = Lambertian::new(Color::new(0.8, 0.8, 0.8));
+    let point8lambert = Lambertian::new_solid(Color::new(0.8, 0.8, 0.8));
     let point8metal = Metal::new(Color::new(0.8, 0.8, 0.8), 0.01);
 
-    let ground = Arc::new(Plane::new(
+    let ground = Box::new(Plane::new(
         Vector3::new(0.0, -11.0, 0.0),
         Unit::new_normalize(Vector3::new(0.0, 1.0, -0.05)),
-        Box::new(point8lambert),
+        Box::new(point8lambert.clone()),
     ));
-    let sphere0 = Arc::new(Sphere::new(
+    let sphere0 = Box::new(Sphere::new(
         Vector3::new(0.0, 0.0, -30.0),
         20.0,
-        Box::new(point8lambert),
+        Box::new(point8lambert.clone()),
     ));
-    let sphere1 = Arc::new(Sphere::new(
+    let sphere1 = Box::new(Sphere::new(
         Vector3::new(50.0, 0.0, -40.0),
         15.0,
         Box::new(point8metal),
     ));
 
-    let objects: Vec<Arc<dyn Intersectable>> = vec![ground, sphere0, sphere1];
+    let objects: Vec<Box<dyn Intersectable>> = vec![ground, sphere0, sphere1];
 
     let scene = Scene::new(objects);
 

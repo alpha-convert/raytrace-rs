@@ -1,6 +1,6 @@
 use std::sync::Arc;
 
-use nalgebra::{Unit, Vector3};
+use nalgebra::{Unit, Vector2, Vector3};
 
 use crate::geom::ray::Ray;
 use crate::lighting::material::Material;
@@ -13,6 +13,7 @@ pub struct Intersection<'o> {
     normal: Unit<Vector3<f64>>,
     material: &'o Box<dyn Material>,
     ray_in: Ray,
+    uv : Vector2<f64>
 }
 
 impl<'o> Intersection<'o> {
@@ -22,6 +23,7 @@ impl<'o> Intersection<'o> {
         normal: Unit<Vector3<f64>>,
         material: &'o Box<dyn Material>,
         ray_in: Ray,
+        uv : Vector2<f64>
     ) -> Self {
         Intersection {
             point: point,
@@ -29,6 +31,7 @@ impl<'o> Intersection<'o> {
             normal: normal,
             material: material,
             ray_in,
+            uv
         }
     }
 
@@ -42,6 +45,10 @@ impl<'o> Intersection<'o> {
 
     pub fn point(&self) -> Vector3<f64> {
         self.point
+    }
+
+    pub fn uv(&self) -> Vector2<f64> {
+        self.uv
     }
 
     pub fn point_mut(&mut self) -> &mut Vector3<f64> {
