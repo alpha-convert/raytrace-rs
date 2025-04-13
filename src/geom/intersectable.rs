@@ -13,7 +13,7 @@ pub struct Intersection<'o> {
     normal: Unit<Vector3<f64>>,
     material: &'o Box<dyn Material>,
     ray_in: Ray,
-    uv : Vector2<f64>
+    uv: Vector2<f64>,
 }
 
 impl<'o> Intersection<'o> {
@@ -23,7 +23,7 @@ impl<'o> Intersection<'o> {
         normal: Unit<Vector3<f64>>,
         material: &'o Box<dyn Material>,
         ray_in: Ray,
-        uv : Vector2<f64>
+        uv: Vector2<f64>,
     ) -> Self {
         Intersection {
             point: point,
@@ -31,7 +31,7 @@ impl<'o> Intersection<'o> {
             normal: normal,
             material: material,
             ray_in,
-            uv
+            uv,
         }
     }
 

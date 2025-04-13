@@ -19,12 +19,10 @@ use std::time::Duration;
 mod geom;
 mod lighting;
 mod rendering;
-mod util;
 mod scenedesc;
+mod util;
 
 fn main() {
-
-
     let sdl_context = sdl2::init().unwrap();
     let video_subsystem = sdl_context.video().unwrap();
 

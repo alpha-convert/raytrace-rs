@@ -7,11 +7,15 @@ use crate::{
     util::{self, is_small},
 };
 
-use super::{color::Color, material::Material, texture::{solidcolor::SolidColor, Texture}};
+use super::{
+    color::Color,
+    material::Material,
+    texture::{Texture, solidcolor::SolidColor},
+};
 
 #[derive(Clone)]
 pub struct Lambertian {
-    tex : Arc<dyn Texture>
+    tex: Arc<dyn Texture>,
 }
 
 impl Lambertian {
