@@ -33,13 +33,12 @@ impl Sphere {
 
     /// Ripped from raytracing the next week. Given a point on the unit sphere,
     /// return the uv coordinates for that point.
-    fn unit_sphere_uv(v : &UnitVector3<f64>) -> Vector2<f64>{
+    fn unit_sphere_uv(v: &UnitVector3<f64>) -> Vector2<f64> {
         let theta = f64::acos(-v.y);
         let phi = f64::atan2(-v.z, v.x) + PI;
 
         Vector2::new(phi / (2.0 * PI), theta / PI)
     }
-
 }
 
 impl Intersectable for Sphere {
@@ -79,7 +78,7 @@ impl Intersectable for Sphere {
             normal,
             self.material.clone(),
             ray,
-            uv
+            uv,
         ))
     }
 }

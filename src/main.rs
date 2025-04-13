@@ -6,9 +6,9 @@ use geom::sphere::Sphere;
 use lighting::color::Color;
 use lighting::lambertian::Lambertian;
 use lighting::metal::Metal;
+use lighting::texture::Texture;
 use lighting::texture::checkerboard::Checkerboard;
 use lighting::texture::solidcolor::SolidColor;
-use lighting::texture::Texture;
 use nalgebra::{Unit, Vector3};
 use rendering::renderer::Renderer;
 use rendering::scene::Scene;
@@ -46,13 +46,17 @@ fn main() {
     let world_screen_width = 96.0;
     let world_screen_height = 54.0;
 
-    let point8solid : Arc<dyn Texture> = Arc::new(SolidColor::new(Color::new(0.8, 0.8, 0.8)));
-    let point2solid : Arc<dyn Texture> = Arc::new(SolidColor::new(Color::new(0.2, 0.2, 0.2)));
+    let point8solid: Arc<dyn Texture> = Arc::new(SolidColor::new(Color::new(0.8, 0.8, 0.8)));
+    let point2solid: Arc<dyn Texture> = Arc::new(SolidColor::new(Color::new(0.2, 0.2, 0.2)));
 
     let point8lambert = Arc::new(Lambertian::new(point8solid.clone()));
     let point2lambert = Arc::new(Lambertian::new(point2solid.clone()));
 
-    let checkertex : Arc<dyn Texture> = Arc::new(Checkerboard::new(5.0,point8solid.clone(),point2solid.clone()));
+    let checkertex: Arc<dyn Texture> = Arc::new(Checkerboard::new(
+        5.0,
+        point8solid.clone(),
+        point2solid.clone(),
+    ));
 
     let lambertchecker = Arc::new(Lambertian::new(checkertex));
 
@@ -62,7 +66,7 @@ fn main() {
         Vector3::new(0.0, -11.0, 0.0),
         Unit::new_normalize(Vector3::new(0.0, 1.0, 0.0)),
         Unit::new_normalize(Vector3::new(0.0, 0.0, -1.0)),
-        lambertchecker
+        lambertchecker,
     ));
     let sphere0 = Box::new(Sphere::new(
         Vector3::new(0.0, 0.0, -30.0),

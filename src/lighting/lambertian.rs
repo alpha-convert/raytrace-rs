@@ -19,16 +19,13 @@ pub struct Lambertian {
 }
 
 impl Lambertian {
-    pub fn new(tex : Arc<dyn Texture>) -> Self {
+    pub fn new(tex: Arc<dyn Texture>) -> Self {
         Lambertian { tex: tex }
     }
 }
 
 impl Material for Lambertian {
-    fn scatter(
-        &self,
-        inter: &crate::geom::intersectable::Intersection,
-    ) -> Option<(Color, Ray)> {
+    fn scatter(&self, inter: &crate::geom::intersectable::Intersection) -> Option<(Color, Ray)> {
         let normal = inter.normal();
         let mut bounce_dir = *normal + *util::random_unit_vec3();
         if is_small(bounce_dir) {

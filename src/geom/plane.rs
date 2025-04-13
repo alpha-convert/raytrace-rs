@@ -15,8 +15,8 @@ use super::interval::Interval;
 pub struct Plane {
     pt: Vector3<f64>,
     normal: Unit<Vector3<f64>>,
-    u_hat : UnitVector3<f64>,
-    v_hat : UnitVector3<f64>,
+    u_hat: UnitVector3<f64>,
+    v_hat: UnitVector3<f64>,
     material: Arc<dyn Material>,
 }
 
@@ -24,7 +24,7 @@ impl Plane {
     pub fn new(
         center: Vector3<f64>,
         normal: UnitVector3<f64>,
-        v_hat : UnitVector3<f64>,
+        v_hat: UnitVector3<f64>,
         material: Arc<dyn Material>,
     ) -> Self {
         let u_hat = Unit::new_normalize(v_hat.cross(&normal));
@@ -57,7 +57,7 @@ impl Intersectable for Plane {
                     self.normal,
                     self.material.clone(),
                     ray,
-                    Vector2::new(u,v),
+                    Vector2::new(u, v),
                 ));
             } else {
                 // println!("Culled Plane: t={}, min={}, denom={}", t, dist_min, denom);

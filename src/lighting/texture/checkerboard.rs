@@ -5,16 +5,16 @@ use crate::lighting::color::Color;
 use super::Texture;
 
 pub struct Checkerboard {
-    tex1 : Arc<dyn Texture>,
-    tex2 : Arc<dyn Texture>,
-    scale : f64,
+    tex1: Arc<dyn Texture>,
+    tex2: Arc<dyn Texture>,
+    scale: f64,
 }
 
 impl Checkerboard {
-    pub fn new(scale : f64, tex1 : Arc<dyn Texture> , tex2 : Arc<dyn Texture>) -> Self {
+    pub fn new(scale: f64, tex1: Arc<dyn Texture>, tex2: Arc<dyn Texture>) -> Self {
         Checkerboard {
-            tex1 : tex1,
-            tex2 : tex2,
+            tex1: tex1,
+            tex2: tex2,
             scale,
         }
     }
