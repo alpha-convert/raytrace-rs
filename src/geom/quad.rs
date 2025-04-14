@@ -78,7 +78,7 @@ impl Geom for Quad {
             t,
             self.normal,
             self.mat.as_ref(),
-            ray,
+            ray.dir(),
             Vector2::new(u, v),
         ));
     }

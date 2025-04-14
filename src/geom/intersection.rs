@@ -1,17 +1,17 @@
 use std::cmp::Ordering;
 use std::f64::NAN;
 
-use nalgebra::{Unit, Vector2, Vector3};
+use nalgebra::{Unit, UnitVector3, Vector2, Vector3};
 
 use crate::lighting::material::Material;
 use crate::math::ray::Ray;
 
 pub struct Intersection<'r> {
     point: Vector3<f64>,
-    dist: f64,
+    dist: f64, //NOTE: distances are relative, not absolute (because of scaling)
     normal: Unit<Vector3<f64>>,
     material: &'r dyn Material,
-    ray_in_dir: Vector3<f64>,
+    ray_in_dir: UnitVector3<f64>,
     uv: Vector2<f64>,
 }
 
@@ -21,7 +21,7 @@ impl<'r> Intersection<'r> {
         dist: f64,
         normal: Unit<Vector3<f64>>,
         material: &'r dyn Material,
-        ray_in_dir: Ray,
+        ray_in_dir: UnitVector3<f64>,
         uv: Vector2<f64>,
     ) -> Self {
         Intersection {
@@ -47,10 +47,6 @@ impl<'r> Intersection<'r> {
         }
     }
 
-    pub fn dist(&self) -> f64 {
-        self.dist
-    }
-
     pub fn normal(&self) -> Unit<Vector3<f64>> {
         self.normal
     }
@@ -71,8 +67,7 @@ impl<'r> Intersection<'r> {
         self.material
     }
 
-    pub fn ray_in_dir(&self) -> Vector3<f64>{
+    pub fn ray_in_dir(&self) -> UnitVector3<f64> {
         self.ray_in_dir
     }
-
 }

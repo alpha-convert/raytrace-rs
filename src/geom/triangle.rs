@@ -82,7 +82,7 @@ impl Geom for Triangle {
             t,
             self.normal,
             self.mat.as_ref(),
-            ray,
+            ray.dir(),
             uv,
         ))
     }
