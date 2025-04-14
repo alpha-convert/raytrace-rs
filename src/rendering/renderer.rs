@@ -125,8 +125,9 @@ impl Renderer {
                     }
                 }
             } else {
-                let a = 0.5 * (ray.dir().y + 1.0);
-                Color::white().scale(1.0 - a) + Color::new(0.3, 0.1, 0.3).scale(a)
+                Color::white()
+                // let a = 0.5 * (ray.dir().y + 1.0);
+                // Color::white().scale(1.0 - a) + Color::new(0.3, 0.1, 0.3).scale(a)
             }
         }
     }

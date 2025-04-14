@@ -13,7 +13,7 @@ impl SolidColor {
 }
 
 impl Texture for SolidColor {
-    fn color_at(&self, uv: &nalgebra::Vector2<f64>, xyz: &nalgebra::Vector3<f64>) -> Color {
+    fn color_at(&self, _: &nalgebra::Vector2<f64>, _: &nalgebra::Vector3<f64>) -> Color {
         self.albedo
     }
 }

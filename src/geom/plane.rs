@@ -15,8 +15,10 @@ use super::interval::Interval;
 pub struct Plane {
     pt: Vector3<f64>,
     normal: Unit<Vector3<f64>>,
-    u_hat: UnitVector3<f64>,
-    v_hat: UnitVector3<f64>,
+    u_hat: Vector3<f64>,
+    u_hat_mag_sqr : f64,
+    v_hat: Vector3<f64>,
+    v_hat_mag_sqr : f64,
     material: Arc<dyn Material>,
 }
 
@@ -24,15 +26,19 @@ impl Plane {
     pub fn new(
         center: Vector3<f64>,
         normal: UnitVector3<f64>,
-        v_hat: UnitVector3<f64>,
+        u_hat: Vector3<f64>,
+        v_hat: Vector3<f64>,
         material: Arc<dyn Material>,
     ) -> Self {
-        let u_hat = Unit::new_normalize(v_hat.cross(&normal));
+        assert!(u_hat.dot(&v_hat) < 1e-8);
+        assert!(u_hat.dot(&normal) < 1e-8);
         Plane {
             pt: center,
             normal,
             u_hat,
+            u_hat_mag_sqr : u_hat.magnitude_squared(),
             v_hat,
+            v_hat_mag_sqr : v_hat.magnitude_squared(),
             material,
         }
     }
@@ -48,8 +54,16 @@ impl Intersectable for Plane {
 
                 let to_ipoint = ipoint - self.pt;
 
-                let u = to_ipoint.dot(&self.u_hat);
-                let v = to_ipoint.dot(&self.v_hat);
+                let mut u = (to_ipoint.dot(&self.u_hat) / self.u_hat_mag_sqr).fract();
+                let mut v = (to_ipoint.dot(&self.v_hat) / self.v_hat_mag_sqr).fract();
+
+                assert!(-1.0 < u);
+                assert!(-1.0 < v);
+                assert!(u < 1.0);
+                assert!(v < 1.0);
+
+                u = (1.0 + u) / 2.0;
+                v = (1.0 + v) / 2.0;
 
                 return Some(Intersection::new(
                     ipoint,

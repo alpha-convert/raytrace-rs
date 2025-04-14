@@ -37,7 +37,10 @@ impl Sphere {
         let theta = f64::acos(-v.y);
         let phi = f64::atan2(-v.z, v.x) + PI;
 
-        Vector2::new(phi / (2.0 * PI), theta / PI)
+        let u = phi / (2.0 * PI);
+        let v = theta / PI;
+
+        Vector2::new(u,v)
     }
 }
 

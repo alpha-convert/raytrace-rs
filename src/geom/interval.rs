@@ -5,7 +5,14 @@ pub struct Interval {
 }
 
 impl Interval {
+    pub fn length(&self) -> f64 {
+        self.max - self.min
+    }
+
+    pub const UNIT : Interval = Interval { min : 0.0, max : 1.0};
+
     pub fn new(min: f64, max: f64) -> Self {
+        assert!(min <= max);
         Interval { min: min, max: max }
     }
 
@@ -19,11 +26,9 @@ impl Interval {
         self.min <= t && t <= self.max
     }
 
-    pub fn pad_by(&self, delta: f64) -> Self {
+    pub fn pad_by(&mut self, delta: f64) {
         let padding = delta / 2.0;
-        Interval {
-            min: self.min - padding,
-            max: self.max + padding,
-        }
+        self.min -= padding;
+        self.max += padding;
     }
 }

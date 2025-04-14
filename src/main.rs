@@ -2,14 +2,16 @@ extern crate sdl2;
 
 use geom::intersectable::Intersectable;
 use geom::plane::Plane;
+use geom::quad::Quad;
 use geom::sphere::Sphere;
 use lighting::color::Color;
 use lighting::lambertian::Lambertian;
 use lighting::metal::Metal;
+use lighting::texture::image::Image;
 use lighting::texture::Texture;
 use lighting::texture::checkerboard::Checkerboard;
 use lighting::texture::solidcolor::SolidColor;
-use nalgebra::{Unit, Vector3};
+use nalgebra::{Unit, Vector, Vector3};
 use rendering::renderer::Renderer;
 use rendering::scene::Scene;
 use sdl2::event::Event;
@@ -49,29 +51,47 @@ fn main() {
     let point8solid: Arc<dyn Texture> = Arc::new(SolidColor::new(Color::new(0.8, 0.8, 0.8)));
     let point2solid: Arc<dyn Texture> = Arc::new(SolidColor::new(Color::new(0.2, 0.2, 0.2)));
 
+    let birdttex : Arc<dyn Texture> = Arc::new(Image::from_fname("bird.jpeg"));
+    let lambird = Arc::new(Lambertian::new(birdttex));
+
     let point8lambert = Arc::new(Lambertian::new(point8solid.clone()));
-    let point2lambert = Arc::new(Lambertian::new(point2solid.clone()));
 
-    let checkertex: Arc<dyn Texture> = Arc::new(Checkerboard::new(
-        5.0,
-        point8solid.clone(),
-        point2solid.clone(),
-    ));
+    // let checkertex: Arc<dyn Texture> =
+    // Arc::new(Checkerboard::new(
+    //     0.2,
+    //     point8solid.clone(),
+    //     point2solid.clone(),
+    // ));
 
-    let lambertchecker = Arc::new(Lambertian::new(checkertex));
+    // let lambertchecker = Arc::new(Lambertian::new(checkertex));
 
     let point8metal = Arc::new(Metal::new(Color::new(0.8, 0.8, 0.8), 0.01));
+
+    let sqr = Box::new(Quad::new(
+        Vector3::new(-1.0, 1.0, -30.0),
+        Vector3::new(20.0,0.0,0.0),
+        Vector3::new(0.0,20.0,0.0),
+       lambird.clone() 
+    ));
+
+    // let sqr2 = Box::new(Quad::new(
+    //     Vector3::new(0.0, 5.0, 5.0),
+    //     Vector3::new(5.0, 0.0, 0.0),
+    //     Vector3::new(0.0, 0.0, -5.0),
+    //     point8metal.clone()
+    // ));
 
     let ground = Box::new(Plane::new(
         Vector3::new(0.0, -11.0, 0.0),
         Unit::new_normalize(Vector3::new(0.0, 1.0, 0.0)),
-        Unit::new_normalize(Vector3::new(0.0, 0.0, -1.0)),
-        lambertchecker,
+        (Vector3::new(0.0, 0.0, -20.0)),
+        (Vector3::new(20.0, 0.0, 0.0)),
+        lambird.clone(),
     ));
     let sphere0 = Box::new(Sphere::new(
         Vector3::new(0.0, 0.0, -30.0),
         20.0,
-        point8lambert.clone(),
+        lambird.clone(),
     ));
     let sphere1 = Box::new(Sphere::new(
         Vector3::new(50.0, 0.0, -40.0),
@@ -79,12 +99,12 @@ fn main() {
         point8metal,
     ));
 
-    let objects: Vec<Box<dyn Intersectable>> = vec![ground, sphere0, sphere1];
+    let objects: Vec<Box<dyn Intersectable>> = vec![sqr, ground, sphere1];
 
     let scene = Scene::new(objects);
 
     let recursion_depth = 50;
-    let samples_per_pixel = 300;
+    let samples_per_pixel = 10;
 
     let renderer = Renderer::new(
         recursion_depth,

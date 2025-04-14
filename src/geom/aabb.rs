@@ -28,6 +28,19 @@ pub struct AABB {
 }
 
 impl AABB {
+    fn pad_to_minimums(&mut self){
+        let tol = 0.0001;
+
+        if self.x.length() < tol { self.x.pad_by(tol) }
+        if self.y.length() < tol { self.y.pad_by(tol) }
+        if self.z.length() < tol { self.z.pad_by(tol) }
+    }
+    fn new(x : Interval, y : Interval, z : Interval) -> Self {
+        let mut aabb = AABB {x,y,z};
+        aabb.pad_to_minimums();
+        aabb
+    }
+
     pub fn from_points(v1: Vector3<f64>, v2: Vector3<f64>) -> Self {
         let x = if v1.x <= v2.x {
             Interval::new(v1.x, v2.x)
@@ -44,14 +57,16 @@ impl AABB {
         } else {
             Interval::new(v2.z, v1.z)
         };
-        AABB { x: x, y: y, z: z }
+
+        Self::new(x, y, z)
     }
 
     pub fn union(bb1: AABB, bb2: AABB) -> Self {
         let x = Interval::union(bb1.x, bb2.x);
         let y = Interval::union(bb1.y, bb2.y);
         let z = Interval::union(bb1.z, bb2.z);
-        AABB { x: x, y: y, z: z }
+        
+        Self::new(x, y, z)
     }
 
     pub fn union_all<I>(bbs: I) -> Self
