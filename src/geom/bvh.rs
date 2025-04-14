@@ -1,4 +1,3 @@
-
 use crate::{
     geom::{Geom, aabb::AABB},
     math::{axis::Axis, interval::Interval, ray::Ray},

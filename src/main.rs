@@ -1,12 +1,12 @@
 extern crate sdl2;
 
-use geom::translation::Translation;
-use geom::trimesh::TriMesh;
 use geom::Geom;
 use geom::cube::Cube;
 use geom::quad::Quad;
 use geom::sphere::Sphere;
+use geom::translation::Translation;
 use geom::triangle::Triangle;
+use geom::trimesh::TriMesh;
 use lighting::color::Color;
 use lighting::diffuselight::DiffuseLight;
 use lighting::lambertian::Lambertian;
@@ -62,10 +62,12 @@ fn main() {
 
     let point8lambert = Arc::new(Lambertian::new(point8solid.clone()));
 
-    let blendermonkey = Arc::new(
-    Translation::new(
+    let blendermonkey = Arc::new(Translation::new(
         Vector3::new(0.0, 0.0, 45.0),
-    Arc::new(TriMesh::from_fname("scenes/blender.obj",point8lambert.clone()))
+        Arc::new(TriMesh::from_fname(
+            "scenes/blender.obj",
+            point8lambert.clone(),
+        )),
     ));
 
     // let checkertex: Arc<dyn Texture> =
@@ -79,16 +81,15 @@ fn main() {
 
     let point8metal = Arc::new(Metal::new(Color::new(0.9, 0.8, 0.8), 0.01));
 
-
     let sqr = Arc::new(Quad::new(
-        Vector3::new(2.5, -2.0,46.0),
+        Vector3::new(2.5, -2.0, 46.0),
         Vector3::new(0.0, 0.0, -10.0),
         Vector3::new(0.0, 10.0, 0.0),
         birdlight.clone(),
     ));
 
     let sqr2 = Arc::new(Quad::new(
-        Vector3::new(-2.5, -2.0,46.0),
+        Vector3::new(-2.5, -2.0, 46.0),
         Vector3::new(0.0, 0.0, -10.0),
         Vector3::new(0.0, 10.0, 0.0),
         birdlight.clone(),
@@ -129,7 +130,7 @@ fn main() {
         birdlight.clone(),
     ));
 
-    let objects: Vec<Arc<dyn Geom>> = vec![blendermonkey,sqr,sqr2];
+    let objects: Vec<Arc<dyn Geom>> = vec![blendermonkey, sqr, sqr2];
 
     let scene = Scene::new(objects, Color::black());
 

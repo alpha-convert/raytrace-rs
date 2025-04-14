@@ -15,7 +15,7 @@ pub struct TriMesh {
 }
 
 impl TriMesh {
-    pub fn from_fname(fname : &str,  mat : Arc<dyn Material>) -> Self {
+    pub fn from_fname(fname: &str, mat: Arc<dyn Material>) -> Self {
         let obj = obj::Obj::load(fname).unwrap();
 
         let verts = obj.data.position;
@@ -23,12 +23,12 @@ impl TriMesh {
 
         let mut tris: Vec<Triangle> = Vec::with_capacity(faces.len());
         for SimplePolygon(face) in faces {
-            let IndexTuple(vidx0,_,_) = face[0];
-            let IndexTuple(vidx1,_,_) = face[1];
-            let IndexTuple(vidx2,_,_) = face[2];
-            let a : Vector3<f64> = Vector3::from_column_slice(verts.get(vidx0).unwrap()).cast();
-            let b : Vector3<f64> = Vector3::from_column_slice(verts.get(vidx1).unwrap()).cast();
-            let c : Vector3<f64> = Vector3::from_column_slice(verts.get(vidx2).unwrap()).cast();
+            let IndexTuple(vidx0, _, _) = face[0];
+            let IndexTuple(vidx1, _, _) = face[1];
+            let IndexTuple(vidx2, _, _) = face[2];
+            let a: Vector3<f64> = Vector3::from_column_slice(verts.get(vidx0).unwrap()).cast();
+            let b: Vector3<f64> = Vector3::from_column_slice(verts.get(vidx1).unwrap()).cast();
+            let c: Vector3<f64> = Vector3::from_column_slice(verts.get(vidx2).unwrap()).cast();
 
             let edge1 = b - a;
             let edge2 = c - a;
@@ -41,9 +41,7 @@ impl TriMesh {
         TriMesh {
             faces: BVH::construct(tris),
         }
-
     }
-    
 }
 
 impl Geom for TriMesh {
