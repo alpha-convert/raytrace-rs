@@ -17,7 +17,6 @@ pub struct Renderer {
     //Canvas data
     window_width: usize,
     window_height: usize,
-    // canvas : RefCell<Canvas<Window>>,
 
     //Camera data
     pub camera_pos: Vector3<f64>,
@@ -118,16 +117,15 @@ impl Renderer {
             Color::black()
         } else {
             if let Some(inter) = scene.intersect(ray, Interval::new(0.001, f64::MAX)) {
+                let emit = inter.material().emit(&inter.uv());
                 match inter.material().scatter(&inter) {
-                    None => Color::black(),
-                    Some((attenuation, bounce_ray)) => {
-                        return Self::trace(&bounce_ray, scene, depth - 1) * attenuation;
+                    None => emit,
+                    Some(scatter) => {
+                        return emit + Self::trace(&scatter.ray(), scene, depth - 1) * scatter.color();
                     }
                 }
             } else {
-                Color::white()
-                // let a = 0.5 * (ray.dir().y + 1.0);
-                // Color::white().scale(1.0 - a) + Color::new(0.3, 0.1, 0.3).scale(a)
+                scene.background_color()
             }
         }
     }

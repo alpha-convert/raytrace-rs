@@ -87,15 +87,6 @@ impl Intersectable for Quad {
             ray,
             Vector2::new(u, v),
         ));
-        // auto denom = dot(normal, r.direction());
 
-        // // No hit if the ray is parallel to the plane.
-        // if (std::fabs(denom) < 1e-8)
-        //     return false;
-
-        // // Return false if the hit point parameter t is outside the ray interval.
-        // auto t = (D - dot(normal, r.origin())) / denom;
-        // if (!ray_t.contains(t))
-        //     return false;
     }
 }

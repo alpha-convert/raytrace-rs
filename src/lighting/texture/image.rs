@@ -23,7 +23,7 @@ impl Image {
 }
 
 impl Texture for Image {
-    fn color_at(&self, uv: &Vector2<f64>, _: &Vector3<f64>) -> Color {
+    fn color_at(&self, uv: &Vector2<f64>) -> Color {
         assert!(uv.x < 1.0);
         assert!(uv.y < 1.0);
         assert!(0.0 <= uv.x);

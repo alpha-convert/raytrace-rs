@@ -1,16 +1,21 @@
-use crate::geom::{
+use crate::{geom::{
     intersectable::{Intersectable, Intersection},
     interval::Interval,
     ray::Ray,
-};
+}, lighting::color::Color};
 
 pub struct Scene {
-    pub objects: Vec<Box<dyn Intersectable>>,
+    objects: Vec<Box<dyn Intersectable>>,
+    background_color : Color,
 }
 
 impl Scene {
-    pub fn new(objects: Vec<Box<dyn Intersectable>>) -> Self {
-        Scene { objects: objects }
+    pub fn new(objects: Vec<Box<dyn Intersectable>>, background_color : Color) -> Self {
+        Scene { objects: objects, background_color }
+    }
+
+    pub fn background_color(&self) -> Color {
+        self.background_color
     }
 }
 
