@@ -1,7 +1,7 @@
-use std::{fs::File, io::BufReader, sync::Arc};
+use std::sync::Arc;
 
 use nalgebra::{Unit, Vector3};
-use obj::{IndexTuple, Obj, SimplePolygon};
+use obj::{IndexTuple, SimplePolygon};
 
 use crate::{
     lighting::material::Material,

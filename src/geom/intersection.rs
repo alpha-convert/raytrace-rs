@@ -4,7 +4,6 @@ use std::f64::NAN;
 use nalgebra::{Unit, UnitVector3, Vector2, Vector3};
 
 use crate::lighting::material::Material;
-use crate::math::ray::Ray;
 
 pub struct Intersection<'r> {
     point: Vector3<f64>,
