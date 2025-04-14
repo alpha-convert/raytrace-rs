@@ -37,6 +37,6 @@ impl Geom for Translation {
     }
 
     fn bbox(&self) -> AABB {
-        todo!()
+        self.inner.bbox().translate(self.trans)
     }
 }

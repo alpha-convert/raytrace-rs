@@ -122,8 +122,7 @@ impl Renderer {
                 match inter.material().scatter(&inter) {
                     None => emit,
                     Some(scatter) => {
-                        return emit
-                            + Self::trace(*scatter.ray(), scene, depth - 1) * scatter.color();
+                        return emit + Self::trace(*scatter.ray(), scene, depth - 1) * scatter.color();
                     }
                 }
             } else {

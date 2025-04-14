@@ -1,5 +1,7 @@
 extern crate sdl2;
 
+use geom::translation::Translation;
+use geom::trimesh::TriMesh;
 use geom::Geom;
 use geom::cube::Cube;
 use geom::quad::Quad;
@@ -50,7 +52,7 @@ fn main() {
     let world_screen_width = 96.0;
     let world_screen_height = 54.0;
 
-    let point8solid: Arc<dyn Texture> = Arc::new(SolidColor::new(Color::new(0.8, 0.8, 0.8)));
+    let point8solid: Arc<dyn Texture> = Arc::new(SolidColor::new(Color::new(0.99, 0.99, 0.99)));
     let point2solid: Arc<dyn Texture> = Arc::new(SolidColor::new(Color::new(0.2, 0.2, 0.2)));
 
     let birdttex: Arc<dyn Texture> = Arc::new(Image::from_fname("bird.jpeg"));
@@ -59,6 +61,12 @@ fn main() {
     let whitediffuse: Arc<dyn Material> = Arc::new(DiffuseLight::solid(Color::new(0.1, 0.55, 0.2)));
 
     let point8lambert = Arc::new(Lambertian::new(point8solid.clone()));
+
+    let blendermonkey = Arc::new(
+    Translation::new(
+        Vector3::new(0.0, 0.0, 45.0),
+    Arc::new(TriMesh::from_fname("scenes/blender.obj",point8lambert.clone()))
+    ));
 
     // let checkertex: Arc<dyn Texture> =
     // Arc::new(Checkerboard::new(
@@ -71,9 +79,18 @@ fn main() {
 
     let point8metal = Arc::new(Metal::new(Color::new(0.9, 0.8, 0.8), 0.01));
 
-    let sqr = Arc::new(Cube::new(
-        Vector3::new(10.0, 20.0, 10.0),
-        10.0,
+
+    let sqr = Arc::new(Quad::new(
+        Vector3::new(2.5, -2.0,46.0),
+        Vector3::new(0.0, 0.0, -10.0),
+        Vector3::new(0.0, 10.0, 0.0),
+        birdlight.clone(),
+    ));
+
+    let sqr2 = Arc::new(Quad::new(
+        Vector3::new(-2.5, -2.0,46.0),
+        Vector3::new(0.0, 0.0, -10.0),
+        Vector3::new(0.0, 10.0, 0.0),
         birdlight.clone(),
     ));
 
@@ -112,12 +129,12 @@ fn main() {
         birdlight.clone(),
     ));
 
-    let objects: Vec<Arc<dyn Geom>> = vec![ground, sphere0, sphere1, tri0];
+    let objects: Vec<Arc<dyn Geom>> = vec![blendermonkey,sqr,sqr2];
 
     let scene = Scene::new(objects, Color::black());
 
     let recursion_depth = 50;
-    let samples_per_pixel = 100;
+    let samples_per_pixel = 300;
 
     let renderer = Renderer::new(
         recursion_depth,

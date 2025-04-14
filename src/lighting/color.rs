@@ -38,6 +38,15 @@ impl Color {
         }
     }
 
+    pub fn clamp(&mut self) {
+        self.v.x = f64::min(self.v.x, 1.0);
+        self.v.y = f64::min(self.v.y, 1.0);
+        self.v.z = f64::min(self.v.z, 1.0);
+        self.v.x = f64::max(self.v.x, 0.0);
+        self.v.y = f64::max(self.v.y, 0.0);
+        self.v.z = f64::max(self.v.z, 0.0);
+    }
+
     pub fn gamma(self) -> GammaColor {
         From::from(self)
     }
@@ -58,9 +67,11 @@ impl Color {
 impl Add for Color {
     type Output = Color;
     fn add(self, rhs: Self) -> Self::Output {
-        Color {
+        let mut c = Color {
             v: self.v.add(rhs.v),
-        }
+        };
+        c.clamp();
+        c
     }
 }
 
@@ -74,9 +85,11 @@ impl Mul for Color {
     type Output = Color;
 
     fn mul(self, rhs: Self) -> Self::Output {
-        Color {
+        let mut c = Color {
             v: Vector3::new(self.v.x * rhs.v.x, self.v.y * rhs.v.y, self.v.z * rhs.v.z),
-        }
+        };
+        c.clamp();
+        c
     }
 }
 
