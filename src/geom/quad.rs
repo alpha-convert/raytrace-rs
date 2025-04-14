@@ -2,7 +2,10 @@ use std::sync::Arc;
 
 use nalgebra::{Unit, UnitVector3, Vector2, Vector3};
 
-use crate::{lighting::material::Material, math::{interval::Interval, ray::Ray}};
+use crate::{
+    lighting::material::Material,
+    math::{interval::Interval, ray::Ray},
+};
 
 use super::{Geom, aabb::AABB, intersection::Intersection};
 

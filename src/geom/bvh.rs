@@ -1,6 +1,9 @@
 use std::sync::Arc;
 
-use crate::{geom::{aabb::AABB, Geom}, math::{axis::Axis, interval::Interval, ray::Ray}};
+use crate::{
+    geom::{Geom, aabb::AABB},
+    math::{axis::Axis, interval::Interval, ray::Ray},
+};
 
 use super::intersection::Intersection;
 
@@ -20,7 +23,8 @@ pub enum BVH<T> {
 
 impl<T> BVH<T> {
     pub fn construct(mut geoms: Vec<T>) -> Self
-        where T : Geom + Clone
+    where
+        T: Geom + Clone,
     {
         let n = geoms.len();
         assert!(n > 0);
@@ -77,7 +81,7 @@ impl<T> BVH<T> {
     }
 }
 
-impl<T : Geom> Geom for BVH<T> {
+impl<T: Geom> Geom for BVH<T> {
     fn intersect<'r>(&'r self, ray: Ray, i: Interval) -> Option<Intersection<'r>> {
         match self {
             BVH::BVHLeaf { bbox, geom } => {

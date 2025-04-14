@@ -1,5 +1,7 @@
 use crate::{
-    geom::intersection::Intersection, math::ray::Ray, util::{random_unit_vec3, reflect}
+    geom::intersection::Intersection,
+    math::ray::Ray,
+    util::{random_unit_vec3, reflect},
 };
 
 use super::{

@@ -3,7 +3,8 @@ use std::sync::Arc;
 use nalgebra::Unit;
 
 use crate::{
-    math::ray::Ray, util::{self, is_small}
+    math::ray::Ray,
+    util::{self, is_small},
 };
 
 use super::{

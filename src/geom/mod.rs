@@ -1,9 +1,9 @@
 use std::sync::Arc;
 
-use aabb::AABB;
-use intersection::Intersection;
 use crate::math::interval::Interval;
 use crate::math::ray::Ray;
+use aabb::AABB;
+use intersection::Intersection;
 
 pub mod aabb;
 pub mod bvh;
@@ -21,7 +21,6 @@ pub trait Geom: Send + Sync {
     fn intersect<'r>(&'r self, ray: Ray, i: Interval) -> Option<Intersection<'r>>;
     fn bbox(&self) -> AABB;
 }
-
 
 impl Geom for Arc<dyn Geom> {
     fn intersect<'r>(&'r self, ray: Ray, i: Interval) -> Option<Intersection<'r>> {

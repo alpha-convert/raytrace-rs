@@ -3,7 +3,10 @@ use std::{collections::HashMap, sync::Arc};
 use nalgebra::Vector3;
 use serde_json::Value;
 
-use crate::{lighting::{color::Color, texture::Texture}, math::interval::Interval};
+use crate::{
+    lighting::{color::Color, texture::Texture},
+    math::interval::Interval,
+};
 
 pub enum TextureDesc {
     Solid {
@@ -66,7 +69,7 @@ pub struct SceneDesc {
     pub background_color: Color,
 }
 
-fn parse_color(obj : &serde_json::Value) -> Color {
+fn parse_color(obj: &serde_json::Value) -> Color {
     let obj = obj.as_array().expect("Color is array");
     assert!(obj.len() == 3);
     let r = obj[0].as_f64().expect("R is f64");
@@ -78,19 +81,20 @@ fn parse_color(obj : &serde_json::Value) -> Color {
     Color::new(r, g, b)
 }
 
-fn parse_vec3(obj : &serde_json::Value) -> Vector3<f64> {
+fn parse_vec3(obj: &serde_json::Value) -> Vector3<f64> {
     let obj = obj.as_array().expect("Color is array");
     assert!(obj.len() == 3);
     let x = obj[0].as_f64().expect("X is f64");
     let y = obj[1].as_f64().expect("Y is f64");
     let z = obj[2].as_f64().expect("Z is f64");
-    Vector3::new(x,y,z)
+    Vector3::new(x, y, z)
 }
 
 fn parse_texture(typ: String, obj: &serde_json::Value) -> TextureDesc {
     if typ == "solid" {
         let albedo = obj.get("albedo").expect("Solid texture has albedo");
-        return TextureDesc::Solid {albedo: parse_color(&albedo),
+        return TextureDesc::Solid {
+            albedo: parse_color(&albedo),
         };
     } else {
         unimplemented!()
@@ -117,17 +121,34 @@ fn parse_textures(v: &Vec<serde_json::Value>) -> HashMap<String, TextureDesc> {
 }
 fn parse_material(typ: String, obj: &serde_json::Value) -> MaterialDesc {
     if typ == "diffuselight" {
-        let tex = obj.get("tex").expect("DiffuseLight Material has a tex").as_str().expect("tex is a string");
-        MaterialDesc::DiffuseLight { tex: String::from(tex) }
+        let tex = obj
+            .get("tex")
+            .expect("DiffuseLight Material has a tex")
+            .as_str()
+            .expect("tex is a string");
+        MaterialDesc::DiffuseLight {
+            tex: String::from(tex),
+        }
     } else if typ == "lambert" {
-        let tex = obj.get("tex").expect("Lambert Material has a tex").as_str().expect("tex is a string");
-        MaterialDesc::DiffuseLight { tex: String::from(tex) }
+        let tex = obj
+            .get("tex")
+            .expect("Lambert Material has a tex")
+            .as_str()
+            .expect("tex is a string");
+        MaterialDesc::DiffuseLight {
+            tex: String::from(tex),
+        }
     } else if typ == "metal" {
-        let fuzz = obj.get("fuzz").expect("Metal Material has a fuzz").as_f64().expect("fuzz is a number");
-        let albedo = obj
-            .get("albedo")
-            .expect("Metal texture has albedo");
-        MaterialDesc::Metal { albedo: parse_color(albedo), fuzz: fuzz }
+        let fuzz = obj
+            .get("fuzz")
+            .expect("Metal Material has a fuzz")
+            .as_f64()
+            .expect("fuzz is a number");
+        let albedo = obj.get("albedo").expect("Metal texture has albedo");
+        MaterialDesc::Metal {
+            albedo: parse_color(albedo),
+            fuzz: fuzz,
+        }
     } else {
         unimplemented!()
     }
@@ -154,24 +175,49 @@ fn parse_materials(v: &Vec<serde_json::Value>) -> HashMap<String, MaterialDesc> 
 }
 
 fn parse_geom(geom: &Value) -> GeomDesc {
-    let typ = geom.get("type").expect("Geom has a type").as_str().expect("type is a string");
+    let typ = geom
+        .get("type")
+        .expect("Geom has a type")
+        .as_str()
+        .expect("type is a string");
     if typ == "quad" {
-        let mat = geom.get("mat").expect("quad has a mat").as_str().expect("mat is a str");
+        let mat = geom
+            .get("mat")
+            .expect("quad has a mat")
+            .as_str()
+            .expect("mat is a str");
         let q = geom.get("q").expect("quad has a q");
         let q = parse_vec3(q);
         let u = geom.get("u").expect("quad has a u");
         let u = parse_vec3(u);
         let v = geom.get("v").expect("quad has a v");
         let v = parse_vec3(v);
-        GeomDesc::Quad { q: q, u: u, v: v, mat: mat.to_string() }
+        GeomDesc::Quad {
+            q: q,
+            u: u,
+            v: v,
+            mat: mat.to_string(),
+        }
     } else if typ == "cube" {
         unimplemented!()
     } else if typ == "sphere" {
-        let mat = geom.get("mat").expect("sphere has a mat").as_str().expect("mat is a str");
+        let mat = geom
+            .get("mat")
+            .expect("sphere has a mat")
+            .as_str()
+            .expect("mat is a str");
         let c = geom.get("c").expect("sphere has a c");
         let c = parse_vec3(c);
-        let r = geom.get("r").expect("sphere has an r").as_f64().expect("r is a float");
-        GeomDesc::Sphere { c: c, r: r, mat: mat.to_string() }
+        let r = geom
+            .get("r")
+            .expect("sphere has an r")
+            .as_f64()
+            .expect("r is a float");
+        GeomDesc::Sphere {
+            c: c,
+            r: r,
+            mat: mat.to_string(),
+        }
     } else if typ == "translation" {
         unimplemented!()
     } else {
@@ -179,11 +225,11 @@ fn parse_geom(geom: &Value) -> GeomDesc {
     }
 }
 
-
-
 impl From<serde_json::Value> for SceneDesc {
     fn from(value: serde_json::Value) -> Self {
-        let background_color = value.get("background_color").expect("Scene has a background color");
+        let background_color = value
+            .get("background_color")
+            .expect("Scene has a background color");
         let background_color = parse_color(background_color);
 
         let textures = value
@@ -192,19 +238,23 @@ impl From<serde_json::Value> for SceneDesc {
             .as_array()
             .expect("Textures is an array");
         let textures = parse_textures(textures);
-    
+
         let materials = value
             .get("materials")
             .expect("Scene has materials")
             .as_array()
             .expect(" Materials is an array");
-    
+
         let materials = parse_materials(materials);
-    
-        let geoms = value.get("geoms").expect("scene has geoms").as_array().expect("geoms is an array");
-    
+
+        let geoms = value
+            .get("geoms")
+            .expect("scene has geoms")
+            .as_array()
+            .expect("geoms is an array");
+
         let geoms = geoms.iter().map(parse_geom).collect();
-    
+
         SceneDesc {
             textures,
             materials,
@@ -213,6 +263,3 @@ impl From<serde_json::Value> for SceneDesc {
         }
     }
 }
-
-
-

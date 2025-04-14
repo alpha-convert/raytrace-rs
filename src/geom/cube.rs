@@ -2,14 +2,12 @@ use std::sync::Arc;
 
 use nalgebra::Vector3;
 
-use crate::{lighting::material::Material, math::{interval::Interval, ray::Ray}};
-
-use super::{
-    Geom,
-    aabb::{AABB},
-    intersection::Intersection,
-    quad::Quad,
+use crate::{
+    lighting::material::Material,
+    math::{interval::Interval, ray::Ray},
 };
+
+use super::{Geom, aabb::AABB, intersection::Intersection, quad::Quad};
 
 pub struct Cube {
     faces: Arc<[Box<Quad>; 6]>,

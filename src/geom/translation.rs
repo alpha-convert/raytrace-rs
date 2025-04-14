@@ -2,9 +2,12 @@ use std::sync::Arc;
 
 use nalgebra::Vector3;
 
-use crate::{geom::{intersection::Intersection, Geom}, math::{interval::Interval, ray::Ray}};
+use crate::{
+    geom::{Geom, intersection::Intersection},
+    math::{interval::Interval, ray::Ray},
+};
 
-use super::{aabb::AABB};
+use super::aabb::AABB;
 
 pub struct Translation {
     trans: Vector3<f64>,

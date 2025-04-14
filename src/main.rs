@@ -1,11 +1,11 @@
 extern crate sdl2;
 
-use geom::cube::Cube;
-use geom::triangle::Triangle;
 use geom::Geom;
+use geom::cube::Cube;
 use geom::plane::Plane;
 use geom::quad::Quad;
 use geom::sphere::Sphere;
+use geom::triangle::Triangle;
 use lighting::color::Color;
 use lighting::diffuselight::DiffuseLight;
 use lighting::lambertian::Lambertian;
@@ -25,9 +25,9 @@ use std::time::Duration;
 
 mod geom;
 mod lighting;
+mod math;
 mod rendering;
 mod util;
-mod math;
 
 fn main() {
     let sdl_context = sdl2::init().unwrap();
@@ -111,7 +111,7 @@ fn main() {
         Vector3::new(-10.0, 0.0, 0.0),
         Vector3::new(-10.0, 10.0, 0.0),
         Unit::new_normalize(Vector3::new(0.0, 0.0, 1.0)),
-        birdlight.clone()
+        birdlight.clone(),
     ));
 
     let objects: Vec<Arc<dyn Geom>> = vec![ground, sphere0, sphere1, tri0];
