@@ -25,7 +25,6 @@ use std::time::Duration;
 mod geom;
 mod lighting;
 mod rendering;
-mod scenedesc;
 mod util;
 
 fn main() {
@@ -56,7 +55,7 @@ fn main() {
     let point2solid: Arc<dyn Texture> = Arc::new(SolidColor::new(Color::new(0.2, 0.2, 0.2)));
 
     let birdttex: Arc<dyn Texture> = Arc::new(Image::from_fname("bird.jpeg"));
-    let lambird = Arc::new(Lambertian::new(birdttex));
+    let birdlight = Arc::new(DiffuseLight::new(birdttex));
 
     let whitediffuse : Arc<dyn Material> = Arc::new(DiffuseLight::solid(Color::new(0.1, 0.55, 0.2)));
 
@@ -74,9 +73,9 @@ fn main() {
     let point8metal = Arc::new(Metal::new(Color::new(0.9, 0.8, 0.8), 0.01));
 
     let sqr = Box::new(Cube::new(
-        Vector3::new(-35.0, 20.0, -30.0),
+        Vector3::new(10.0, 20.0, 10.0),
         10.0,
-        whitediffuse.clone(),
+        birdlight.clone(),
     ));
 
     // let sqr2 = Box::new(Quad::new(
@@ -106,10 +105,10 @@ fn main() {
 
     let objects: Vec<Box<dyn Intersectable>> = vec![sqr, ground, sphere0, sphere1];
 
-    let scene = Scene::new(objects,Color::white());
+    let scene = Scene::new(objects,Color::black());
 
     let recursion_depth = 50;
-    let samples_per_pixel = 300;
+    let samples_per_pixel = 100;
 
     let renderer = Renderer::new(
         recursion_depth,

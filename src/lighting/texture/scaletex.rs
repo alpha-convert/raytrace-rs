@@ -10,6 +10,12 @@ pub struct ScaleTex {
     tex: Arc<dyn Texture>,
 }
 
+impl ScaleTex{
+    pub fn new(scale_u : f64, scale_v : f64, tex : Arc<dyn Texture>) -> Self {
+        ScaleTex {scale_u, scale_v,tex}
+    }
+}
+
 impl Texture for ScaleTex {
     fn color_at(
         &self,
