@@ -28,15 +28,21 @@ pub struct AABB {
 }
 
 impl AABB {
-    fn pad_to_minimums(&mut self){
+    fn pad_to_minimums(&mut self) {
         let tol = 0.0001;
 
-        if self.x.length() < tol { self.x.pad_by(tol) }
-        if self.y.length() < tol { self.y.pad_by(tol) }
-        if self.z.length() < tol { self.z.pad_by(tol) }
+        if self.x.length() < tol {
+            self.x.pad_by(tol)
+        }
+        if self.y.length() < tol {
+            self.y.pad_by(tol)
+        }
+        if self.z.length() < tol {
+            self.z.pad_by(tol)
+        }
     }
-    fn new(x : Interval, y : Interval, z : Interval) -> Self {
-        let mut aabb = AABB {x,y,z};
+    fn new(x: Interval, y: Interval, z: Interval) -> Self {
+        let mut aabb = AABB { x, y, z };
         aabb.pad_to_minimums();
         aabb
     }
@@ -65,7 +71,7 @@ impl AABB {
         let x = Interval::union(bb1.x, bb2.x);
         let y = Interval::union(bb1.y, bb2.y);
         let z = Interval::union(bb1.z, bb2.z);
-        
+
         Self::new(x, y, z)
     }
 

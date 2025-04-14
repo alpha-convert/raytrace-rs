@@ -7,9 +7,9 @@ use geom::sphere::Sphere;
 use lighting::color::Color;
 use lighting::lambertian::Lambertian;
 use lighting::metal::Metal;
-use lighting::texture::image::Image;
 use lighting::texture::Texture;
 use lighting::texture::checkerboard::Checkerboard;
+use lighting::texture::image::Image;
 use lighting::texture::solidcolor::SolidColor;
 use nalgebra::{Unit, Vector, Vector3};
 use rendering::renderer::Renderer;
@@ -51,7 +51,7 @@ fn main() {
     let point8solid: Arc<dyn Texture> = Arc::new(SolidColor::new(Color::new(0.8, 0.8, 0.8)));
     let point2solid: Arc<dyn Texture> = Arc::new(SolidColor::new(Color::new(0.2, 0.2, 0.2)));
 
-    let birdttex : Arc<dyn Texture> = Arc::new(Image::from_fname("bird.jpeg"));
+    let birdttex: Arc<dyn Texture> = Arc::new(Image::from_fname("bird.jpeg"));
     let lambird = Arc::new(Lambertian::new(birdttex));
 
     let point8lambert = Arc::new(Lambertian::new(point8solid.clone()));
@@ -69,9 +69,9 @@ fn main() {
 
     let sqr = Box::new(Quad::new(
         Vector3::new(-1.0, 1.0, -30.0),
-        Vector3::new(20.0,0.0,0.0),
-        Vector3::new(0.0,20.0,0.0),
-       lambird.clone() 
+        Vector3::new(20.0, 0.0, 0.0),
+        Vector3::new(0.0, 20.0, 0.0),
+        lambird.clone(),
     ));
 
     // let sqr2 = Box::new(Quad::new(

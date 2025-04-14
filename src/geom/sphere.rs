@@ -40,7 +40,7 @@ impl Sphere {
         let u = phi / (2.0 * PI);
         let v = theta / PI;
 
-        Vector2::new(u,v)
+        Vector2::new(u, v)
     }
 }
 

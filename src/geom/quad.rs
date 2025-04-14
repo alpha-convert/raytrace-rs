@@ -4,23 +4,33 @@ use nalgebra::{Unit, UnitVector3, Vector2, Vector3};
 
 use crate::lighting::material::Material;
 
-use super::{aabb::AABB, intersectable::{Intersectable, Intersection}, interval::Interval, ray::Ray};
+use super::{
+    aabb::AABB,
+    intersectable::{Intersectable, Intersection},
+    interval::Interval,
+    ray::Ray,
+};
 
 pub struct Quad {
-    q : Vector3<f64>,
-    u_hat : Vector3<f64>,
-    v_hat : Vector3<f64>,
+    q: Vector3<f64>,
+    u_hat: Vector3<f64>,
+    v_hat: Vector3<f64>,
 
-    normal : UnitVector3<f64>,
-    d : f64,
-    w : Vector3<f64>,
+    normal: UnitVector3<f64>,
+    d: f64,
+    w: Vector3<f64>,
 
-    bbox : AABB,
-    mat : Arc<dyn Material>
+    bbox: AABB,
+    mat: Arc<dyn Material>,
 }
 
 impl Quad {
-    pub fn new(q : Vector3<f64>, u_hat : Vector3<f64>, v_hat : Vector3<f64>, mat : Arc<dyn Material>) -> Self {
+    pub fn new(
+        q: Vector3<f64>,
+        u_hat: Vector3<f64>,
+        v_hat: Vector3<f64>,
+        mat: Arc<dyn Material>,
+    ) -> Self {
         let bb1 = AABB::from_points(q, q + u_hat + v_hat);
         let bb2 = AABB::from_points(q + u_hat, q + v_hat);
         let bbox = AABB::union(bb1, bb2);
@@ -39,7 +49,7 @@ impl Quad {
             mat,
             normal,
             d,
-            w
+            w,
         }
     }
 }
@@ -47,20 +57,19 @@ impl Quad {
 impl Intersectable for Quad {
     fn intersect(&self, ray: Ray, i: Interval) -> Option<Intersection> {
         if !self.bbox.intersect(ray, i) {
-            return None
+            return None;
         }
 
         let denom = self.normal.dot(&ray.dir());
 
         if denom.abs() < 1e-8 {
-            return None
-        } 
+            return None;
+        }
         let t = (self.d - self.normal.dot(&ray.origin())) / denom;
 
         if !i.contains(t) {
-            return None
+            return None;
         }
-
 
         let p = ray.at(t);
         let planar_hitpt_vector = p - self.q;
@@ -68,7 +77,7 @@ impl Intersectable for Quad {
         let v = 1.0 - self.w.dot(&self.u_hat.cross(&planar_hitpt_vector));
 
         if !(Interval::UNIT.contains(u) && Interval::UNIT.contains(v)) {
-            return None
+            return None;
         }
         return Some(Intersection::new(
             ray.at(t),
@@ -76,8 +85,8 @@ impl Intersectable for Quad {
             self.normal,
             self.mat.clone(),
             ray,
-            Vector2::new(u,v)
-        ))
+            Vector2::new(u, v),
+        ));
         // auto denom = dot(normal, r.direction());
 
         // // No hit if the ray is parallel to the plane.

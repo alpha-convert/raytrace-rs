@@ -9,7 +9,7 @@ impl Interval {
         self.max - self.min
     }
 
-    pub const UNIT : Interval = Interval { min : 0.0, max : 1.0};
+    pub const UNIT: Interval = Interval { min: 0.0, max: 1.0 };
 
     pub fn new(min: f64, max: f64) -> Self {
         assert!(min <= max);

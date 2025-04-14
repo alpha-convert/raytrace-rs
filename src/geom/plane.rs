@@ -16,9 +16,9 @@ pub struct Plane {
     pt: Vector3<f64>,
     normal: Unit<Vector3<f64>>,
     u_hat: Vector3<f64>,
-    u_hat_mag_sqr : f64,
+    u_hat_mag_sqr: f64,
     v_hat: Vector3<f64>,
-    v_hat_mag_sqr : f64,
+    v_hat_mag_sqr: f64,
     material: Arc<dyn Material>,
 }
 
@@ -36,9 +36,9 @@ impl Plane {
             pt: center,
             normal,
             u_hat,
-            u_hat_mag_sqr : u_hat.magnitude_squared(),
+            u_hat_mag_sqr: u_hat.magnitude_squared(),
             v_hat,
-            v_hat_mag_sqr : v_hat.magnitude_squared(),
+            v_hat_mag_sqr: v_hat.magnitude_squared(),
             material,
         }
     }

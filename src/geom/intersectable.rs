@@ -37,16 +37,16 @@ impl Intersection {
         }
     }
 
-    pub fn dist_compare(&self, other : &Self) -> Ordering {
+    pub fn dist_compare(&self, other: &Self) -> Ordering {
         assert!(self.dist != NAN);
         assert!(other.dist != NAN);
 
         if self.dist < other.dist {
-            return Ordering::Less
+            return Ordering::Less;
         } else if self.dist > other.dist {
-            return Ordering::Greater
+            return Ordering::Greater;
         } else {
-            return Ordering::Equal
+            return Ordering::Equal;
         }
     }
 

@@ -6,13 +6,13 @@ use crate::lighting::color::Color;
 use super::Texture;
 
 pub struct Image {
-    buf : ImageBuffer<Rgb<f32>,Vec<f32>>,
-    width : u32,
-    height : u32,
+    buf: ImageBuffer<Rgb<f32>, Vec<f32>>,
+    width: u32,
+    height: u32,
 }
 
 impl Image {
-    pub fn from_fname(fname : &str) -> Image {
+    pub fn from_fname(fname: &str) -> Image {
         let i = ImageReader::open(fname).unwrap().decode().unwrap();
 
         let buf = i.into_rgb32f();
@@ -23,7 +23,7 @@ impl Image {
 }
 
 impl Texture for Image {
-    fn color_at(&self, uv: &Vector2<f64>, _ : &Vector3<f64>) -> Color {
+    fn color_at(&self, uv: &Vector2<f64>, _: &Vector3<f64>) -> Color {
         assert!(uv.x < 1.0);
         assert!(uv.y < 1.0);
         assert!(0.0 <= uv.x);

@@ -7,6 +7,6 @@ pub trait Texture: Sync + Send {
 }
 
 pub mod checkerboard;
-pub mod solidcolor;
 pub mod image;
 pub mod scaletex;
+pub mod solidcolor;
