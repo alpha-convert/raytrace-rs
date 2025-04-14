@@ -1,13 +1,12 @@
 use std::sync::Arc;
 
 use nalgebra::Vector3;
-use sdl2::libc::close;
 
 use crate::lighting::material::Material;
 
 use super::{
     Geom,
-    aabb::{self, AABB},
+    aabb::{AABB},
     intersection::Intersection,
     interval::Interval,
     quad::Quad,

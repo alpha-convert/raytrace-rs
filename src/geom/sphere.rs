@@ -1,4 +1,4 @@
-use std::{borrow::Cow, f64::consts::PI, sync::Arc};
+use std::{f64::consts::PI, sync::Arc};
 
 use nalgebra::{Unit, UnitVector3, Vector2, Vector3};
 

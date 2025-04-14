@@ -2,7 +2,6 @@ extern crate sdl2;
 
 use geom::Geom;
 use geom::cube::Cube;
-use geom::plane::Plane;
 use geom::quad::Quad;
 use geom::sphere::Sphere;
 use lighting::color::Color;
@@ -11,10 +10,9 @@ use lighting::lambertian::Lambertian;
 use lighting::material::Material;
 use lighting::metal::Metal;
 use lighting::texture::Texture;
-use lighting::texture::checkerboard::Checkerboard;
 use lighting::texture::image::Image;
 use lighting::texture::solidcolor::SolidColor;
-use nalgebra::{Unit, Vector, Vector3};
+use nalgebra::{Unit, Vector3};
 use rendering::renderer::Renderer;
 use rendering::scene::Scene;
 use sdl2::event::Event;
@@ -86,8 +84,8 @@ fn main() {
 
     let ground = Arc::new(Quad::new(
         Vector3::new(-20.0, -12.0, 0.0),
-        (Vector3::new(40.0, 0.0, 0.0)),
-        (Vector3::new(0.0, 0.0, -30.0)),
+        Vector3::new(40.0, 0.0, 0.0),
+        Vector3::new(0.0, 0.0, -30.0),
         birdlight.clone(),
     ));
     // let ground = Arc::new(Plane::new(

@@ -17,8 +17,8 @@ impl AABB {
         let x = this.idx(a).min;
         let y = that.idx(a).min;
 
-        assert!(x != f64::NAN);
-        assert!(y != f64::NAN);
+        assert!(!x.is_nan());
+        assert!(!y.is_nan());
 
         if x < y {
             Ordering::Less

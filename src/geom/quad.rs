@@ -1,4 +1,4 @@
-use std::{borrow::Cow, sync::Arc};
+use std::sync::Arc;
 
 use nalgebra::{Unit, UnitVector3, Vector2, Vector3};
 

@@ -8,9 +8,8 @@ use crate::{
 };
 
 use super::{
-    color::Color,
     material::{Material, Scatter},
-    texture::{Texture, solidcolor::SolidColor},
+    texture::Texture,
 };
 
 #[derive(Clone)]

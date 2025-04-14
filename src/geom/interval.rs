@@ -19,8 +19,8 @@ impl Interval {
     pub const UNIT: Interval = Interval { min: 0.0, max: 1.0 };
 
     pub fn new(min: f64, max: f64) -> Self {
-        assert!(min != f64::NAN);
-        assert!(max != f64::NAN);
+        assert!(!min.is_nan());
+        assert!(!max.is_nan());
         assert!(min <= max);
         Interval { min: min, max: max }
     }

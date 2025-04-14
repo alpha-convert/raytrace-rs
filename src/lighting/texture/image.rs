@@ -1,5 +1,5 @@
-use image::{ImageBuffer, ImageError, ImageReader, Rgb};
-use nalgebra::{Vector2, Vector3};
+use image::{ImageBuffer, ImageReader, Rgb};
+use nalgebra::Vector2;
 
 use crate::lighting::color::Color;
 

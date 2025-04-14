@@ -1,14 +1,11 @@
-use std::borrow::Cow;
 use std::cmp::Ordering;
 use std::f64::NAN;
-use std::sync::Arc;
 
 use nalgebra::{Unit, Vector2, Vector3};
 
 use crate::geom::ray::Ray;
 use crate::lighting::material::Material;
 
-use super::interval::Interval;
 
 pub struct Intersection<'r> {
     point: Vector3<f64>,

@@ -1,4 +1,4 @@
-use std::{collections::HashMap, fs::File, hash::Hash, sync::Arc};
+use std::{collections::HashMap, fs::File, sync::Arc};
 
 use nalgebra::Unit;
 
