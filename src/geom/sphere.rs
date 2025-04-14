@@ -45,7 +45,7 @@ impl Sphere {
 }
 
 impl Intersectable for Sphere {
-    fn intersect(&self, ray: Ray, i: Interval) -> Option<Intersection> {
+    fn intersect<'r>(&'r self, ray: &'r Ray, i: Interval) -> Option<Intersection<'r>> {
         if !self.bbox.intersect(ray, i) {
             return None;
         }
@@ -79,7 +79,7 @@ impl Intersectable for Sphere {
             point,
             dist,
             normal,
-            self.material.clone(),
+            self.material.as_ref(),
             ray,
             uv,
         ))

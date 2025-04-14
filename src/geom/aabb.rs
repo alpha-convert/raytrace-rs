@@ -94,7 +94,7 @@ impl AABB {
         }
     }
 
-    pub fn intersect(&self, r: Ray, mut i: Interval) -> bool {
+    pub fn intersect(&self, r: &Ray, mut i: Interval) -> bool {
         for a in [Axis::X, Axis::Y, Axis::Z] {
             let axi = self.idx(a);
             let adinv = 1.0 / a.vec_idx(*r.dir());

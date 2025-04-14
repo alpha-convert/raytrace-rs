@@ -13,15 +13,17 @@ use super::{
 };
 
 pub struct Cube {
-    faces: [Quad; 6],
+    faces: [Box<Quad>; 6],
 }
 
 impl Cube {
-    pub fn new(c: Vector3<f64>, r: f64, material: Arc<dyn Material>) -> Self {}
+    pub fn new(c: Vector3<f64>, r: f64, material: Arc<dyn Material>) -> Self {
+        todo!()
+    }
 }
 
 impl Intersectable for Cube {
-    fn intersect(&self, ray: Ray, i: Interval) -> Option<Intersection> {
+    fn intersect<'r>(&'r self, ray: &'r Ray, i: Interval) -> Option<Intersection<'r>> {
         (&self.faces)
             .into_iter()
             .filter_map(|face| face.intersect(ray, i))

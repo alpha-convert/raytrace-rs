@@ -9,22 +9,22 @@ use crate::lighting::material::Material;
 
 use super::interval::Interval;
 
-pub struct Intersection {
+pub struct Intersection<'r> {
     point: Vector3<f64>,
     dist: f64,
     normal: Unit<Vector3<f64>>,
-    material: Arc<dyn Material>,
-    ray_in: Ray,
+    material: &'r dyn Material,
+    ray_in: &'r Ray,
     uv: Vector2<f64>,
 }
 
-impl Intersection {
+impl<'r> Intersection<'r> {
     pub fn new(
         point: Vector3<f64>,
         dist: f64,
         normal: Unit<Vector3<f64>>,
-        material: Arc<dyn Material>,
-        ray_in: Ray,
+        material: &'r dyn Material,
+        ray_in: &'r Ray,
         uv: Vector2<f64>,
     ) -> Self {
         Intersection {
@@ -70,18 +70,18 @@ impl Intersection {
         &mut self.point
     }
 
-    pub fn material(&self) -> Arc<dyn Material> {
-        self.material.clone()
+    pub fn material(&self) -> &'r dyn Material {
+        self.material
     }
 
-    pub fn ray_in(&self) -> Ray {
+    pub fn ray_in(&self) -> &'r Ray {
         self.ray_in
     }
 }
 
 pub trait Intersectable: Send + Sync {
     // It might be more efficient to pass in a &mut Option<Intersectoin>, but that's ugly.
-    fn intersect(&self, ray: Ray, i: Interval) -> Option<Intersection>;
+    fn intersect<'r>(&'r self, ray: &'r Ray, i: Interval) -> Option<Intersection<'r>>;
 }
 
 // impl Intersectable for Arc<dyn Intersectable> {

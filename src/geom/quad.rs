@@ -55,7 +55,7 @@ impl Quad {
 }
 
 impl Intersectable for Quad {
-    fn intersect(&self, ray: Ray, i: Interval) -> Option<Intersection> {
+    fn intersect<'r>(&'r self, ray: &'r Ray, i: Interval) -> Option<Intersection<'r>> {
         if !self.bbox.intersect(ray, i) {
             return None;
         }
@@ -83,7 +83,7 @@ impl Intersectable for Quad {
             ray.at(t),
             t,
             self.normal,
-            self.mat.clone(),
+            self.mat.as_ref(),
             ray,
             Vector2::new(u, v),
         ));

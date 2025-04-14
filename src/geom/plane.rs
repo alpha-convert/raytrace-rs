@@ -45,7 +45,7 @@ impl Plane {
 }
 
 impl Intersectable for Plane {
-    fn intersect(&self, ray: Ray, i: Interval) -> Option<Intersection> {
+    fn intersect<'r>(&'r self, ray: &'r Ray, i: Interval) -> Option<Intersection<'r>> {
         let denom = self.normal.dot(&ray.dir());
         if denom.abs() > 1e-8 {
             let t = (self.pt - ray.origin()).dot(&self.normal) / denom;
@@ -69,7 +69,7 @@ impl Intersectable for Plane {
                     ipoint,
                     t,
                     self.normal,
-                    self.material.clone(),
+                    self.material.as_ref(),
                     ray,
                     Vector2::new(u, v),
                 ));

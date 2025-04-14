@@ -15,23 +15,7 @@ impl Scene {
 }
 
 impl Intersectable for Scene {
-    fn intersect(&self, ray: Ray, i: Interval) -> Option<Intersection> {
-        let mut closest = None;
-        for obj in self.objects.iter() {
-            match obj.intersect(ray, i) {
-                None => (),
-                Some(inter) => match closest {
-                    None => {
-                        closest.replace(inter);
-                    }
-                    Some(ref inter2) => {
-                        if inter.dist() < inter2.dist() {
-                            closest.replace(inter);
-                        }
-                    }
-                },
-            }
-        }
-        closest
+    fn intersect<'r>(&'r self, ray: &'r Ray, i: Interval) -> Option<Intersection<'r>> {
+        self.objects.iter().filter_map(|obj| { obj.intersect(ray, i)}).min_by(Intersection::dist_compare)
     }
 }
