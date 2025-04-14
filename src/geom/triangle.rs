@@ -1,6 +1,6 @@
 use std::sync::Arc;
 
-use nalgebra::{UnitVector3, Vector, Vector2, Vector3};
+use nalgebra::{UnitVector3, Vector2, Vector3};
 
 use crate::{
     lighting::material::Material,

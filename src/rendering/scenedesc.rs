@@ -1,10 +1,10 @@
-use std::{collections::HashMap, sync::Arc};
+use std::collections::HashMap;
 
 use nalgebra::Vector3;
 use serde_json::Value;
 
 use crate::{
-    lighting::{color::Color, texture::Texture},
+    lighting::color::Color,
     math::interval::Interval,
 };
 

@@ -1,10 +1,9 @@
 use std::{collections::HashMap, fs::File, sync::Arc};
 
-use nalgebra::Unit;
 
 use crate::{
     geom::{
-        Geom, aabb::AABB, bvh::BVH, cube::Cube, intersection::Intersection, plane::Plane,
+        Geom, aabb::AABB, bvh::BVH, cube::Cube, intersection::Intersection,
         quad::Quad, sphere::Sphere, translation::Translation,
     },
     lighting::{
