@@ -23,7 +23,7 @@ impl Metal {
 
 impl Material for Metal {
     fn scatter(&self, inter: &Intersection) -> Option<Scatter> {
-        let refl = reflect(&inter.ray_in().dir(), &inter.normal());
+        let refl = reflect(&inter.ray_in_dir(), &inter.normal());
         let scattered = refl + random_unit_vec3().scale(self.fuzz);
         if scattered.dot(&inter.normal()) > 0.0 {
             Some(Scatter::new(

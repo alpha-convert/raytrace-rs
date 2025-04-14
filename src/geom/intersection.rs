@@ -11,7 +11,7 @@ pub struct Intersection<'r> {
     dist: f64,
     normal: Unit<Vector3<f64>>,
     material: &'r dyn Material,
-    ray_in: Ray,
+    ray_in_dir: Vector3<f64>,
     uv: Vector2<f64>,
 }
 
@@ -21,7 +21,7 @@ impl<'r> Intersection<'r> {
         dist: f64,
         normal: Unit<Vector3<f64>>,
         material: &'r dyn Material,
-        ray_in: Ray,
+        ray_in_dir: Ray,
         uv: Vector2<f64>,
     ) -> Self {
         Intersection {
@@ -29,7 +29,7 @@ impl<'r> Intersection<'r> {
             dist: dist,
             normal: normal,
             material: material,
-            ray_in,
+            ray_in_dir,
             uv,
         }
     }
@@ -71,11 +71,8 @@ impl<'r> Intersection<'r> {
         self.material
     }
 
-    pub fn ray_in(&self) -> Ray {
-        self.ray_in
+    pub fn ray_in_dir(&self) -> Vector3<f64>{
+        self.ray_in_dir
     }
 
-    pub fn ray_in_mut(&mut self) -> &mut Ray {
-        &mut self.ray_in
-    }
 }

@@ -62,10 +62,18 @@ fn main() {
 
     let point8lambert = Arc::new(Lambertian::new(point8solid.clone()));
 
-    let blendermonkey = Arc::new(Translation::new(
-        Vector3::new(0.0, 0.0, 45.0),
+    // let blendermonkey = Arc::new(Translation::new(
+    //     Vector3::new(0.0, 0.0, 45.0),
+    //     Arc::new(TriMesh::from_fname(
+    //         "scenes/blender.obj",
+    //         point8lambert.clone(),
+    //     )),
+    // ));
+
+    let bunny = Arc::new(Translation::new(
+        Vector3::new(0.0, -0.1, 49.775),
         Arc::new(TriMesh::from_fname(
-            "scenes/blender.obj",
+            "scenes/bunny.obj",
             point8lambert.clone(),
         )),
     ));
@@ -83,14 +91,14 @@ fn main() {
 
     let sqr = Arc::new(Quad::new(
         Vector3::new(2.5, -2.0, 46.0),
-        Vector3::new(0.0, 0.0, -10.0),
+        Vector3::new(0.0, 0.0, 10.0),
         Vector3::new(0.0, 10.0, 0.0),
         birdlight.clone(),
     ));
 
     let sqr2 = Arc::new(Quad::new(
         Vector3::new(-2.5, -2.0, 46.0),
-        Vector3::new(0.0, 0.0, -10.0),
+        Vector3::new(0.0, 0.0, 10.0),
         Vector3::new(0.0, 10.0, 0.0),
         birdlight.clone(),
     ));
@@ -130,7 +138,7 @@ fn main() {
         birdlight.clone(),
     ));
 
-    let objects: Vec<Arc<dyn Geom>> = vec![blendermonkey, sqr, sqr2];
+    let objects: Vec<Arc<dyn Geom>> = vec![bunny, sqr, sqr2];
 
     let scene = Scene::new(objects, Color::black());
 
