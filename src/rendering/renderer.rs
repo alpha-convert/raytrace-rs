@@ -4,7 +4,7 @@ use rayon::iter::{IntoParallelIterator, ParallelIterator};
 
 // use itertools::Itertools;
 use crate::{
-    geom::{intersectable::Geom, interval::Interval, ray::Ray},
+    geom::{Geom, interval::Interval, ray::Ray},
     lighting::color::Color,
 };
 

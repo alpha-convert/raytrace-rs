@@ -83,14 +83,3 @@ impl<'r> Intersection<'r> {
         &mut self.ray_in
     }
 }
-
-pub trait Geom: Send + Sync {
-    // It might be more efficient to pass in a &mut Option<Intersectoin>, but that's ugly.
-    fn intersect<'r>(&'r self, ray: Ray, i: Interval) -> Option<Intersection<'r>>;
-}
-
-// impl Intersectable for Arc<dyn Intersectable> {
-//     fn intersect<'o>(&'o self, ray : Ray, i : Interval) -> Option<Intersection<'o>> {
-//         (**self).intersect(ray,i)
-//     }
-// }

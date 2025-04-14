@@ -6,7 +6,7 @@ use crate::lighting::material::Material;
 
 use super::{
     aabb::AABB,
-    intersectable::{Geom, Intersection},
+    Geom, intersection::Intersection,
     interval::Interval,
     ray::Ray,
 };

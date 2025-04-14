@@ -5,7 +5,7 @@ use nalgebra::Unit;
 use crate::{
     geom::{
         cube::Cube,
-        intersectable::{Geom, Intersection},
+        Geom, intersection::Intersection,
         interval::Interval,
         plane::Plane,
         quad::Quad,

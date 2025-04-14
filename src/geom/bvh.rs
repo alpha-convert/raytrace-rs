@@ -1,6 +1,6 @@
-use crate::geom::{aabb::AABB, intersectable::Geom};
+use crate::geom::{aabb::AABB, Geom};
 
-use super::{intersectable::Intersection, interval::Interval, ray::Ray};
+use super::{intersection::Intersection, interval::Interval, ray::Ray};
 
 enum BVH {
     BVHLeaf {

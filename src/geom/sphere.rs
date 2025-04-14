@@ -4,7 +4,7 @@ use nalgebra::{Unit, UnitVector3, Vector2, Vector3};
 
 use crate::{
     geom::{
-        intersectable::{Geom, Intersection},
+        Geom, intersection::Intersection,
         ray::Ray,
     },
     lighting::material::Material,

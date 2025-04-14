@@ -6,7 +6,7 @@ use sdl2::libc::close;
 use crate::lighting::material::Material;
 
 use super::{
-    intersectable::{Geom, Intersection},
+    Geom, intersection::Intersection,
     interval::Interval,
     quad::Quad,
     ray::Ray,

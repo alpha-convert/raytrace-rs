@@ -3,7 +3,7 @@ use std::{borrow::Cow, mem::replace, sync::Arc};
 use nalgebra::Vector3;
 
 use crate::geom::{
-    intersectable::{Geom, Intersection},
+    Geom, intersection::Intersection,
     ray::Ray,
 };
 
