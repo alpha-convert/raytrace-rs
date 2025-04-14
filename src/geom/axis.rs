@@ -1,7 +1,6 @@
 use nalgebra::Vector3;
 use rand::Rng;
 
-
 #[derive(Debug, Clone, Copy)]
 pub enum Axis {
     X,
@@ -20,13 +19,13 @@ impl Axis {
 
     pub fn random() -> Self {
         let mut rng = rand::rng();
-        let a : u64 = rng.random::<u64>() % 3;
+        let a: u64 = rng.random::<u64>() % 3;
         if a == 0 {
-            return Axis::X
+            return Axis::X;
         } else if a == 1 {
-            return Axis::Y
+            return Axis::Y;
         } else if a == 2 {
-            return Axis::Z
+            return Axis::Z;
         }
         panic!()
     }

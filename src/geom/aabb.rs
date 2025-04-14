@@ -4,7 +4,6 @@ use nalgebra::Vector3;
 
 use super::{axis::Axis, interval::Interval, ray::Ray};
 
-
 #[derive(Debug, Default, Clone)]
 // Axis-aligned bounding box represented by the intervals in space it covers.
 pub struct AABB {
@@ -14,8 +13,7 @@ pub struct AABB {
 }
 
 impl AABB {
-
-    pub fn axis_compare(a : Axis, this : &Self, that : &Self) -> Ordering {
+    pub fn axis_compare(a: Axis, this: &Self, that: &Self) -> Ordering {
         let x = this.idx(a).min;
         let y = that.idx(a).min;
 
@@ -59,8 +57,12 @@ impl AABB {
         aabb
     }
 
-    pub fn translate(&self, by : Vector3<f64>) -> AABB {
-        AABB { x: self.x.translate(by.x), y: self.y.translate(by.y), z: self.z.translate(by.z) }
+    pub fn translate(&self, by: Vector3<f64>) -> AABB {
+        AABB {
+            x: self.x.translate(by.x),
+            y: self.y.translate(by.y),
+            z: self.z.translate(by.z),
+        }
     }
 
     pub fn from_points(v1: Vector3<f64>, v2: Vector3<f64>) -> Self {

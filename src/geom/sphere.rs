@@ -3,10 +3,7 @@ use std::{borrow::Cow, f64::consts::PI, sync::Arc};
 use nalgebra::{Unit, UnitVector3, Vector2, Vector3};
 
 use crate::{
-    geom::{
-        Geom, intersection::Intersection,
-        ray::Ray,
-    },
+    geom::{Geom, intersection::Intersection, ray::Ray},
     lighting::material::Material,
 };
 
@@ -80,7 +77,7 @@ impl Geom for Sphere {
             uv,
         ))
     }
-    
+
     fn bbox(&self) -> AABB {
         self.bbox.clone()
     }

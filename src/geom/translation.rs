@@ -2,10 +2,7 @@ use std::{borrow::Cow, mem::replace, sync::Arc};
 
 use nalgebra::Vector3;
 
-use crate::geom::{
-    Geom, intersection::Intersection,
-    ray::Ray,
-};
+use crate::geom::{Geom, intersection::Intersection, ray::Ray};
 
 use super::{aabb::AABB, interval::Interval};
 
@@ -35,7 +32,7 @@ impl Geom for Translation {
             }
         }
     }
-    
+
     fn bbox(&self) -> AABB {
         todo!()
     }

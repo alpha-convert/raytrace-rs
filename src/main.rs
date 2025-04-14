@@ -1,7 +1,7 @@
 extern crate sdl2;
 
-use geom::cube::Cube;
 use geom::Geom;
+use geom::cube::Cube;
 use geom::plane::Plane;
 use geom::quad::Quad;
 use geom::sphere::Sphere;

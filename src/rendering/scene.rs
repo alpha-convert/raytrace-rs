@@ -4,7 +4,8 @@ use nalgebra::Unit;
 
 use crate::{
     geom::{
-        aabb::AABB, bvh::BVH, cube::Cube, intersection::Intersection, interval::Interval, plane::Plane, quad::Quad, ray::Ray, sphere::Sphere, translation::Translation, Geom
+        Geom, aabb::AABB, bvh::BVH, cube::Cube, intersection::Intersection, interval::Interval,
+        plane::Plane, quad::Quad, ray::Ray, sphere::Sphere, translation::Translation,
     },
     lighting::{
         color::Color,
@@ -13,7 +14,8 @@ use crate::{
         material::Material,
         metal::Metal,
         texture::{
-            checkerboard::Checkerboard, image::Image, scaletex::ScaleTex, solidcolor::SolidColor, Texture
+            Texture, checkerboard::Checkerboard, image::Image, scaletex::ScaleTex,
+            solidcolor::SolidColor,
         },
     },
 };
@@ -47,9 +49,9 @@ impl Scene {
 
 impl Geom for Scene {
     fn intersect<'r>(&'r self, ray: Ray, i: Interval) -> Option<Intersection<'r>> {
-        self.geoms.intersect(ray,i)
+        self.geoms.intersect(ray, i)
     }
-    
+
     fn bbox(&self) -> AABB {
         self.geoms.bbox()
     }

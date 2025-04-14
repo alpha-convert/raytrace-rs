@@ -4,8 +4,8 @@ use nalgebra::{Unit, UnitVector3, Vector2, Vector3};
 
 use crate::{
     geom::{
-        {Geom, intersection::Intersection},
         ray::Ray,
+        {Geom, intersection::Intersection},
     },
     lighting::material::Material,
 };
@@ -79,7 +79,7 @@ impl Geom for Plane {
         }
         None
     }
-    
+
     fn bbox(&self) -> super::aabb::AABB {
         todo!()
     }

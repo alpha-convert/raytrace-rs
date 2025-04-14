@@ -4,12 +4,7 @@ use nalgebra::{Unit, UnitVector3, Vector2, Vector3};
 
 use crate::lighting::material::Material;
 
-use super::{
-    aabb::AABB,
-    Geom, intersection::Intersection,
-    interval::Interval,
-    ray::Ray,
-};
+use super::{Geom, aabb::AABB, intersection::Intersection, interval::Interval, ray::Ray};
 
 pub struct Quad {
     q: Vector3<f64>,
@@ -84,7 +79,7 @@ impl Geom for Quad {
             Vector2::new(u, v),
         ));
     }
-    
+
     fn bbox(&self) -> AABB {
         self.bbox.clone()
     }

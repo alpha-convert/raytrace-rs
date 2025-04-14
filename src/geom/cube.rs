@@ -6,11 +6,16 @@ use sdl2::libc::close;
 use crate::lighting::material::Material;
 
 use super::{
-    aabb::{self, AABB}, intersection::Intersection, interval::Interval, quad::Quad, ray::Ray, Geom
+    Geom,
+    aabb::{self, AABB},
+    intersection::Intersection,
+    interval::Interval,
+    quad::Quad,
+    ray::Ray,
 };
 
 pub struct Cube {
-    faces: Arc<[Box<Quad>; 6]>
+    faces: Arc<[Box<Quad>; 6]>,
 }
 
 impl Cube {
@@ -76,14 +81,16 @@ impl Cube {
                 Box::new(bottom),
                 Box::new(right),
                 Box::new(left),
-            ].into(),
+            ]
+            .into(),
         }
     }
 }
 
 impl Geom for Cube {
     fn intersect<'r>(&'r self, ray: Ray, i: Interval) -> Option<Intersection<'r>> {
-        (self.faces).as_ref()
+        (self.faces)
+            .as_ref()
             .into_iter()
             .filter_map(|face| face.intersect(ray, i))
             .min_by(Intersection::dist_compare)
