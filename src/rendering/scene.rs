@@ -23,7 +23,7 @@ use crate::{
 use super::scenedesc::{GeomDesc, MaterialDesc, SceneDesc, TextureDesc};
 
 pub struct Scene {
-    geoms: BVH,
+    geoms: BVH<Arc<dyn Geom>>,
     background_color: Color,
 }
 
@@ -37,7 +37,7 @@ impl Scene {
 
     pub fn new(mut geoms: Vec<Arc<dyn Geom>>, background_color: Color) -> Self {
         Scene {
-            geoms: BVH::construct(geoms.as_mut_slice()),
+            geoms: BVH::construct(geoms),
             background_color,
         }
     }
@@ -66,25 +66,25 @@ fn construct_geom(gd: &GeomDesc, mat_map: &HashMap<String, Arc<dyn Material>>) -
                 .clone();
             Arc::new(Cube::new(*c, *r, mat))
         }
-        GeomDesc::Plane {
-            center,
-            normal,
-            u_hat,
-            v_hat,
-            mat,
-        } => {
-            let mat = mat_map
-                .get(mat)
-                .expect(format!("material {} to be defined", mat).as_str())
-                .clone();
-            Arc::new(Plane::new(
-                *center,
-                Unit::new_normalize(*normal),
-                *u_hat,
-                *v_hat,
-                mat,
-            ))
-        }
+        // GeomDesc::Plane {
+        //     center,
+        //     normal,
+        //     u_hat,
+        //     v_hat,
+        //     mat,
+        // } => {
+        //     let mat = mat_map
+        //         .get(mat)
+        //         .expect(format!("material {} to be defined", mat).as_str())
+        //         .clone();
+        //     Arc::new(Plane::new(
+        //         *center,
+        //         Unit::new_normalize(*normal),
+        //         *u_hat,
+        //         *v_hat,
+        //         mat,
+        //     ))
+        // }
         GeomDesc::Quad { q, u, v, mat } => {
             let mat = mat_map
                 .get(mat)
@@ -175,7 +175,7 @@ impl<'a> From<&'a SceneDesc> for Scene {
             geoms.push(construct_geom(geom_desc, &mat_map));
         }
 
-        let geoms = BVH::construct(&mut geoms);
+        let geoms = BVH::construct(geoms);
 
         Scene {
             geoms: geoms,

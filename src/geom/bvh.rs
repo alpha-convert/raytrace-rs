@@ -4,42 +4,44 @@ use crate::geom::{Geom, aabb::AABB};
 
 use super::{axis::Axis, intersection::Intersection, interval::Interval, ray::Ray};
 
-pub enum BVH {
+pub enum BVH<T> {
     BVHLeaf {
         bbox: AABB,
-        geom: Arc<dyn Geom>,
+        geom: T,
     },
     BVHNode {
         bbox_union: Box<AABB>,
         bbox_left: Box<AABB>,
         bbox_right: Box<AABB>,
-        left: Arc<BVH>,
-        right: Arc<BVH>,
+        left: Box<BVH<T>>,
+        right: Box<BVH<T>>,
     },
 }
 
-impl BVH {
-    pub fn construct(geoms: &mut [Arc<dyn Geom>]) -> Self {
+impl<T> BVH<T> {
+    pub fn construct(mut geoms: Vec<T>) -> Self
+        where T : Geom + Clone
+    {
         let n = geoms.len();
         assert!(n > 0);
         if n == 1 {
-            let geom = &geoms[0];
+            let geom = geoms.remove(0);
             return BVH::BVHLeaf {
                 bbox: geom.bbox().clone(),
-                geom: geom.clone(),
+                geom: geom,
             };
         } else if n == 2 {
-            let gl = &geoms[0];
-            let gr = &geoms[1];
+            let gr = geoms.remove(1);
+            let gl = geoms.remove(0);
             let bbl = gl.bbox();
-            let bbr = gr.bbox();
-            let left = Arc::new(BVH::BVHLeaf {
+            let left = Box::new(BVH::BVHLeaf {
                 bbox: gl.bbox().clone(),
-                geom: gl.clone(),
+                geom: gl,
             });
-            let right = Arc::new(BVH::BVHLeaf {
+            let bbr = gr.bbox();
+            let right = Box::new(BVH::BVHLeaf {
                 bbox: gr.bbox().clone(),
-                geom: gr.clone(),
+                geom: gr,
             });
             let bbu = AABB::union(&bbl, &bbr);
             return BVH::BVHNode {
@@ -56,8 +58,8 @@ impl BVH {
 
             let mid = n / 2;
             let (geoms_left, geoms_right) = geoms.split_at_mut(mid);
-            let bvh_left = Self::construct(geoms_left);
-            let bvh_right = Self::construct(geoms_right);
+            let bvh_left = Self::construct(geoms_left.to_vec());
+            let bvh_right = Self::construct(geoms_right.to_vec());
 
             let bbl = bvh_left.bbox();
             let bbr = bvh_right.bbox();
@@ -68,14 +70,14 @@ impl BVH {
                 bbox_union: Box::new(bbu),
                 bbox_left: Box::new(bbl.clone()),
                 bbox_right: Box::new(bbr.clone()),
-                left: Arc::new(bvh_left),
-                right: Arc::new(bvh_right),
+                left: Box::new(bvh_left),
+                right: Box::new(bvh_right),
             }
         }
     }
 }
 
-impl Geom for BVH {
+impl<T : Geom> Geom for BVH<T> {
     fn intersect<'r>(&'r self, ray: Ray, i: Interval) -> Option<Intersection<'r>> {
         match self {
             BVH::BVHLeaf { bbox, geom } => {

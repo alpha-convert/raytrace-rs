@@ -1,7 +1,9 @@
 extern crate sdl2;
 
-use geom::Geom;
 use geom::cube::Cube;
+use geom::triangle::Triangle;
+use geom::Geom;
+use geom::plane::Plane;
 use geom::quad::Quad;
 use geom::sphere::Sphere;
 use lighting::color::Color;
@@ -10,9 +12,10 @@ use lighting::lambertian::Lambertian;
 use lighting::material::Material;
 use lighting::metal::Metal;
 use lighting::texture::Texture;
+use lighting::texture::checkerboard::Checkerboard;
 use lighting::texture::image::Image;
 use lighting::texture::solidcolor::SolidColor;
-use nalgebra::{Unit, Vector3};
+use nalgebra::{Unit, Vector, Vector3};
 use rendering::renderer::Renderer;
 use rendering::scene::Scene;
 use sdl2::event::Event;
@@ -84,8 +87,8 @@ fn main() {
 
     let ground = Arc::new(Quad::new(
         Vector3::new(-20.0, -12.0, 0.0),
-        Vector3::new(40.0, 0.0, 0.0),
-        Vector3::new(0.0, 0.0, -30.0),
+        (Vector3::new(40.0, 0.0, 0.0)),
+        (Vector3::new(0.0, 0.0, -30.0)),
         birdlight.clone(),
     ));
     // let ground = Arc::new(Plane::new(
@@ -102,7 +105,15 @@ fn main() {
         point8metal,
     ));
 
-    let objects: Vec<Arc<dyn Geom>> = vec![sqr, ground, sphere0, sphere1];
+    let tri0 = Arc::new(Triangle::new(
+        Vector3::new(10.0, 10.0, 0.0),
+        Vector3::new(-10.0, 0.0, 0.0),
+        Vector3::new(-10.0, 10.0, 0.0),
+        Unit::new_normalize(Vector3::new(0.0, 0.0, 1.0)),
+        birdlight.clone()
+    ));
+
+    let objects: Vec<Arc<dyn Geom>> = vec![ground, sphere0, sphere1, tri0];
 
     let scene = Scene::new(objects, Color::black());
 

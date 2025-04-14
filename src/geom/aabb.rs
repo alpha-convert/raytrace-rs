@@ -82,7 +82,9 @@ impl AABB {
             Interval::new(v2.z, v1.z)
         };
 
-        Self::new(x, y, z)
+        let mut i = Self::new(x, y, z);
+        i.pad_to_minimums();
+        i
     }
 
     pub fn union(bb1: &AABB, bb2: &AABB) -> Self {
