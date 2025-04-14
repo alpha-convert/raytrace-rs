@@ -3,7 +3,7 @@ use std::{collections::HashMap, sync::Arc};
 use nalgebra::Vector3;
 use serde_json::Value;
 
-use crate::{geom::interval::Interval, lighting::{color::Color, texture::Texture}};
+use crate::{lighting::{color::Color, texture::Texture}, math::interval::Interval};
 
 pub enum TextureDesc {
     Solid {

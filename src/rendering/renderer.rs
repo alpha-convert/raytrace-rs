@@ -4,8 +4,8 @@ use rayon::iter::{IntoParallelIterator, ParallelIterator};
 
 // use itertools::Itertools;
 use crate::{
-    geom::{Geom, interval::Interval, ray::Ray},
-    lighting::color::Color,
+    geom::Geom,
+    lighting::color::Color, math::{interval::Interval, ray::Ray},
 };
 
 use super::{par_buffer::ParBuffer, scene::Scene};

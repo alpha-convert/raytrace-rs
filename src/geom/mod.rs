@@ -2,18 +2,15 @@ use std::sync::Arc;
 
 use aabb::AABB;
 use intersection::Intersection;
-use interval::Interval;
-use ray::Ray;
+use crate::math::interval::Interval;
+use crate::math::ray::Ray;
 
 pub mod aabb;
-pub mod axis;
 pub mod bvh;
 pub mod cube;
 pub mod intersection;
-pub mod interval;
 pub mod plane;
 pub mod quad;
-pub mod ray;
 pub mod sphere;
 pub mod translation;
 pub mod triangle;

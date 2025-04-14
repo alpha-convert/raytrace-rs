@@ -2,9 +2,9 @@ use std::sync::Arc;
 
 use nalgebra::{UnitVector3, Vector, Vector2, Vector3};
 
-use crate::lighting::material::Material;
+use crate::{lighting::material::Material, math::{interval::Interval, ray::Ray}};
 
-use super::{aabb::AABB, intersection::Intersection, interval::Interval, ray::Ray, Geom};
+use super::{aabb::AABB, intersection::Intersection, Geom};
 
 #[derive(Clone)]
 pub struct Triangle {

@@ -3,7 +3,7 @@ use std::f64::NAN;
 
 use nalgebra::{Unit, Vector2, Vector3};
 
-use crate::geom::ray::Ray;
+use crate::math::ray::Ray;
 use crate::lighting::material::Material;
 
 

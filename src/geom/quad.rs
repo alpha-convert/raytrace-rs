@@ -2,9 +2,9 @@ use std::sync::Arc;
 
 use nalgebra::{Unit, UnitVector3, Vector2, Vector3};
 
-use crate::lighting::material::Material;
+use crate::{lighting::material::Material, math::{interval::Interval, ray::Ray}};
 
-use super::{Geom, aabb::AABB, intersection::Intersection, interval::Interval, ray::Ray};
+use super::{Geom, aabb::AABB, intersection::Intersection};
 
 pub struct Quad {
     q: Vector3<f64>,

@@ -1,6 +1,6 @@
 use nalgebra::Vector2;
 
-use crate::geom::{intersection::Intersection, ray::Ray};
+use crate::{geom::intersection::Intersection, math::ray::Ray};
 
 use super::color::Color;
 

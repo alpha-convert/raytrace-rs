@@ -27,6 +27,7 @@ mod geom;
 mod lighting;
 mod rendering;
 mod util;
+mod math;
 
 fn main() {
     let sdl_context = sdl2::init().unwrap();

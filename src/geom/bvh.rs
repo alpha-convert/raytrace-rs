@@ -1,8 +1,8 @@
 use std::sync::Arc;
 
-use crate::geom::{Geom, aabb::AABB};
+use crate::{geom::{aabb::AABB, Geom}, math::{axis::Axis, interval::Interval, ray::Ray}};
 
-use super::{axis::Axis, intersection::Intersection, interval::Interval, ray::Ray};
+use super::intersection::Intersection;
 
 pub enum BVH<T> {
     BVHLeaf {

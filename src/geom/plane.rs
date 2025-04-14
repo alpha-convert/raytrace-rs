@@ -3,14 +3,10 @@ use std::sync::Arc;
 use nalgebra::{Unit, UnitVector3, Vector2, Vector3};
 
 use crate::{
-    geom::{
-        ray::Ray,
-        {Geom, intersection::Intersection},
-    },
-    lighting::material::Material,
+    geom::{intersection::Intersection, Geom},
+    lighting::material::Material, math::{interval::Interval, ray::Ray},
 };
 
-use super::interval::Interval;
 
 pub struct Plane {
     pt: Vector3<f64>,

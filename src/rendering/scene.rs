@@ -4,8 +4,7 @@ use nalgebra::Unit;
 
 use crate::{
     geom::{
-        Geom, aabb::AABB, bvh::BVH, cube::Cube, intersection::Intersection, interval::Interval,
-        plane::Plane, quad::Quad, ray::Ray, sphere::Sphere, translation::Translation,
+        aabb::AABB, bvh::BVH, cube::Cube, intersection::Intersection, plane::Plane, quad::Quad, sphere::Sphere, translation::Translation, Geom
     },
     lighting::{
         color::Color,
@@ -14,10 +13,9 @@ use crate::{
         material::Material,
         metal::Metal,
         texture::{
-            Texture, checkerboard::Checkerboard, image::Image, scaletex::ScaleTex,
-            solidcolor::SolidColor,
+            checkerboard::Checkerboard, image::Image, scaletex::ScaleTex, solidcolor::SolidColor, Texture
         },
-    },
+    }, math::{interval::Interval, ray::Ray},
 };
 
 use super::scenedesc::{GeomDesc, MaterialDesc, SceneDesc, TextureDesc};
@@ -35,7 +33,7 @@ impl Scene {
         Scene::from(&scene_desc)
     }
 
-    pub fn new(mut geoms: Vec<Arc<dyn Geom>>, background_color: Color) -> Self {
+    pub fn new(geoms: Vec<Arc<dyn Geom>>, background_color: Color) -> Self {
         Scene {
             geoms: BVH::construct(geoms),
             background_color,

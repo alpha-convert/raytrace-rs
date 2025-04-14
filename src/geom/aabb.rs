@@ -2,7 +2,7 @@ use std::cmp::Ordering;
 
 use nalgebra::Vector3;
 
-use super::{axis::Axis, interval::Interval, ray::Ray};
+use crate::math::{axis::Axis, interval::Interval, ray::Ray};
 
 #[derive(Debug, Default, Clone)]
 // Axis-aligned bounding box represented by the intervals in space it covers.

@@ -2,9 +2,9 @@ use std::sync::Arc;
 
 use nalgebra::{Unit, Vector3};
 
-use crate::lighting::material::Material;
+use crate::{lighting::material::Material, math::{interval::Interval, ray::Ray}};
 
-use super::{bvh::BVH, intersection::Intersection, interval::Interval, ray::Ray, triangle::Triangle, Geom};
+use super::{bvh::BVH, intersection::Intersection, triangle::Triangle, Geom};
 
 pub struct TriMesh {
     faces : BVH<Triangle>

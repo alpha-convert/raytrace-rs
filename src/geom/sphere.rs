@@ -3,11 +3,11 @@ use std::{f64::consts::PI, sync::Arc};
 use nalgebra::{Unit, UnitVector3, Vector2, Vector3};
 
 use crate::{
-    geom::{Geom, intersection::Intersection, ray::Ray},
-    lighting::material::Material,
+    geom::{intersection::Intersection, Geom},
+    lighting::material::Material, math::{interval::Interval, ray::Ray},
 };
 
-use super::{aabb::AABB, interval::Interval};
+use super::{aabb::AABB};
 
 pub struct Sphere {
     center: Vector3<f64>,

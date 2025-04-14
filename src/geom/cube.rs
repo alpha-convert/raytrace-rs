@@ -2,15 +2,13 @@ use std::sync::Arc;
 
 use nalgebra::Vector3;
 
-use crate::lighting::material::Material;
+use crate::{lighting::material::Material, math::{interval::Interval, ray::Ray}};
 
 use super::{
     Geom,
     aabb::{AABB},
     intersection::Intersection,
-    interval::Interval,
     quad::Quad,
-    ray::Ray,
 };
 
 pub struct Cube {
