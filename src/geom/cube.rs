@@ -78,7 +78,7 @@ impl Cube {
 }
 
 impl Intersectable for Cube {
-    fn intersect<'r>(&'r self, ray: &'r Ray, i: Interval) -> Option<Intersection<'r>> {
+    fn intersect<'r>(&'r self, ray: Ray, i: Interval) -> Option<Intersection<'r>> {
         (&self.faces)
             .into_iter()
             .filter_map(|face| face.intersect(ray, i))

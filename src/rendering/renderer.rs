@@ -101,7 +101,7 @@ impl Renderer {
                     let ray = Ray::through_points(self.camera_pos, screen_point);
 
                     px_color = px_color
-                        + Self::trace(&ray, scene, self.recursion_depth).scale(self.sample_weight);
+                        + Self::trace(ray, scene, self.recursion_depth).scale(self.sample_weight);
                 }
 
                 row.set(x_idx, px_color);
@@ -112,7 +112,7 @@ impl Renderer {
         buffer
     }
 
-    fn trace(ray: &Ray, scene: &Scene, depth: u64) -> Color {
+    fn trace(ray: Ray, scene: &Scene, depth: u64) -> Color {
         if depth <= 0 {
             Color::black()
         } else {
@@ -121,7 +121,7 @@ impl Renderer {
                 match inter.material().scatter(&inter) {
                     None => emit,
                     Some(scatter) => {
-                        return emit + Self::trace(&scatter.ray(), scene, depth - 1) * scatter.color();
+                        return emit + Self::trace(*scatter.ray(), scene, depth - 1) * scatter.color();
                     }
                 }
             } else {

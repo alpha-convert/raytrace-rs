@@ -21,7 +21,7 @@ pub enum GeomDesc {
     Plane { center: Vector3<f64>, normal : Vector3<f64>, u_hat : Vector3<f64>, v_hat : Vector3<f64>, mat : String},
     Quad { q : Vector3<f64>, u : Vector3<f64>, v : Vector3<f64>, mat : String },
     Sphere { c : Vector3<f64>, r : f64, mat : String },
-    Translation { by : Vector3<f64>, geom : String }
+    Translation { by : Vector3<f64>, gd : Box<GeomDesc> }
 }
 
 pub struct SceneDesc {

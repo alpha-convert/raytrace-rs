@@ -1,4 +1,4 @@
-use std::sync::Arc;
+use std::{borrow::Cow, sync::Arc};
 
 use nalgebra::{Unit, UnitVector3, Vector2, Vector3};
 
@@ -55,8 +55,8 @@ impl Quad {
 }
 
 impl Intersectable for Quad {
-    fn intersect<'r>(&'r self, ray: &'r Ray, i: Interval) -> Option<Intersection<'r>> {
-        if !self.bbox.intersect(ray, i) {
+    fn intersect<'r>(&'r self, ray: Ray, i: Interval) -> Option<Intersection<'r>> {
+        if !self.bbox.intersect(&ray, i) {
             return None;
         }
 

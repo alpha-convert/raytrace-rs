@@ -1,3 +1,4 @@
+use std::borrow::Cow;
 use std::cmp::Ordering;
 use std::f64::NAN;
 use std::sync::Arc;
@@ -14,7 +15,7 @@ pub struct Intersection<'r> {
     dist: f64,
     normal: Unit<Vector3<f64>>,
     material: &'r dyn Material,
-    ray_in: &'r Ray,
+    ray_in: Ray,
     uv: Vector2<f64>,
 }
 
@@ -24,7 +25,7 @@ impl<'r> Intersection<'r> {
         dist: f64,
         normal: Unit<Vector3<f64>>,
         material: &'r dyn Material,
-        ray_in: &'r Ray,
+        ray_in: Ray,
         uv: Vector2<f64>,
     ) -> Self {
         Intersection {
@@ -74,14 +75,19 @@ impl<'r> Intersection<'r> {
         self.material
     }
 
-    pub fn ray_in(&self) -> &'r Ray {
+    pub fn ray_in(&self) -> Ray {
         self.ray_in
     }
+
+    pub fn ray_in_mut(&mut self) -> &mut Ray {
+        &mut self.ray_in
+    }
+
 }
 
 pub trait Intersectable: Send + Sync {
     // It might be more efficient to pass in a &mut Option<Intersectoin>, but that's ugly.
-    fn intersect<'r>(&'r self, ray: &'r Ray, i: Interval) -> Option<Intersection<'r>>;
+    fn intersect<'r>(&'r self, ray: Ray, i: Interval) -> Option<Intersection<'r>>;
 }
 
 // impl Intersectable for Arc<dyn Intersectable> {

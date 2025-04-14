@@ -1,4 +1,4 @@
-use std::sync::Arc;
+use std::{borrow::Cow, sync::Arc};
 
 use nalgebra::{Unit, UnitVector3, Vector2, Vector3};
 
@@ -45,7 +45,7 @@ impl Plane {
 }
 
 impl Intersectable for Plane {
-    fn intersect<'r>(&'r self, ray: &'r Ray, i: Interval) -> Option<Intersection<'r>> {
+    fn intersect<'r>(&'r self, ray: Ray, i: Interval) -> Option<Intersection<'r>> {
         let denom = self.normal.dot(&ray.dir());
         if denom.abs() > 1e-8 {
             let t = (self.pt - ray.origin()).dot(&self.normal) / denom;

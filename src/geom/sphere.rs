@@ -1,4 +1,4 @@
-use std::{f64::consts::PI, sync::Arc};
+use std::{borrow::Cow, f64::consts::PI, sync::Arc};
 
 use nalgebra::{Unit, UnitVector3, Vector2, Vector3};
 
@@ -45,8 +45,8 @@ impl Sphere {
 }
 
 impl Intersectable for Sphere {
-    fn intersect<'r>(&'r self, ray: &'r Ray, i: Interval) -> Option<Intersection<'r>> {
-        if !self.bbox.intersect(ray, i) {
+    fn intersect<'r>(&'r self, ray: Ray, i: Interval) -> Option<Intersection<'r>> {
+        if !self.bbox.intersect(&ray, i) {
             return None;
         }
 
