@@ -10,7 +10,7 @@ use crate::{
 use super::{
     color::Color,
     material::{Material, Scatter},
-    texture::{solidcolor::SolidColor, Texture},
+    texture::{Texture, solidcolor::SolidColor},
 };
 
 #[derive(Clone)]
@@ -33,6 +33,6 @@ impl Material for Lambertian {
         }
         let bounce_ray = Ray::new(inter.point(), Unit::new_normalize(bounce_dir));
         let albedo = self.tex.color_at(&inter.uv());
-        Some(Scatter::new(albedo,bounce_ray))
+        Some(Scatter::new(albedo, bounce_ray))
     }
 }

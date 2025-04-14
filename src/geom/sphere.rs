@@ -4,7 +4,7 @@ use nalgebra::{Unit, UnitVector3, Vector2, Vector3};
 
 use crate::{
     geom::{
-        intersectable::{Intersectable, Intersection},
+        intersectable::{Geom, Intersection},
         ray::Ray,
     },
     lighting::material::Material,
@@ -44,7 +44,7 @@ impl Sphere {
     }
 }
 
-impl Intersectable for Sphere {
+impl Geom for Sphere {
     fn intersect<'r>(&'r self, ray: Ray, i: Interval) -> Option<Intersection<'r>> {
         if !self.bbox.intersect(&ray, i) {
             return None;

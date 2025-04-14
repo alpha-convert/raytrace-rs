@@ -4,7 +4,7 @@ use rayon::iter::{IntoParallelIterator, ParallelIterator};
 
 // use itertools::Itertools;
 use crate::{
-    geom::{intersectable::Intersectable, interval::Interval, ray::Ray},
+    geom::{intersectable::Geom, interval::Interval, ray::Ray},
     lighting::color::Color,
 };
 
@@ -121,7 +121,8 @@ impl Renderer {
                 match inter.material().scatter(&inter) {
                     None => emit,
                     Some(scatter) => {
-                        return emit + Self::trace(*scatter.ray(), scene, depth - 1) * scatter.color();
+                        return emit
+                            + Self::trace(*scatter.ray(), scene, depth - 1) * scatter.color();
                     }
                 }
             } else {

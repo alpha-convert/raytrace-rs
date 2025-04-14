@@ -4,7 +4,7 @@ use nalgebra::{Unit, UnitVector3, Vector2, Vector3};
 
 use crate::{
     geom::{
-        intersectable::{Intersectable, Intersection},
+        intersectable::{Geom, Intersection},
         ray::Ray,
     },
     lighting::material::Material,
@@ -44,7 +44,7 @@ impl Plane {
     }
 }
 
-impl Intersectable for Plane {
+impl Geom for Plane {
     fn intersect<'r>(&'r self, ray: Ray, i: Interval) -> Option<Intersection<'r>> {
         let denom = self.normal.dot(&ray.dir());
         if denom.abs() > 1e-8 {

@@ -1,7 +1,7 @@
 extern crate sdl2;
 
 use geom::cube::Cube;
-use geom::intersectable::Intersectable;
+use geom::intersectable::Geom;
 use geom::plane::Plane;
 use geom::quad::Quad;
 use geom::sphere::Sphere;
@@ -50,14 +50,13 @@ fn main() {
     let world_screen_width = 96.0;
     let world_screen_height = 54.0;
 
-
     let point8solid: Arc<dyn Texture> = Arc::new(SolidColor::new(Color::new(0.8, 0.8, 0.8)));
     let point2solid: Arc<dyn Texture> = Arc::new(SolidColor::new(Color::new(0.2, 0.2, 0.2)));
 
     let birdttex: Arc<dyn Texture> = Arc::new(Image::from_fname("bird.jpeg"));
     let birdlight = Arc::new(DiffuseLight::new(birdttex));
 
-    let whitediffuse : Arc<dyn Material> = Arc::new(DiffuseLight::solid(Color::new(0.1, 0.55, 0.2)));
+    let whitediffuse: Arc<dyn Material> = Arc::new(DiffuseLight::solid(Color::new(0.1, 0.55, 0.2)));
 
     let point8lambert = Arc::new(Lambertian::new(point8solid.clone()));
 
@@ -103,9 +102,9 @@ fn main() {
         point8metal,
     ));
 
-    let objects: Vec<Box<dyn Intersectable>> = vec![sqr, ground, sphere0, sphere1];
+    let objects: Vec<Box<dyn Geom>> = vec![sqr, ground, sphere0, sphere1];
 
-    let scene = Scene::new(objects,Color::black());
+    let scene = Scene::new(objects, Color::black());
 
     let recursion_depth = 50;
     let samples_per_pixel = 100;

@@ -3,7 +3,10 @@ use crate::{
     util::{random_unit_vec3, reflect},
 };
 
-use super::{color::Color, material::{Material, Scatter}};
+use super::{
+    color::Color,
+    material::{Material, Scatter},
+};
 
 #[derive(Debug, Clone, Copy)]
 pub struct Metal {
@@ -24,7 +27,7 @@ impl Material for Metal {
         if scattered.dot(&inter.normal()) > 0.0 {
             Some(Scatter::new(
                 self.albedo,
-                Ray::new_normalize(inter.point(), scattered)
+                Ray::new_normalize(inter.point(), scattered),
             ))
         } else {
             None

@@ -82,10 +82,9 @@ impl<'r> Intersection<'r> {
     pub fn ray_in_mut(&mut self) -> &mut Ray {
         &mut self.ray_in
     }
-
 }
 
-pub trait Intersectable: Send + Sync {
+pub trait Geom: Send + Sync {
     // It might be more efficient to pass in a &mut Option<Intersectoin>, but that's ugly.
     fn intersect<'r>(&'r self, ray: Ray, i: Interval) -> Option<Intersection<'r>>;
 }

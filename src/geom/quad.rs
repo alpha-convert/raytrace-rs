@@ -6,7 +6,7 @@ use crate::lighting::material::Material;
 
 use super::{
     aabb::AABB,
-    intersectable::{Intersectable, Intersection},
+    intersectable::{Geom, Intersection},
     interval::Interval,
     ray::Ray,
 };
@@ -54,7 +54,7 @@ impl Quad {
     }
 }
 
-impl Intersectable for Quad {
+impl Geom for Quad {
     fn intersect<'r>(&'r self, ray: Ray, i: Interval) -> Option<Intersection<'r>> {
         if !self.bbox.intersect(&ray, i) {
             return None;
@@ -87,6 +87,5 @@ impl Intersectable for Quad {
             ray,
             Vector2::new(u, v),
         ));
-
     }
 }
