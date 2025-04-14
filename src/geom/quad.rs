@@ -33,7 +33,7 @@ impl Quad {
     ) -> Self {
         let bb1 = AABB::from_points(q, q + u_hat + v_hat);
         let bb2 = AABB::from_points(q + u_hat, q + v_hat);
-        let bbox = AABB::union(bb1, bb2);
+        let bbox = AABB::union(&bb1, &bb2);
 
         let n = u_hat.cross(&v_hat);
         let normal = Unit::new_normalize(n);
@@ -56,10 +56,6 @@ impl Quad {
 
 impl Geom for Quad {
     fn intersect<'r>(&'r self, ray: Ray, i: Interval) -> Option<Intersection<'r>> {
-        if !self.bbox.intersect(&ray, i) {
-            return None;
-        }
-
         let denom = self.normal.dot(&ray.dir());
 
         if denom.abs() < 1e-8 {
@@ -87,5 +83,9 @@ impl Geom for Quad {
             ray,
             Vector2::new(u, v),
         ));
+    }
+    
+    fn bbox(&self) -> &AABB {
+        todo!()
     }
 }

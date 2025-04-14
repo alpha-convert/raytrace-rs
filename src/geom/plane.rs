@@ -79,4 +79,8 @@ impl Geom for Plane {
         }
         None
     }
+    
+    fn bbox(&self) -> &super::aabb::AABB {
+        todo!()
+    }
 }

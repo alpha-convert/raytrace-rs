@@ -9,9 +9,15 @@ impl Interval {
         self.max - self.min
     }
 
+    pub fn translate(&self, by : f64) -> Self {
+        Interval { min: self.min + by, max: self.max + by }
+    }
+
     pub const UNIT: Interval = Interval { min: 0.0, max: 1.0 };
 
     pub fn new(min: f64, max: f64) -> Self {
+        assert!(min != f64::NAN);
+        assert!(max != f64::NAN);
         assert!(min <= max);
         Interval { min: min, max: max }
     }

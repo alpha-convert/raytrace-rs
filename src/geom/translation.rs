@@ -7,7 +7,7 @@ use crate::geom::{
     ray::Ray,
 };
 
-use super::interval::Interval;
+use super::{aabb::AABB, interval::Interval};
 
 pub struct Translation {
     trans: Vector3<f64>,
@@ -34,5 +34,9 @@ impl Geom for Translation {
                 Some(inter)
             }
         }
+    }
+    
+    fn bbox(&self) -> &AABB {
+        todo!()
     }
 }

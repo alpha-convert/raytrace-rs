@@ -4,14 +4,7 @@ use nalgebra::Unit;
 
 use crate::{
     geom::{
-        cube::Cube,
-        Geom, intersection::Intersection,
-        interval::Interval,
-        plane::Plane,
-        quad::Quad,
-        ray::Ray,
-        sphere::Sphere,
-        translation::Translation,
+        aabb::AABB, bvh::BVH, cube::Cube, intersection::Intersection, interval::Interval, plane::Plane, quad::Quad, ray::Ray, sphere::Sphere, translation::Translation, Geom
     },
     lighting::{
         color::Color,
@@ -20,8 +13,7 @@ use crate::{
         material::Material,
         metal::Metal,
         texture::{
-            Texture, checkerboard::Checkerboard, image::Image, scaletex::ScaleTex,
-            solidcolor::SolidColor,
+            checkerboard::Checkerboard, image::Image, scaletex::ScaleTex, solidcolor::SolidColor, Texture
         },
     },
 };
@@ -29,7 +21,7 @@ use crate::{
 use super::scenedesc::{GeomDesc, MaterialDesc, SceneDesc, TextureDesc};
 
 pub struct Scene {
-    geoms: Vec<Box<dyn Geom>>,
+    geoms: BVH,
     background_color: Color,
 }
 
@@ -41,9 +33,9 @@ impl Scene {
         Scene::from(&scene_desc)
     }
 
-    pub fn new(geoms: Vec<Box<dyn Geom>>, background_color: Color) -> Self {
+    pub fn new(mut geoms: Vec<Arc<dyn Geom>>, background_color: Color) -> Self {
         Scene {
-            geoms: geoms,
+            geoms: BVH::construct(geoms.as_mut_slice()),
             background_color,
         }
     }
@@ -55,21 +47,22 @@ impl Scene {
 
 impl Geom for Scene {
     fn intersect<'r>(&'r self, ray: Ray, i: Interval) -> Option<Intersection<'r>> {
-        self.geoms
-            .iter()
-            .filter_map(|obj| obj.intersect(ray, i))
-            .min_by(Intersection::dist_compare)
+        self.geoms.intersect(ray,i)
+    }
+    
+    fn bbox(&self) -> &AABB {
+        self.geoms.bbox()
     }
 }
 
-fn construct_geom(gd: &GeomDesc, mat_map: &HashMap<String, Arc<dyn Material>>) -> Box<dyn Geom> {
+fn construct_geom(gd: &GeomDesc, mat_map: &HashMap<String, Arc<dyn Material>>) -> Arc<dyn Geom> {
     match gd {
         GeomDesc::Cube { c, r, mat } => {
             let mat = mat_map
                 .get(mat)
                 .expect(format!("material {} to be defined", mat).as_str())
                 .clone();
-            Box::new(Cube::new(*c, *r, mat))
+            Arc::new(Cube::new(*c, *r, mat))
         }
         GeomDesc::Plane {
             center,
@@ -82,7 +75,7 @@ fn construct_geom(gd: &GeomDesc, mat_map: &HashMap<String, Arc<dyn Material>>) -
                 .get(mat)
                 .expect(format!("material {} to be defined", mat).as_str())
                 .clone();
-            Box::new(Plane::new(
+            Arc::new(Plane::new(
                 *center,
                 Unit::new_normalize(*normal),
                 *u_hat,
@@ -95,18 +88,18 @@ fn construct_geom(gd: &GeomDesc, mat_map: &HashMap<String, Arc<dyn Material>>) -
                 .get(mat)
                 .expect(format!("material {} to be defined", mat).as_str())
                 .clone();
-            Box::new(Quad::new(*q, *u, *v, mat))
+            Arc::new(Quad::new(*q, *u, *v, mat))
         }
         GeomDesc::Sphere { c, r, mat } => {
             let mat = mat_map
                 .get(mat)
                 .expect(format!("material {} to be defined", mat).as_str())
                 .clone();
-            Box::new(Sphere::new(*c, *r, mat))
+            Arc::new(Sphere::new(*c, *r, mat))
         }
         GeomDesc::Translation { by, gd } => {
             let geom = construct_geom(gd, mat_map);
-            Box::new(Translation::new(*by, geom.into()))
+            Arc::new(Translation::new(*by, geom.into()))
         }
     }
 }
@@ -174,11 +167,13 @@ impl<'a> From<&'a SceneDesc> for Scene {
             mat_map.insert(name.clone(), mat);
         }
 
-        let mut geoms: Vec<Box<dyn Geom>> = Vec::with_capacity(sd.geoms.len());
+        let mut geoms: Vec<Arc<dyn Geom>> = Vec::with_capacity(sd.geoms.len());
 
         for geom_desc in &sd.geoms {
             geoms.push(construct_geom(geom_desc, &mat_map));
         }
+
+        let geoms = BVH::construct(&mut geoms);
 
         Scene {
             geoms: geoms,

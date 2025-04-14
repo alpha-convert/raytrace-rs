@@ -46,10 +46,6 @@ impl Sphere {
 
 impl Geom for Sphere {
     fn intersect<'r>(&'r self, ray: Ray, i: Interval) -> Option<Intersection<'r>> {
-        if !self.bbox.intersect(&ray, i) {
-            return None;
-        }
-
         let oc = self.center - ray.origin();
 
         let h = ray.dir().dot(&oc);
@@ -83,5 +79,9 @@ impl Geom for Sphere {
             ray,
             uv,
         ))
+    }
+    
+    fn bbox(&self) -> &AABB {
+        &self.bbox
     }
 }

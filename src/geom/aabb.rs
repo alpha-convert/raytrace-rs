@@ -1,23 +1,9 @@
+use std::cmp::Ordering;
+
 use nalgebra::Vector3;
 
-use super::{interval::Interval, ray::Ray};
+use super::{axis::Axis, interval::Interval, ray::Ray};
 
-#[derive(Debug, Clone, Copy)]
-enum Axis {
-    X,
-    Y,
-    Z,
-}
-
-impl Axis {
-    pub fn vec_idx(&self, v: Vector3<f64>) -> f64 {
-        match self {
-            Axis::X => v.x,
-            Axis::Y => v.y,
-            Axis::Z => v.z,
-        }
-    }
-}
 
 #[derive(Debug, Default, Clone)]
 // Axis-aligned bounding box represented by the intervals in space it covers.
@@ -28,6 +14,31 @@ pub struct AABB {
 }
 
 impl AABB {
+
+    pub fn axis_compare(a : Axis, this : &Self, that : &Self) -> Ordering {
+        let x = this.idx(a).min;
+        let y = that.idx(a).min;
+
+        assert!(x != f64::NAN);
+        assert!(y != f64::NAN);
+
+        if x < y {
+            Ordering::Less
+        } else if x > y {
+            Ordering::Greater
+        } else {
+            Ordering::Equal
+        }
+    }
+
+    // static bool box_compare(
+    //     const shared_ptr<hittable> a, const shared_ptr<hittable> b, int axis_index
+    // ) {
+    //     auto a_axis_interval = a->bounding_box().axis_interval(axis_index);
+    //     auto b_axis_interval = b->bounding_box().axis_interval(axis_index);
+    //     return a_axis_interval.min < b_axis_interval.min;
+    // }
+
     fn pad_to_minimums(&mut self) {
         let tol = 0.0001;
 
@@ -41,10 +52,15 @@ impl AABB {
             self.z.pad_by(tol)
         }
     }
+
     fn new(x: Interval, y: Interval, z: Interval) -> Self {
         let mut aabb = AABB { x, y, z };
         aabb.pad_to_minimums();
         aabb
+    }
+
+    pub fn translate(&self, by : Vector3<f64>) -> AABB {
+        AABB { x: self.x.translate(by.x), y: self.y.translate(by.y), z: self.z.translate(by.z) }
     }
 
     pub fn from_points(v1: Vector3<f64>, v2: Vector3<f64>) -> Self {
@@ -67,7 +83,7 @@ impl AABB {
         Self::new(x, y, z)
     }
 
-    pub fn union(bb1: AABB, bb2: AABB) -> Self {
+    pub fn union(bb1: &AABB, bb2: &AABB) -> Self {
         let x = Interval::union(bb1.x, bb2.x);
         let y = Interval::union(bb1.y, bb2.y);
         let z = Interval::union(bb1.z, bb2.z);
@@ -81,7 +97,7 @@ impl AABB {
     {
         let mut bb = AABB::default();
         for b in bbs.into_iter() {
-            bb = AABB::union(bb, b)
+            bb = AABB::union(&bb, &b)
         }
         bb
     }

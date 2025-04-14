@@ -6,10 +6,7 @@ use sdl2::libc::close;
 use crate::lighting::material::Material;
 
 use super::{
-    Geom, intersection::Intersection,
-    interval::Interval,
-    quad::Quad,
-    ray::Ray,
+    aabb::{self, AABB}, intersection::Intersection, interval::Interval, quad::Quad, ray::Ray, Geom
 };
 
 pub struct Cube {
@@ -90,5 +87,9 @@ impl Geom for Cube {
             .into_iter()
             .filter_map(|face| face.intersect(ray, i))
             .min_by(Intersection::dist_compare)
+    }
+
+    fn bbox(&self) -> &AABB {
+        todo!()
     }
 }
