@@ -1,4 +1,4 @@
-mod aabb;
+pub mod aabb;
 pub mod cube;
 pub mod intersectable;
 pub mod interval;
@@ -7,3 +7,5 @@ pub mod quad;
 pub mod ray;
 pub mod sphere;
 pub mod translation;
+
+pub mod bvh;
