@@ -50,7 +50,7 @@ impl Geom for Scene {
         self.geoms.intersect(ray,i)
     }
     
-    fn bbox(&self) -> &AABB {
+    fn bbox(&self) -> AABB {
         self.geoms.bbox()
     }
 }

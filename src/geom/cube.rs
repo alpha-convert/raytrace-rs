@@ -10,7 +10,7 @@ use super::{
 };
 
 pub struct Cube {
-    faces: [Box<Quad>; 6],
+    faces: Arc<[Box<Quad>; 6]>
 }
 
 impl Cube {
@@ -76,20 +76,20 @@ impl Cube {
                 Box::new(bottom),
                 Box::new(right),
                 Box::new(left),
-            ],
+            ].into(),
         }
     }
 }
 
 impl Geom for Cube {
     fn intersect<'r>(&'r self, ray: Ray, i: Interval) -> Option<Intersection<'r>> {
-        (&self.faces)
+        (self.faces).as_ref()
             .into_iter()
             .filter_map(|face| face.intersect(ray, i))
             .min_by(Intersection::dist_compare)
     }
 
-    fn bbox(&self) -> &AABB {
-        todo!()
+    fn bbox(&self) -> AABB {
+        AABB::union_all(self.faces.as_ref().into_iter().map(|obj| obj.bbox()))
     }
 }

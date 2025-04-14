@@ -1,7 +1,7 @@
 
 use std::sync::Arc;
 
-use crate::geom::{self, aabb::AABB, Geom};
+use crate::geom::{aabb::AABB, Geom};
 
 use super::{axis::Axis, intersection::Intersection, interval::Interval, ray::Ray};
 
@@ -35,13 +35,13 @@ impl BVH {
             let bbr = gr.bbox();
             let left = Arc::new(BVH::BVHLeaf { bbox: gl.bbox().clone(), geom: gl.clone() });
             let right = Arc::new(BVH::BVHLeaf { bbox: gr.bbox().clone(), geom: gr.clone() });
-            let bbu = AABB::union(bbl, bbr);
+            let bbu = AABB::union(&bbl, &bbr);
             return BVH::BVHNode { bbox_union : Box::new(bbu), bbox_left: Box::new(bbl.clone()), bbox_right: Box::new(bbr.clone()), left: left, right: right }
         } else {
             let axis = Axis::random();
 
             geoms.sort_by(|this,that| {
-                AABB::axis_compare(axis,this.bbox(),that.bbox())
+                AABB::axis_compare(axis,&this.bbox(),&that.bbox())
             });
 
             let mid = n / 2;
@@ -52,7 +52,7 @@ impl BVH {
             let bbl = bvh_left.bbox();
             let bbr = bvh_right.bbox();
 
-            let bbu = AABB::union(bbl, bbr);
+            let bbu = AABB::union(&bbl, &bbr);
 
             BVH::BVHNode { bbox_union : Box::new(bbu), bbox_left: Box::new(bbl.clone()), bbox_right: Box::new(bbr.clone()), left: Arc::new(bvh_left), right: Arc::new(bvh_right) }
         }
@@ -60,6 +60,7 @@ impl BVH {
     }
 
 }
+
 impl Geom for BVH {
     fn intersect<'r>(&'r self, ray: Ray, i: Interval) -> Option<Intersection<'r>> {
         match self {
@@ -70,15 +71,24 @@ impl Geom for BVH {
                     None
                 },
             BVH::BVHNode {
-                bbox_union,
+                bbox_union : _,
                 bbox_left,
                 bbox_right,
                 left,
                 right,
             } => {
-                if bbox_left.intersect(&ray, i) {
+                let in_left = bbox_left.intersect(&ray, i);
+                let in_right = bbox_right.intersect(&ray, i);
+
+                if in_left && in_right {
+                    let int_left = left.intersect(ray, i);
+                    let int_right = right.intersect(ray, i);
+
+                    [int_left,int_right].into_iter().filter_map(|o| o).min_by(Intersection::dist_compare)
+
+                } else if in_left {
                     left.intersect(ray, i)
-                } else if bbox_right.intersect(&ray, i) {
+                } else if in_right {
                     right.intersect(ray, i)
                 } else {
                     None
@@ -87,10 +97,10 @@ impl Geom for BVH {
         }
     }
 
-    fn bbox(&self) -> &AABB {
+    fn bbox(&self) -> AABB {
         match self {
-            BVH::BVHLeaf { bbox,geom : _ } => bbox,
-            BVH::BVHNode { bbox_union, bbox_left, bbox_right, left, right } => bbox_union,
+            BVH::BVHLeaf { bbox,geom : _ } => bbox.clone(),
+            BVH::BVHNode { bbox_union, bbox_left, bbox_right, left, right } => (**bbox_union).clone(),
         }
     }
 }

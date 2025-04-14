@@ -71,7 +71,7 @@ fn main() {
 
     let point8metal = Arc::new(Metal::new(Color::new(0.9, 0.8, 0.8), 0.01));
 
-    let sqr = Box::new(Cube::new(
+    let sqr = Arc::new(Cube::new(
         Vector3::new(10.0, 20.0, 10.0),
         10.0,
         birdlight.clone(),
@@ -84,25 +84,27 @@ fn main() {
     //     point8metal.clone()
     // ));
 
-    let ground = Box::new(Plane::new(
-        Vector3::new(0.0, -11.0, 0.0),
-        Unit::new_normalize(Vector3::new(0.0, 1.0, 0.0)),
-        (Vector3::new(0.0, 0.0, -20.0)),
-        (Vector3::new(20.0, 0.0, 0.0)),
-        point8lambert.clone(),
+    let ground = Arc::new(Quad::new(
+        Vector3::new(-20.0, -12.0, 0.0),
+        (Vector3::new(40.0, 0.0, 0.0)),
+        (Vector3::new(0.0, 0.0, -30.0)),
+        birdlight.clone(),
     ));
-    let sphere0 = Box::new(Sphere::new(
+    // let ground = Arc::new(Plane::new(
+    //     Unit::new_normalize(Vector3::new(0.0, 1.0, 0.0)),
+    // ));
+    let sphere0 = Arc::new(Sphere::new(
         Vector3::new(0.0, 0.0, -30.0),
         20.0,
         point8lambert.clone(),
     ));
-    let sphere1 = Box::new(Sphere::new(
+    let sphere1 = Arc::new(Sphere::new(
         Vector3::new(50.0, 0.0, -40.0),
         15.0,
         point8metal,
     ));
 
-    let objects: Vec<Box<dyn Geom>> = vec![sqr, ground, sphere0, sphere1];
+    let objects: Vec<Arc<dyn Geom>> = vec![sqr, ground, sphere0, sphere1];
 
     let scene = Scene::new(objects, Color::black());
 

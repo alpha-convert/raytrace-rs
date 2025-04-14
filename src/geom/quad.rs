@@ -85,7 +85,7 @@ impl Geom for Quad {
         ));
     }
     
-    fn bbox(&self) -> &AABB {
-        todo!()
+    fn bbox(&self) -> AABB {
+        self.bbox.clone()
     }
 }

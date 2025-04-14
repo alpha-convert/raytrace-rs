@@ -36,7 +36,7 @@ impl Geom for Translation {
         }
     }
     
-    fn bbox(&self) -> &AABB {
+    fn bbox(&self) -> AABB {
         todo!()
     }
 }

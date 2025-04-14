@@ -1,0 +1,81 @@
+{
+    "textures" : [
+            {
+                "type" : "solid",
+                "name" : "red",
+                "albedo" : [
+                    0.65,
+                    0.05,
+                    0.05
+                ]
+            },
+            {
+                "type" : "solid",
+                "name" : "white",
+                "albedo" : [
+                    0.73,
+                    0.73,
+                    0.73
+                ]
+            },
+            {
+                "type" : "solid",
+                "name" : "green",
+                "albedo" : [
+                    0.12,
+                    0.45,
+                    0.15
+                ]
+            },
+            {
+                "type" : "solid",
+                "name" : "lightcolor",
+                "albedo" : [
+                    0.7,
+                    0.7,
+                    0.7
+                ]
+            }
+    ],
+
+    "materials" : [
+        {
+            "type" : "diffuselight",
+            "name" : "light",
+            "tex" : "lightcolor"
+        },
+        {
+            "type" : "lambert",
+            "name" : "lambertred",
+            "tex" : "red"
+        },
+        {
+            "type" : "lambert",
+            "name" : "lambertwhite",
+            "tex" : "white"
+        },
+        {
+            "type" : "lambert",
+            "name" : "lambertgreen",
+            "tex" : "green"
+        }
+    ],
+
+    "geoms" : [
+        {
+            "type" : "quad",
+            "name" : "leftwall",
+            "mat" : "lambertgreen",
+            "q" : [
+
+            ], 
+            "u" : [
+
+            ],
+            "v" : [
+
+            ]
+        }
+
+    ]
+}

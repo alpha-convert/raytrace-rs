@@ -81,7 +81,7 @@ impl Geom for Sphere {
         ))
     }
     
-    fn bbox(&self) -> &AABB {
-        &self.bbox
+    fn bbox(&self) -> AABB {
+        self.bbox.clone()
     }
 }
