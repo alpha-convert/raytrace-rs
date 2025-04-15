@@ -47,8 +47,7 @@ fn main() {
 
     let camera_pos = Vector3::new(0.0, 0.0, 50.0);
     let camera_dir = Unit::new_normalize(Vector3::new(0.0, 0.0, -1.0));
-    let camera_down_dir = Unit::new_normalize(Vector3::new(0.0, -1.0, 0.0));
-    let camera_right_dir = Unit::new_normalize(Vector3::new(1.0, 0.0, 0.0));
+    let camera_up_dir = Unit::new_normalize(Vector3::new(0.0, 1.0, 0.0));
     let screen_dist = 50.0;
     let world_screen_width = 96.0;
     let world_screen_height = 54.0;
@@ -151,11 +150,9 @@ fn main() {
         window_height as usize,
         camera_pos,
         camera_dir,
-        camera_down_dir,
-        camera_right_dir,
+        camera_up_dir,
         screen_dist,
-        world_screen_width,
-        world_screen_height,
+        80.0,
     );
 
     let renderer = Renderer::new(
