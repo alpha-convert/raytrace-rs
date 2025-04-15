@@ -1,10 +1,10 @@
 use std::sync::Arc;
 
-use nalgebra::{Unit, Vector3};
+use nalgebra::{SimdPartialOrd, Unit, Vector3};
 
 use crate::math::{interval::Interval, ray::Ray};
 
-use super::{Geom, intersection::Intersection};
+use super::{aabb::AABB, intersection::Intersection, Geom};
 
 pub struct Scaling {
     scale : Vector3<f64>,
@@ -60,6 +60,17 @@ impl Geom for Scaling {
     }
 
     fn bbox(&self) -> super::aabb::AABB {
-        todo!()
+        let inner_bbox = self.geom.bbox();
+        let min = inner_bbox.min();
+        let max = inner_bbox.max();
+        
+        let scaled_min = min.component_mul(&self.scale);
+        let scaled_max = max.component_mul(&self.scale);
+        
+        // Ensure min < max for each dimension
+        let new_min = scaled_min.simd_min(scaled_max);
+        let new_max = scaled_min.simd_max(scaled_max);
+        
+        AABB::from_points(new_min, new_max)
     }
 }

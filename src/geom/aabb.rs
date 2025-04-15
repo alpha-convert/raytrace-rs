@@ -13,6 +13,14 @@ pub struct AABB {
 }
 
 impl AABB {
+    pub fn min(&self) -> Vector3<f64> {
+        Vector3::new(self.x.min, self.y.min, self.z.min)
+    }
+
+    pub fn max(&self) -> Vector3<f64> {
+        Vector3::new(self.x.max, self.y.max, self.z.max)
+    }
+
     pub fn axis_compare(a: Axis, this: &Self, that: &Self) -> Ordering {
         let x = this.idx(a).min;
         let y = that.idx(a).min;
@@ -28,14 +36,6 @@ impl AABB {
             Ordering::Equal
         }
     }
-
-    // static bool box_compare(
-    //     const shared_ptr<hittable> a, const shared_ptr<hittable> b, int axis_index
-    // ) {
-    //     auto a_axis_interval = a->bounding_box().axis_interval(axis_index);
-    //     auto b_axis_interval = b->bounding_box().axis_interval(axis_index);
-    //     return a_axis_interval.min < b_axis_interval.min;
-    // }
 
     fn pad_to_minimums(&mut self) {
         let tol = 0.0001;

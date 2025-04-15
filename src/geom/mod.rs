@@ -11,7 +11,7 @@ pub mod cube;
 pub mod intersection;
 pub mod plane;
 pub mod quad;
-pub mod scale;
+pub mod scaling;
 pub mod sphere;
 pub mod translation;
 pub mod triangle;
