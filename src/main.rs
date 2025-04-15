@@ -1,5 +1,6 @@
 extern crate sdl2;
 
+use geom::rotation::Rotation;
 use geom::Geom;
 use geom::quad::Quad;
 use geom::scaling::Scaling;
@@ -22,7 +23,7 @@ use rendering::scene::Scene;
 use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
 use std::sync::Arc;
-use std::time::Duration;
+use std::time::{Duration, Instant};
 
 mod geom;
 mod lighting;
@@ -71,11 +72,14 @@ fn main() {
     // ));
 
     let bunny = Arc::new(Scaling::new(
-        Vector3::new(200.0, 200.0, 200.0),
-        Arc::new(TriMesh::from_fname(
-            "scenes/bunny.obj",
+        Vector3::new(10.0, 10.0, 10.0),
+        Arc::new(
+            Rotation::from_euler(0.0, 0.0, 0.0,
+                Arc::new(
+            TriMesh::from_fname(
+            "scenes/teapot.obj",
             point8lambert.clone(),
-        )),
+        )))),
     ));
 
     // let checkertex: Arc<dyn Texture> =
@@ -138,12 +142,12 @@ fn main() {
         birdlight.clone(),
     ));
 
-    let objects: Vec<Arc<dyn Geom>> = vec![bunny, sqr, sqr2, ground, sphere1];
+    let objects: Vec<Arc<dyn Geom>> = vec![bunny, ground, sphere1];
 
     let scene = Scene::new(objects, Color::white());
 
     let recursion_depth = 50;
-    let samples_per_pixel = 300;
+    let samples_per_batch = 10;
 
     let camera = Camera::new(
         window_width as usize,
@@ -159,11 +163,14 @@ fn main() {
         recursion_depth,
         window_width as usize,
         window_height as usize,
-        samples_per_pixel,
+        samples_per_batch,
+        0.00000001
     );
-    // let mut renderer = Renderer::new(canvas,window_width as u64,window_height as u64);
 
+    let start = Instant::now();
     let mut buf = renderer.render(&camera, &scene);
+    let duration = start.elapsed();
+    dbg!(duration);
     buf.blit_to(&mut canvas);
     canvas.present();
 

@@ -6,10 +6,10 @@ use rayon::iter::{IntoParallelIterator, ParallelIterator};
 use crate::{
     geom::Geom,
     lighting::color::Color,
-    math::{interval::Interval, ray::Ray},
+    math::{interval::Interval, ray::Ray, welford::OnlineMean},
 };
 
-use super::{camera::Camera, par_buffer::ParBuffer, scene::Scene};
+use super::{camera::Camera, par_buffer::{BufRow, ParBuffer}, scene::Scene};
 
 pub struct Renderer {
     //Metadata
@@ -19,9 +19,9 @@ pub struct Renderer {
     window_width: usize,
     window_height: usize,
 
-    //AA data
-    samples_per_pixel: u64,
-    sample_weight: f64, //equals 1/samples_per_pixel
+    //adaptive AA data
+    samples_per_batch: u64,
+    conv_cutoff : f64
 }
 
 impl Renderer {
@@ -29,20 +29,16 @@ impl Renderer {
         recursion_depth: u64,
         window_width: usize,
         window_height: usize,
-        samples_per_pixel: u64,
+        samples_per_batch : u64,
+        conv_cutoff : f64
     ) -> Self {
-        let sample_weight = 1.0 / (samples_per_pixel as f64);
 
         Renderer {
             recursion_depth: recursion_depth,
             window_width: window_width,
             window_height: window_height,
-            // canvas: RefCell::new(canvas),
-            // camera_dir: camera_fwd,
-            // camera_down_dir: camera_down,
-            // camera_right_dir: camera_right,
-            samples_per_pixel,
-            sample_weight,
+            samples_per_batch,
+            conv_cutoff
         }
     }
 
@@ -61,23 +57,33 @@ impl Renderer {
         (0..self.window_height).into_par_iter().for_each(|y_idx| {
             let mut row = buffer.lock_row(y_idx as usize);
             for x_idx in 0..self.window_width {
-                let mut px_color = Color::new(0.0, 0.0, 0.0);
-
-                for _ in 0..self.samples_per_pixel {
-                    let (du, dv) = Renderer::sample_uv();
-
-                    let ray = camera.ray_through(x_idx as f64 + du, y_idx as f64 + dv);
-
-                    px_color = px_color
-                        + Self::trace(ray, scene, self.recursion_depth).scale(self.sample_weight);
-                }
-
-                row.set(x_idx, px_color);
+                self.render_px(&mut row,camera,scene,x_idx,y_idx);
             }
         });
 
-        // buffer.blit_to(surf);
         buffer
+    }
+
+    /// Adaptive rendering. Estimate the pixel color online with welfords algorithm.
+    fn render_px(&self, row : &mut BufRow<'_>, camera : &Camera, scene : &Scene, x_idx : usize, y_idx : usize){
+
+        let mut estimator = OnlineMean::new();
+
+        while estimator.convergence_delta() > self.conv_cutoff {
+            for _ in 0..self.samples_per_batch {
+                let (du, dv) = Renderer::sample_uv();
+                let ray = camera.ray_through(x_idx as f64 + du, y_idx as f64 + dv);
+
+                let color = Self::trace(ray, scene, self.recursion_depth);
+                estimator.add_sample(color.inner_vec());
+            }
+        }
+
+        // dbg!(estimator.convergence_delta());
+
+        let px_color = Color::from_vec(estimator.mean());
+
+        row.set(x_idx, px_color);
     }
 
     fn trace(ray: Ray, scene: &Scene, depth: u64) -> Color {

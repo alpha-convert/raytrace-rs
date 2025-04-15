@@ -38,6 +38,14 @@ impl Color {
         }
     }
 
+    pub fn from_vec(v : Vector3<f64>) -> Self {
+        Color { v: v }
+    }
+
+    pub fn inner_vec(&self) -> Vector3<f64> {
+        self.v
+    }
+
     pub fn clamp(&mut self) {
         self.v.x = f64::min(self.v.x, 1.0);
         self.v.y = f64::min(self.v.y, 1.0);

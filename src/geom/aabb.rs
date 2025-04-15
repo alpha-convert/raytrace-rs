@@ -114,13 +114,17 @@ impl AABB {
         }
     }
 
+
     pub fn intersect(&self, r: &Ray, mut i: Interval) -> bool {
         for a in [Axis::X, Axis::Y, Axis::Z] {
             let axi = self.idx(a);
             let adinv = 1.0 / a.vec_idx(*r.dir());
 
-            let t0 = (axi.min - a.vec_idx(r.origin())) * adinv;
-            let t1 = (axi.max - a.vec_idx(r.origin())) * adinv;
+            let o = r.origin();
+            let oa = a.vec_idx(o);
+
+            let t0 = (axi.min - oa) * adinv;
+            let t1 = (axi.max - oa) * adinv;
 
             if t0 < t1 {
                 if t0 > i.min {
