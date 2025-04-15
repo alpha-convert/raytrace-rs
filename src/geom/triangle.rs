@@ -77,14 +77,7 @@ impl Geom for Triangle {
 
         let pt = ray.at(t);
         let uv = Vector2::new(u, v);
-        Some(Intersection::new(
-            pt,
-            t,
-            self.normal,
-            self.mat.as_ref(),
-            ray.dir(),
-            uv,
-        ))
+        Some(Intersection::new(pt, t, self.normal, self.mat.as_ref(), uv))
     }
 
     fn bbox(&self) -> super::aabb::AABB {

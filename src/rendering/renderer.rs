@@ -119,7 +119,7 @@ impl Renderer {
         } else {
             if let Some(inter) = scene.intersect(ray, Interval::new(0.001, f64::MAX)) {
                 let emit = inter.material().emit(&inter.uv());
-                match inter.material().scatter(&inter) {
+                match inter.material().scatter(&ray, &inter) {
                     None => emit,
                     Some(scatter) => {
                         return emit

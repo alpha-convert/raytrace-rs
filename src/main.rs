@@ -1,8 +1,8 @@
 extern crate sdl2;
 
-use geom::scaling::Scaling;
 use geom::Geom;
 use geom::quad::Quad;
+use geom::scaling::Scaling;
 use geom::sphere::Sphere;
 use geom::translation::Translation;
 use geom::triangle::Triangle;
@@ -52,7 +52,7 @@ fn main() {
     let world_screen_width = 96.0;
     let world_screen_height = 54.0;
 
-    let point8solid: Arc<dyn Texture> = Arc::new(SolidColor::new(Color::new(0.8, 0.2, 0.8)));
+    let point8solid: Arc<dyn Texture> = Arc::new(SolidColor::new(Color::new(0.2, 0.2, 0.8)));
     let point2solid: Arc<dyn Texture> = Arc::new(SolidColor::new(Color::new(0.2, 0.2, 0.2)));
 
     let birdttex: Arc<dyn Texture> = Arc::new(Image::from_fname("bird.jpeg"));
@@ -71,7 +71,7 @@ fn main() {
     // ));
 
     let bunny = Arc::new(Scaling::new(
-        Vector3::new(200.0, 100.0, 200.0),
+        Vector3::new(200.0, 200.0, 200.0),
         Arc::new(TriMesh::from_fname(
             "scenes/bunny.obj",
             point8lambert.clone(),
@@ -138,7 +138,7 @@ fn main() {
         birdlight.clone(),
     ));
 
-    let objects: Vec<Arc<dyn Geom>> = vec![bunny, sqr, sqr2,ground, sphere1];
+    let objects: Vec<Arc<dyn Geom>> = vec![bunny, sqr, sqr2, ground, sphere1];
 
     let scene = Scene::new(objects, Color::white());
 

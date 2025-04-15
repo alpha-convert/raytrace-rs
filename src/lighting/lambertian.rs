@@ -24,7 +24,11 @@ impl Lambertian {
 }
 
 impl Material for Lambertian {
-    fn scatter(&self, inter: &crate::geom::intersection::Intersection) -> Option<Scatter> {
+    fn scatter(
+        &self,
+        ray_in: &Ray,
+        inter: &crate::geom::intersection::Intersection,
+    ) -> Option<Scatter> {
         let normal = inter.normal();
         let mut bounce_dir = *normal + *util::random_unit_vec3();
         if is_small(bounce_dir) {

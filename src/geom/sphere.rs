@@ -74,7 +74,6 @@ impl Geom for Sphere {
             dist,
             normal,
             self.material.as_ref(),
-            ray.dir(),
             uv,
         ))
     }

@@ -24,7 +24,7 @@ impl Scatter {
 }
 
 pub trait Material: Sync + Send {
-    fn scatter(&self, inter: &Intersection) -> Option<Scatter>;
+    fn scatter(&self, ray_in: &Ray, inter: &Intersection) -> Option<Scatter>;
 
     fn emit(&self, _: &Vector2<f64>) -> Color {
         Color::black()

@@ -10,7 +10,6 @@ pub struct Intersection<'r> {
     dist: f64, //NOTE: distances are relative, not absolute (because of scaling)
     normal: Unit<Vector3<f64>>,
     material: &'r dyn Material,
-    ray_in_dir: UnitVector3<f64>,
     uv: Vector2<f64>,
 }
 
@@ -20,7 +19,6 @@ impl<'r> Intersection<'r> {
         dist: f64,
         normal: Unit<Vector3<f64>>,
         material: &'r dyn Material,
-        ray_in_dir: UnitVector3<f64>,
         uv: Vector2<f64>,
     ) -> Self {
         Intersection {
@@ -28,7 +26,6 @@ impl<'r> Intersection<'r> {
             dist: dist,
             normal: normal,
             material: material,
-            ray_in_dir,
             uv,
         }
     }
@@ -64,9 +61,5 @@ impl<'r> Intersection<'r> {
 
     pub fn material(&self) -> &'r dyn Material {
         self.material
-    }
-
-    pub fn ray_in_dir(&self) -> UnitVector3<f64> {
-        self.ray_in_dir
     }
 }

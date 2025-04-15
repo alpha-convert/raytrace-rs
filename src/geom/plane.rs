@@ -66,7 +66,6 @@ impl Geom for Plane {
                     t,
                     self.normal,
                     self.material.as_ref(),
-                    ray.dir(),
                     Vector2::new(u, v),
                 ));
             } else {

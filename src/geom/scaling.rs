@@ -4,11 +4,11 @@ use nalgebra::{SimdPartialOrd, Unit, Vector3};
 
 use crate::math::{interval::Interval, ray::Ray};
 
-use super::{aabb::AABB, intersection::Intersection, Geom};
+use super::{Geom, aabb::AABB, intersection::Intersection};
 
 pub struct Scaling {
-    scale : Vector3<f64>,
-    scale_inv : Vector3<f64>,
+    scale: Vector3<f64>,
+    scale_inv: Vector3<f64>,
     geom: Arc<dyn Geom>,
 }
 
@@ -19,7 +19,7 @@ impl Scaling {
         assert!(0.0 < scale.z);
         Scaling {
             scale,
-            scale_inv : Vector3::new(1.0/scale.x, 1.0/scale.y, 1.0/scale.z),
+            scale_inv: Vector3::new(1.0 / scale.x, 1.0 / scale.y, 1.0 / scale.z),
             geom: geom,
         }
     }
@@ -30,7 +30,7 @@ impl Geom for Scaling {
         let scaled_origin = ray.origin().component_mul(&self.scale_inv);
         let scaled_dir = ray.dir().component_mul(&self.scale_inv);
         if scaled_dir.magnitude_squared() < 1e-10 {
-            return None
+            return None;
         }
         let scaled_dir = Unit::new_normalize(scaled_dir);
 
@@ -44,7 +44,7 @@ impl Geom for Scaling {
 
         let scaled_normal = int.normal().component_mul(&self.scale_inv);
         if scaled_normal.magnitude_squared() < 1e-10 {
-            return None
+            return None;
         }
         let scaled_normal = Unit::new_normalize(scaled_normal);
 
@@ -53,24 +53,22 @@ impl Geom for Scaling {
             dist,
             scaled_normal,
             int.material(),
-            ray.dir(),
-            int.uv()
+            int.uv(),
         ))
-
     }
 
     fn bbox(&self) -> super::aabb::AABB {
         let inner_bbox = self.geom.bbox();
         let min = inner_bbox.min();
         let max = inner_bbox.max();
-        
+
         let scaled_min = min.component_mul(&self.scale);
         let scaled_max = max.component_mul(&self.scale);
-        
+
         // Ensure min < max for each dimension
         let new_min = scaled_min.simd_min(scaled_max);
         let new_max = scaled_min.simd_max(scaled_max);
-        
+
         AABB::from_points(new_min, new_max)
     }
 }

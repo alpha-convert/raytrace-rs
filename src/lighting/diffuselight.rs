@@ -1,5 +1,7 @@
 use std::sync::Arc;
 
+use crate::math::ray::Ray;
+
 use super::{
     color::Color,
     material::Material,
@@ -23,6 +25,7 @@ impl DiffuseLight {
 impl Material for DiffuseLight {
     fn scatter(
         &self,
+        ray_in: &Ray,
         inter: &crate::geom::intersection::Intersection,
     ) -> Option<super::material::Scatter> {
         None
