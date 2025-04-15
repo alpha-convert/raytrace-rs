@@ -29,7 +29,6 @@ impl Geom for Translation {
         match self.inner.intersect(new_ray, i) {
             None => None,
             Some(mut inter) => {
-                //FIXME: shouldn't we also fixup the "ray_in" of the inter?
                 *inter.point_mut() = inter.point() + self.trans;
                 Some(inter)
             }
