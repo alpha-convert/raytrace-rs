@@ -16,6 +16,7 @@ use lighting::texture::Texture;
 use lighting::texture::image::Image;
 use lighting::texture::solidcolor::SolidColor;
 use nalgebra::{Unit, Vector3};
+use rendering::camera::Camera;
 use rendering::renderer::Renderer;
 use rendering::scene::Scene;
 use sdl2::event::Event;
@@ -145,8 +146,7 @@ fn main() {
     let recursion_depth = 50;
     let samples_per_pixel = 300;
 
-    let renderer = Renderer::new(
-        recursion_depth,
+    let camera = Camera::new(
         window_width as usize,
         window_height as usize,
         camera_pos,
@@ -156,11 +156,17 @@ fn main() {
         screen_dist,
         world_screen_width,
         world_screen_height,
+    );
+
+    let renderer = Renderer::new(
+        recursion_depth,
+        window_width as usize,
+        window_height as usize,
         samples_per_pixel,
     );
     // let mut renderer = Renderer::new(canvas,window_width as u64,window_height as u64);
 
-    let mut buf = renderer.render(&scene);
+    let mut buf = renderer.render(&camera, &scene);
     buf.blit_to(&mut canvas);
     canvas.present();
 

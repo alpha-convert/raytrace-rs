@@ -25,8 +25,8 @@ impl DiffuseLight {
 impl Material for DiffuseLight {
     fn scatter(
         &self,
-        ray_in: &Ray,
-        inter: &crate::geom::intersection::Intersection,
+        _: &Ray,
+        _: &crate::geom::intersection::Intersection,
     ) -> Option<super::material::Scatter> {
         None
     }

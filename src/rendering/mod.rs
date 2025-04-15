@@ -1,3 +1,4 @@
+pub mod camera;
 pub mod par_buffer;
 pub mod render_surface;
 pub mod renderer;

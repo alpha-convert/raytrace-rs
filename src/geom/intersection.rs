@@ -7,7 +7,7 @@ use crate::lighting::material::Material;
 
 pub struct Intersection<'r> {
     point: Vector3<f64>,
-    dist: f64, //NOTE: distances are relative, not absolute (because of scaling)
+    dist: f64, //note: this can always be recomputed from the point and the ray at top level.
     normal: Unit<Vector3<f64>>,
     material: &'r dyn Material,
     uv: Vector2<f64>,
@@ -31,8 +31,8 @@ impl<'r> Intersection<'r> {
     }
 
     pub fn dist_compare(&self, other: &Self) -> Ordering {
-        assert!(self.dist != NAN);
-        assert!(other.dist != NAN);
+        assert!(!self.dist.is_nan());
+        assert!(!other.dist.is_nan());
 
         if self.dist < other.dist {
             return Ordering::Less;
