@@ -1,6 +1,6 @@
 use nalgebra::{Unit, Vector3};
 use rand::Rng;
-use rayon::iter::{IntoParallelIterator, ParallelIterator};
+use rayon::iter::{IntoParallelIterator, IntoParallelRefMutIterator, ParallelIterator};
 
 // use itertools::Itertools;
 use crate::{
@@ -11,7 +11,7 @@ use crate::{
 
 use super::{
     camera::Camera,
-    par_buffer::{BufRow, ParBuffer},
+    par_buffer::{ParBuffer},
     scene::Scene,
 };
 
@@ -55,27 +55,25 @@ impl Renderer {
     }
 
     pub fn render(&self, camera: &Camera, scene: &Scene) -> ParBuffer {
-        let buffer = ParBuffer::new(self.window_height as usize, self.window_width as usize);
+        let mut buffer = ParBuffer::new(self.window_height as usize, self.window_width as usize);
 
-        (0..self.window_height).into_par_iter().for_each(|y_idx| {
-            let mut row = buffer.lock_row(y_idx as usize);
-            for x_idx in 0..self.window_width {
-                self.render_px(&mut row, camera, scene, x_idx, y_idx);
+        buffer.par_iter_mut().for_each(|(y_idx,row)| {
+            for (x_idx,c) in row.iter_mut().enumerate() {
+                *c = self.render_px(camera,scene,x_idx,y_idx)
             }
         });
-
         buffer
     }
 
     /// Adaptive rendering. Estimate the pixel color online with welfords algorithm.
     fn render_px(
         &self,
-        row: &mut BufRow<'_>,
         camera: &Camera,
         scene: &Scene,
         x_idx: usize,
         y_idx: usize,
-    ) {
+    )  -> Color
+    {
         let mut estimator = OnlineMean::new();
 
         while estimator.convergence_delta() > self.conv_cutoff {
@@ -88,9 +86,7 @@ impl Renderer {
             }
         }
 
-        let px_color = Color::from_vec(estimator.mean());
-
-        row.set(x_idx, px_color);
+        Color::from_vec(estimator.mean())
     }
 
     fn trace(ray: Ray, scene: &Scene, depth: u64) -> Color {
