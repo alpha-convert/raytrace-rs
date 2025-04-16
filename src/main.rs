@@ -1,8 +1,8 @@
 extern crate sdl2;
 
-use geom::rotation::Rotation;
 use geom::Geom;
 use geom::quad::Quad;
+use geom::rotation::Rotation;
 use geom::scaling::Scaling;
 use geom::sphere::Sphere;
 use geom::translation::Translation;
@@ -73,13 +73,15 @@ fn main() {
 
     let bunny = Arc::new(Scaling::new(
         Vector3::new(10.0, 10.0, 10.0),
-        Arc::new(
-            Rotation::from_euler(0.0, 0.0, 0.0,
-                Arc::new(
-            TriMesh::from_fname(
-            "scenes/teapot.obj",
-            point8lambert.clone(),
-        )))),
+        Arc::new(Rotation::from_euler(
+            0.0,
+            0.0,
+            0.0,
+            Arc::new(TriMesh::from_fname(
+                "scenes/teapot.obj",
+                point8lambert.clone(),
+            )),
+        )),
     ));
 
     // let checkertex: Arc<dyn Texture> =
@@ -164,7 +166,7 @@ fn main() {
         window_width as usize,
         window_height as usize,
         samples_per_batch,
-        0.00000001
+        0.00000001,
     );
 
     let start = Instant::now();

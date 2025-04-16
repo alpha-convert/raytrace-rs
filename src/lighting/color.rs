@@ -38,7 +38,7 @@ impl Color {
         }
     }
 
-    pub fn from_vec(v : Vector3<f64>) -> Self {
+    pub fn from_vec(v: Vector3<f64>) -> Self {
         Color { v: v }
     }
 

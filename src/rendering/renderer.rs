@@ -6,10 +6,14 @@ use rayon::iter::{IntoParallelIterator, ParallelIterator};
 use crate::{
     geom::Geom,
     lighting::color::Color,
-    math::{interval::Interval, ray::Ray, welford::OnlineMean},
+    math::{interval::Interval, onlinemean::OnlineMean, ray::Ray},
 };
 
-use super::{camera::Camera, par_buffer::{BufRow, ParBuffer}, scene::Scene};
+use super::{
+    camera::Camera,
+    par_buffer::{BufRow, ParBuffer},
+    scene::Scene,
+};
 
 pub struct Renderer {
     //Metadata
@@ -21,7 +25,7 @@ pub struct Renderer {
 
     //adaptive AA data
     samples_per_batch: u64,
-    conv_cutoff : f64
+    conv_cutoff: f64,
 }
 
 impl Renderer {
@@ -29,16 +33,15 @@ impl Renderer {
         recursion_depth: u64,
         window_width: usize,
         window_height: usize,
-        samples_per_batch : u64,
-        conv_cutoff : f64
+        samples_per_batch: u64,
+        conv_cutoff: f64,
     ) -> Self {
-
         Renderer {
             recursion_depth: recursion_depth,
             window_width: window_width,
             window_height: window_height,
             samples_per_batch,
-            conv_cutoff
+            conv_cutoff,
         }
     }
 
@@ -57,7 +60,7 @@ impl Renderer {
         (0..self.window_height).into_par_iter().for_each(|y_idx| {
             let mut row = buffer.lock_row(y_idx as usize);
             for x_idx in 0..self.window_width {
-                self.render_px(&mut row,camera,scene,x_idx,y_idx);
+                self.render_px(&mut row, camera, scene, x_idx, y_idx);
             }
         });
 
@@ -65,8 +68,14 @@ impl Renderer {
     }
 
     /// Adaptive rendering. Estimate the pixel color online with welfords algorithm.
-    fn render_px(&self, row : &mut BufRow<'_>, camera : &Camera, scene : &Scene, x_idx : usize, y_idx : usize){
-
+    fn render_px(
+        &self,
+        row: &mut BufRow<'_>,
+        camera: &Camera,
+        scene: &Scene,
+        x_idx: usize,
+        y_idx: usize,
+    ) {
         let mut estimator = OnlineMean::new();
 
         while estimator.convergence_delta() > self.conv_cutoff {
@@ -78,8 +87,6 @@ impl Renderer {
                 estimator.add_sample(color.inner_vec());
             }
         }
-
-        // dbg!(estimator.convergence_delta());
 
         let px_color = Color::from_vec(estimator.mean());
 

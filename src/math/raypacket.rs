@@ -1,7 +1,7 @@
 use super::ray::Ray;
 
 pub struct RayPacket {
-    rays : Vec<Ray>
+    rays: Vec<Ray>,
 }
 
 impl RayPacket {
@@ -22,6 +22,8 @@ impl IntoIterator for RayPacket {
 
 impl FromIterator<Ray> for RayPacket {
     fn from_iter<T: IntoIterator<Item = Ray>>(iter: T) -> Self {
-        RayPacket { rays : Vec::from_iter(iter)}
+        RayPacket {
+            rays: Vec::from_iter(iter),
+        }
     }
 }

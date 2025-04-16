@@ -1,11 +1,13 @@
-
 use std::marker::PhantomData;
 
 use crate::{
-    geom::{aabb::AABB, Geom},
-    math::{axis::Axis, interval::Interval, ray::{self, Ray}},
+    geom::{Geom, aabb::AABB},
+    math::{
+        axis::Axis,
+        interval::Interval,
+        ray::{self, Ray},
+    },
 };
-
 
 use super::intersection::Intersection;
 
@@ -15,20 +17,24 @@ struct BVHLeaf<T> {
 }
 
 impl<T> BVHLeaf<T> {
-    pub fn new(geom : T) -> Self
-        where T : Geom
+    pub fn new(geom: T) -> Self
+    where
+        T: Geom,
     {
-        BVHLeaf { bbox: geom.bbox().clone(), geom: geom }
+        BVHLeaf {
+            bbox: geom.bbox().clone(),
+            geom: geom,
+        }
     }
 }
 
-impl<T : Geom> Geom for BVHLeaf<T> {
+impl<T: Geom> Geom for BVHLeaf<T> {
     fn intersect<'r>(&'r self, ray: Ray, i: Interval) -> Option<Intersection<'r>> {
-                if self.bbox.intersect(&ray, i) {
-                    self.geom.intersect(ray, i)
-                } else {
-                    None
-                }
+        if self.bbox.intersect(&ray, i) {
+            self.geom.intersect(ray, i)
+        } else {
+            None
+        }
     }
 
     fn bbox(&self) -> AABB {
@@ -37,7 +43,7 @@ impl<T : Geom> Geom for BVHLeaf<T> {
 }
 
 struct BVHNode<T> {
-    phantom : PhantomData<T>,
+    phantom: PhantomData<T>,
     bbox_union: AABB,
     bbox_left: AABB,
     bbox_right: AABB,
@@ -46,24 +52,26 @@ struct BVHNode<T> {
 }
 
 impl<T> BVHNode<T> {
-    pub fn new(left : BVHTree<T>, right : BVHTree<T>) -> Self
-        where T : Geom
+    pub fn new(left: BVHTree<T>, right: BVHTree<T>) -> Self
+    where
+        T: Geom,
     {
         let bbl = left.bbox();
         let bbr = right.bbox();
         let bbu = AABB::union(&bbl, &bbr);
 
-        BVHNode { phantom: PhantomData,
-                    bbox_union: bbu,
-                    bbox_left: bbl,
-                    bbox_right: bbr,
-                    left: Box::new(left),
-                    right: Box::new(right)
-                }
+        BVHNode {
+            phantom: PhantomData,
+            bbox_union: bbu,
+            bbox_left: bbl,
+            bbox_right: bbr,
+            left: Box::new(left),
+            right: Box::new(right),
+        }
     }
 }
 
-impl<T : Geom> Geom for BVHNode<T> {
+impl<T: Geom> Geom for BVHNode<T> {
     fn intersect<'r>(&'r self, ray: Ray, i: Interval) -> Option<Intersection<'r>> {
         let in_left = self.bbox_left.intersect(&ray, i);
         let in_right = self.bbox_right.intersect(&ray, i);
@@ -90,37 +98,38 @@ impl<T : Geom> Geom for BVHNode<T> {
     }
 }
 
-
 enum BVHTree<T> {
-    Leaf (BVHLeaf<T>),
-    Node(BVHNode<T>)
+    Leaf(BVHLeaf<T>),
+    Node(BVHNode<T>),
 }
 
 impl<T: Geom> Geom for BVHTree<T> {
     fn intersect<'r>(&'r self, ray: Ray, i: Interval) -> Option<Intersection<'r>> {
         match self {
-            BVHTree::Leaf(leaf) => leaf.intersect(ray,i),
-            BVHTree::Node(node) => node.intersect(ray,i)
+            BVHTree::Leaf(leaf) => leaf.intersect(ray, i),
+            BVHTree::Node(node) => node.intersect(ray, i),
         }
     }
 
     fn bbox(&self) -> AABB {
         match self {
             BVHTree::Leaf(leaf) => leaf.bbox(),
-            BVHTree::Node(node) => node.bbox()
+            BVHTree::Node(node) => node.bbox(),
         }
     }
 }
 
 impl<T> BVHTree<T> {
-    pub fn leaf(geom : T) -> Self
-        where T : Geom
+    pub fn leaf(geom: T) -> Self
+    where
+        T: Geom,
     {
         BVHTree::Leaf(BVHLeaf::new(geom))
     }
-    
-    pub fn node(left : BVHTree<T>, right :BVHTree<T>) -> Self
-        where T : Geom
+
+    pub fn node(left: BVHTree<T>, right: BVHTree<T>) -> Self
+    where
+        T: Geom,
     {
         BVHTree::Node(BVHNode::new(left, right))
     }
@@ -128,18 +137,14 @@ impl<T> BVHTree<T> {
     pub fn depth(&self) -> usize {
         match self {
             BVHTree::Leaf(_) => 0,
-            BVHTree::Node(bvhnode) => {
-                1 + usize::max(bvhnode.left.depth(),bvhnode.right.depth())
-            },
+            BVHTree::Node(bvhnode) => 1 + usize::max(bvhnode.left.depth(), bvhnode.right.depth()),
         }
     }
 
     pub fn size(&self) -> usize {
         match self {
             BVHTree::Leaf(_) => 0,
-            BVHTree::Node(bvhnode) => {
-                1 + bvhnode.left.size() + bvhnode.right.size()
-            },
+            BVHTree::Node(bvhnode) => 1 + bvhnode.left.size() + bvhnode.right.size(),
         }
     }
 
@@ -151,7 +156,7 @@ impl<T> BVHTree<T> {
         assert!(n > 0);
         if n == 1 {
             let geom = geoms.remove(0);
-            return BVHTree::Leaf(BVHLeaf::new(geom))
+            return BVHTree::Leaf(BVHLeaf::new(geom));
         } else if n == 2 {
             let gr = geoms.remove(1);
             let gl = geoms.remove(0);
@@ -168,19 +173,16 @@ impl<T> BVHTree<T> {
             let left = Self::construct(geoms_left.to_vec());
             let right = Self::construct(geoms_right.to_vec());
 
-            BVHTree::node(left,right)
-
+            BVHTree::node(left, right)
         }
     }
-
-    
 }
 
 pub struct BVH<T> {
-    tree : BVHTree<T>
+    tree: BVHTree<T>,
 }
 
-impl<T> BVH<T>{
+impl<T> BVH<T> {
     pub fn construct(geoms: Vec<T>) -> Self
     where
         T: Geom + Clone,
@@ -192,7 +194,7 @@ impl<T> BVH<T>{
     }
 }
 
-impl<T : Geom> Geom for BVH<T> {
+impl<T: Geom> Geom for BVH<T> {
     fn intersect<'r>(&'r self, ray: Ray, i: Interval) -> Option<Intersection<'r>> {
         self.tree.intersect(ray, i)
     }

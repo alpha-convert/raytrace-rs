@@ -2,7 +2,8 @@ use std::{collections::HashMap, fs::File, sync::Arc};
 
 use crate::{
     geom::{
-        aabb::AABB, bvh::BVH, cube::Cube, intersection::Intersection, quad::Quad, sphere::Sphere, translation::Translation, Geom
+        Geom, aabb::AABB, bvh::BVH, cube::Cube, intersection::Intersection, quad::Quad,
+        sphere::Sphere, translation::Translation,
     },
     lighting::{
         color::Color,
@@ -11,7 +12,8 @@ use crate::{
         material::Material,
         metal::Metal,
         texture::{
-            checkerboard::Checkerboard, image::Image, scaletex::ScaleTex, solidcolor::SolidColor, Texture
+            Texture, checkerboard::Checkerboard, image::Image, scaletex::ScaleTex,
+            solidcolor::SolidColor,
         },
     },
     math::{interval::Interval, ray::Ray},
