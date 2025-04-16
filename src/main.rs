@@ -71,7 +71,10 @@ fn main() {
     //     )),
     // ));
 
-    let bunny = Arc::new(Scaling::new(
+    let bunny = Arc::new(
+        Translation::new(Vector3::new(0.0, -10.0, 0.0),
+            Arc::new(
+        Scaling::new(
         Vector3::new(10.0, 10.0, 10.0),
         Arc::new(Rotation::from_euler(
             0.0,
@@ -82,7 +85,7 @@ fn main() {
                 point8lambert.clone(),
             )),
         )),
-    ));
+    ))));
 
     // let checkertex: Arc<dyn Texture> =
     // Arc::new(Checkerboard::new(
@@ -166,7 +169,7 @@ fn main() {
         window_width as usize,
         window_height as usize,
         samples_per_batch,
-        0.00000001,
+        0.000000001,
     );
 
     let start = Instant::now();

@@ -37,6 +37,14 @@ impl<T: Geom> Geom for BVHLeaf<T> {
         }
     }
 
+    fn intersect_packet<'r>(
+        &'r self,
+        raypacket: crate::math::raypacket::RayPacket,
+        i: Interval,
+    ) -> Vec<(usize, Intersection<'r>)> {
+        self.geom.intersect_packet(raypacket, i)
+    }
+
     fn bbox(&self) -> AABB {
         self.bbox.clone()
     }
@@ -108,6 +116,17 @@ impl<T: Geom> Geom for BVHTree<T> {
         match self {
             BVHTree::Leaf(leaf) => leaf.intersect(ray, i),
             BVHTree::Node(node) => node.intersect(ray, i),
+        }
+    }
+
+    fn intersect_packet<'r>(
+        &'r self,
+        raypacket: crate::math::raypacket::RayPacket,
+        i: Interval,
+    ) -> Vec<(usize, Intersection<'r>)> {
+        match self {
+            BVHTree::Leaf(leaf) => leaf.intersect_packet(raypacket, i),
+            BVHTree::Node(node) => node.intersect_packet(raypacket, i),
         }
     }
 

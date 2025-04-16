@@ -39,9 +39,7 @@ impl Geom for Scaling {
         let int = self.geom.intersect(scaled_ray, i)?;
 
         let point = int.point().component_mul(&self.scale);
-
         let dist = (point - ray.origin()).norm(); //recompute the distance using the point.
-
         let scaled_normal = int.normal().component_mul(&self.scale_inv);
         if scaled_normal.magnitude_squared() < 1e-10 {
             return None;
