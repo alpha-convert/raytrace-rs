@@ -20,6 +20,7 @@ impl<'a> BufRow<'a> {
         *(self.data.get_mut(j).unwrap()) = c;
     }
 }
+   
 
 impl ParBuffer {
     pub fn new(rows: usize, cols: usize) -> Self {
