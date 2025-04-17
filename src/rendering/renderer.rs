@@ -9,11 +9,7 @@ use crate::{
     math::{interval::Interval, onlinemean::OnlineMean, ray::Ray},
 };
 
-use super::{
-    camera::Camera,
-    par_buffer::{ParBuffer},
-    scene::Scene,
-};
+use super::{camera::Camera, par_buffer::ParBuffer, scene::Scene};
 
 pub struct Renderer {
     //Metadata
@@ -57,23 +53,16 @@ impl Renderer {
     pub fn render(&self, camera: &Camera, scene: &Scene) -> ParBuffer {
         let mut buffer = ParBuffer::new(self.window_height as usize, self.window_width as usize);
 
-        buffer.par_iter_mut().for_each(|(y_idx,row)| {
-            for (x_idx,c) in row.iter_mut().enumerate() {
-                *c = self.render_px(camera,scene,x_idx,y_idx)
+        buffer.par_iter_mut().for_each(|(y_idx, row)| {
+            for (x_idx, c) in row.iter_mut().enumerate() {
+                *c = self.render_px(camera, scene, x_idx, y_idx)
             }
         });
         buffer
     }
 
-    /// Adaptive rendering. Estimate the pixel color online with welfords algorithm.
-    fn render_px(
-        &self,
-        camera: &Camera,
-        scene: &Scene,
-        x_idx: usize,
-        y_idx: usize,
-    )  -> Color
-    {
+    /// Adaptive rendering. Estimate the pixel color online, stop when it converges in L2 norm.
+    fn render_px(&self, camera: &Camera, scene: &Scene, x_idx: usize, y_idx: usize) -> Color {
         let mut estimator = OnlineMean::new();
 
         while estimator.convergence_delta() > self.conv_cutoff {
@@ -107,12 +96,4 @@ impl Renderer {
             }
         }
     }
-
-    // fn shade(inter : &Intersection) -> Color {
-    //     let r = inter.normal().x.abs();
-    //     let g = inter.normal().y.abs();
-    //     let b = inter.normal().z.abs();
-
-    //     Color::new(r, g, b)
-    // }
 }

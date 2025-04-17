@@ -71,21 +71,21 @@ fn main() {
     //     )),
     // ));
 
-    let bunny = Arc::new(
-        Translation::new(Vector3::new(0.0, -10.0, 0.0),
-            Arc::new(
-        Scaling::new(
-        Vector3::new(10.0, 10.0, 10.0),
-        Arc::new(Rotation::from_euler(
-            0.0,
-            0.0,
-            0.0,
-            Arc::new(TriMesh::from_fname(
-                "scenes/teapot.obj",
-                point8lambert.clone(),
+    let bunny = Arc::new(Translation::new(
+        Vector3::new(0.0, -10.0, 0.0),
+        Arc::new(Scaling::new(
+            Vector3::new(10.0, 10.0, 10.0),
+            Arc::new(Rotation::from_euler(
+                0.0,
+                0.0,
+                0.0,
+                Arc::new(TriMesh::from_fname(
+                    "scenes/teapot.obj",
+                    point8lambert.clone(),
+                )),
             )),
         )),
-    ))));
+    ));
 
     // let checkertex: Arc<dyn Texture> =
     // Arc::new(Checkerboard::new(

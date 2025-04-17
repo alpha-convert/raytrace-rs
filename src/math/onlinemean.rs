@@ -28,7 +28,7 @@ impl OnlineMean {
         self.conv = (old_mean - self.mean).magnitude_squared()
     }
 
-    pub fn mean(&self) -> Vector3<f64> {
+    pub fn mean(self) -> Vector3<f64> {
         self.mean
     }
 
