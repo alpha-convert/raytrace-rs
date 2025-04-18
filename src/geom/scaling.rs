@@ -4,28 +4,30 @@ use nalgebra::{SimdPartialOrd, Unit, Vector3};
 
 use crate::math::{interval::Interval, ray::Ray};
 
-use super::{aabb::AABB, bbox::Bbox, intersectable::Intersectable, intersection::Intersection, Geomable};
+use super::{
+    Geomable, aabb::AABB, bbox::Bbox, intersectable::Intersectable, intersection::Intersection,
+};
 
 pub struct Scaling<T> {
     scale: Vector3<f64>,
     scale_inv: Vector3<f64>,
-    inner : T,
+    inner: T,
 }
 
 impl<T> Scaling<T> {
-    pub fn new(scale: Vector3<f64>, inner : T) -> Self {
+    pub fn new(scale: Vector3<f64>, inner: T) -> Self {
         assert!(0.0 < scale.x);
         assert!(0.0 < scale.y);
         assert!(0.0 < scale.z);
         Scaling {
             scale,
             scale_inv: Vector3::new(1.0 / scale.x, 1.0 / scale.y, 1.0 / scale.z),
-            inner
+            inner,
         }
     }
 }
 
-impl<T : Intersectable> Intersectable for Scaling<T> {
+impl<T: Intersectable> Intersectable for Scaling<T> {
     fn intersect<'r>(&'r self, ray: Ray, i: Interval) -> Option<Intersection<'r>> {
         let scaled_origin = ray.origin().component_mul(&self.scale_inv);
         let scaled_dir = ray.dir().component_mul(&self.scale_inv);
@@ -55,18 +57,22 @@ impl<T : Intersectable> Intersectable for Scaling<T> {
         ))
     }
 
-    // fn bbox(&self) -> super::aabb::AABB 
+    // fn bbox(&self) -> super::aabb::AABB
 }
 
-impl<T : Geomable> Geomable for Scaling<T> {
+impl<T: Geomable> Geomable for Scaling<T> {
     fn into_geoms(self) -> impl Iterator<Item = super::Geom> {
-        self.inner.into_geoms().map(move |g| { super::Geom::Scale(Box::new(Scaling { scale: self.scale, scale_inv: self.scale_inv, inner: g }))})
+        self.inner.into_geoms().map(move |g| {
+            super::Geom::Scale(Box::new(Scaling {
+                scale: self.scale,
+                scale_inv: self.scale_inv,
+                inner: g,
+            }))
+        })
     }
-
-    
 }
 
-impl<T : Bbox> Bbox for Scaling<T> {
+impl<T: Bbox> Bbox for Scaling<T> {
     fn bbox(&self) -> AABB {
         let inner_bbox = self.inner.bbox();
         let min = inner_bbox.min();

@@ -16,7 +16,9 @@ use translation::Translation;
 use triangle::Triangle;
 
 pub mod aabb;
+pub mod bbox;
 pub mod bvh;
+pub mod bvhcache;
 pub mod cube;
 pub mod intersectable;
 pub mod intersection;
@@ -27,9 +29,6 @@ pub mod sphere;
 pub mod translation;
 pub mod triangle;
 pub mod trimesh;
-pub mod bvhcache;
-pub mod bbox;
-
 
 pub enum Geom {
     Quad(Box<Quad>),
@@ -37,7 +36,7 @@ pub enum Geom {
     Sphere(Box<Sphere>),
     Rot(Box<Rotation<Geom>>),
     Scale(Box<Scaling<Geom>>),
-    Trans(Box<Translation<Geom>>)
+    Trans(Box<Translation<Geom>>),
 }
 
 impl Intersectable for Geom {
@@ -76,11 +75,12 @@ impl Geomable for Geom {
     }
 }
 
-impl<T,I> Geomable for I
-    where T : Geomable,
-          I : IntoIterator<Item = T>
+impl<T, I> Geomable for I
+where
+    T: Geomable,
+    I: IntoIterator<Item = T>,
 {
     fn into_geoms(self) -> impl Iterator<Item = Geom> {
-        self.into_iter().flat_map(|t| {t.into_geoms()})
+        self.into_iter().flat_map(|t| t.into_geoms())
     }
 }

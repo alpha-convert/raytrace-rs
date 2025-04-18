@@ -82,13 +82,11 @@ fn main() {
                 1.0,
                 0.0,
                 0.0,
-                (TriMesh::from_fname(
-                    "scenes/teapot.obj",
-                    point8lambert.clone(),
-                )),
+                (TriMesh::from_fname("scenes/teapot.obj", point8lambert.clone())),
             )),
         )),
-    )).into_geoms();
+    ))
+    .into_geoms();
 
     // let checkertex: Arc<dyn Texture> =
     // Arc::new(Checkerboard::new(
@@ -150,7 +148,7 @@ fn main() {
         birdlight.clone(),
     );
 
-    let objects= bunny;
+    let objects = bunny;
 
     let scene = Scene::new(objects, Color::white());
 

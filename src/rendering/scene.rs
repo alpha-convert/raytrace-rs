@@ -2,7 +2,8 @@ use std::{collections::HashMap, fs::File, sync::Arc};
 
 use crate::{
     geom::{
-        aabb::AABB, bvh::BVH, cube::Cube, intersectable::Intersectable, intersection::Intersection, quad::Quad, sphere::Sphere, translation::Translation, Geom, Geomable
+        Geom, Geomable, aabb::AABB, bvh::BVH, cube::Cube, intersectable::Intersectable,
+        intersection::Intersection, quad::Quad, sphere::Sphere, translation::Translation,
     },
     lighting::{
         color::Color,
@@ -11,7 +12,8 @@ use crate::{
         material::Material,
         metal::Metal,
         texture::{
-            checkerboard::Checkerboard, image::Image, scaletex::ScaleTex, solidcolor::SolidColor, Texture
+            Texture, checkerboard::Checkerboard, image::Image, scaletex::ScaleTex,
+            solidcolor::SolidColor,
         },
     },
     math::{interval::Interval, ray::Ray},
@@ -32,7 +34,7 @@ impl Scene {
     //     Scene::from(&scene_desc)
     // }
 
-    pub fn new(geoms: impl Geomable , background_color: Color) -> Self {
+    pub fn new(geoms: impl Geomable, background_color: Color) -> Self {
         let geoms = geoms.into_geoms().collect();
         Scene {
             geoms: BVH::construct(geoms),

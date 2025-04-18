@@ -1,6 +1,8 @@
 use nalgebra::{Unit, Vector3};
 use rand::Rng;
-use rayon::iter::{IndexedParallelIterator, IntoParallelIterator, IntoParallelRefMutIterator, ParallelIterator};
+use rayon::iter::{
+    IndexedParallelIterator, IntoParallelIterator, IntoParallelRefMutIterator, ParallelIterator,
+};
 
 // use itertools::Itertools;
 use crate::{
@@ -51,9 +53,9 @@ impl Renderer {
     pub fn render(&self, camera: &Camera, scene: &Scene) -> ParBuffer {
         let mut buffer = ParBuffer::new(self.window_height as usize, self.window_width as usize);
 
-        buffer.par_iter_mut().for_each(|((x_idx,y_idx), c)| {
-            *c = self.render_px(camera, scene, x_idx, y_idx)
-        });
+        buffer
+            .par_iter_mut()
+            .for_each(|((x_idx, y_idx), c)| *c = self.render_px(camera, scene, x_idx, y_idx));
         buffer
     }
 

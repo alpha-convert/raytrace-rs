@@ -3,10 +3,14 @@ use std::sync::Arc;
 use nalgebra::{Unit, UnitVector3, Vector2, Vector3};
 
 use crate::{
-    geom::Geom, lighting::material::Material, math::{interval::Interval, ray::Ray}
+    geom::Geom,
+    lighting::material::Material,
+    math::{interval::Interval, ray::Ray},
 };
 
-use super::{aabb::AABB, bbox::Bbox, intersectable::Intersectable, intersection::Intersection, Geomable};
+use super::{
+    Geomable, aabb::AABB, bbox::Bbox, intersectable::Intersectable, intersection::Intersection,
+};
 
 pub struct Quad {
     q: Vector3<f64>,
@@ -80,8 +84,6 @@ impl Intersectable for Quad {
             Vector2::new(u, v),
         ));
     }
-
-    
 }
 
 impl Geomable for Quad {

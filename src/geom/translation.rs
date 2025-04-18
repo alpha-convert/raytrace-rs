@@ -7,7 +7,7 @@ use crate::{
     math::{interval::Interval, ray::Ray},
 };
 
-use super::{aabb::AABB, bbox::Bbox, Geomable};
+use super::{Geomable, aabb::AABB, bbox::Bbox};
 
 pub struct Translation<T> {
     trans: Vector3<f64>,
@@ -23,7 +23,7 @@ impl<T> Translation<T> {
     }
 }
 
-impl<T : Intersectable> Intersectable for Translation<T> {
+impl<T: Intersectable> Intersectable for Translation<T> {
     fn intersect<'r>(&'r self, ray: Ray, i: Interval) -> Option<Intersection<'r>> {
         let new_ray = Ray::new(ray.origin() - self.trans, ray.dir());
         match self.inner.intersect(new_ray, i) {
@@ -34,20 +34,20 @@ impl<T : Intersectable> Intersectable for Translation<T> {
             }
         }
     }
-
-    
 }
 
-impl<T : Geomable> Geomable for Translation<T> {
+impl<T: Geomable> Geomable for Translation<T> {
     fn into_geoms(self) -> impl Iterator<Item = super::Geom> {
-        self.inner.into_geoms().map(move |g| { super::Geom::Trans(Box::new(Translation { trans : self.trans , inner: g }))})
+        self.inner.into_geoms().map(move |g| {
+            super::Geom::Trans(Box::new(Translation {
+                trans: self.trans,
+                inner: g,
+            }))
+        })
     }
-
-    
-
 }
 
-impl<T : Bbox> Bbox for Translation<T> {
+impl<T: Bbox> Bbox for Translation<T> {
     fn bbox(&self) -> AABB {
         self.inner.bbox().translate(self.trans)
     }

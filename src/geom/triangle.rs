@@ -7,7 +7,10 @@ use crate::{
     math::{interval::Interval, ray::Ray},
 };
 
-use super::{aabb::AABB, bbox::Bbox, intersectable::Intersectable, intersection::Intersection, Geom, Geomable};
+use super::{
+    Geom, Geomable, aabb::AABB, bbox::Bbox, intersectable::Intersectable,
+    intersection::Intersection,
+};
 
 #[derive(Clone)]
 pub struct Triangle {
@@ -79,8 +82,6 @@ impl Intersectable for Triangle {
         let uv = Vector2::new(u, v);
         Some(Intersection::new(pt, t, self.normal, self.mat.as_ref(), uv))
     }
-
-    
 }
 
 impl Geomable for Triangle {

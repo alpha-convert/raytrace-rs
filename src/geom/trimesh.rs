@@ -4,10 +4,15 @@ use nalgebra::{Unit, Vector3};
 use obj::{IndexTuple, SimplePolygon};
 
 use crate::{
-    geom::aabb::AABB, lighting::material::Material, math::{interval::Interval, ray::Ray}
+    geom::aabb::AABB,
+    lighting::material::Material,
+    math::{interval::Interval, ray::Ray},
 };
 
-use super::{bvh::BVH, intersectable::Intersectable, intersection::Intersection, triangle::Triangle, Geomable};
+use super::{
+    Geomable, bvh::BVH, intersectable::Intersectable, intersection::Intersection,
+    triangle::Triangle,
+};
 
 pub struct TriMesh {
     faces: Vec<Triangle>,
@@ -37,15 +42,15 @@ impl TriMesh {
             tris.push(Triangle::new(a, b, c, normal, mat.clone()));
         }
 
-        TriMesh {
-            faces: tris,
-        }
+        TriMesh { faces: tris }
     }
 }
 
 impl Geomable for TriMesh {
     fn into_geoms(self) -> impl Iterator<Item = super::Geom> {
-        self.faces.into_iter().map(|t| {super::Geom::Tri(Box::new(t))})
+        self.faces
+            .into_iter()
+            .map(|t| super::Geom::Tri(Box::new(t)))
     }
 }
 // impl Intersectable for TriMesh {

@@ -1,7 +1,7 @@
 use std::marker::PhantomData;
 
 use crate::{
-    geom::{intersectable::Intersectable, aabb::AABB},
+    geom::{aabb::AABB, intersectable::Intersectable},
     math::{
         axis::Axis,
         interval::Interval,
@@ -9,7 +9,7 @@ use crate::{
     },
 };
 
-use super::{bbox::Bbox, bvhcache::BVHCache, intersection::Intersection, Geom, Geomable};
+use super::{Geom, Geomable, bbox::Bbox, bvhcache::BVHCache, intersection::Intersection};
 
 struct BVHLeaf<T> {
     bbox: AABB,
@@ -17,7 +17,7 @@ struct BVHLeaf<T> {
 }
 
 impl<T> BVHLeaf<T> {
-    pub fn new(inner : T) -> Self
+    pub fn new(inner: T) -> Self
     where
         T: Bbox,
     {
@@ -70,7 +70,6 @@ impl<T> BVHNode<T> {
             right: Box::new(right),
         }
     }
-
 }
 
 impl<T: Intersectable> Intersectable for BVHNode<T> {
@@ -113,7 +112,6 @@ impl<T: Intersectable> Intersectable for BVHTree<T> {
         }
     }
 
-
     // fn bbox(&self) -> AABB {
     //     match self {
     //         BVHTree::Leaf(leaf) => leaf.bbox(),
@@ -130,7 +128,7 @@ impl<T> BVHTree<T> {
         }
     }
 
-    pub fn leaf(inner : T) -> Self
+    pub fn leaf(inner: T) -> Self
     where
         T: Bbox,
     {
@@ -158,8 +156,9 @@ impl<T> BVHTree<T> {
         }
     }
 
-    fn construct(mut from : Vec<T>) -> Self
-        where T : Bbox
+    fn construct(mut from: Vec<T>) -> Self
+    where
+        T: Bbox,
     {
         let n = from.len();
         assert!(n > 0);
@@ -181,7 +180,7 @@ impl<T> BVHTree<T> {
 
             let geoms_right = from.split_off(mid);
             let geoms_left = from;
-             
+
             let left = Self::construct(geoms_left);
             let right = Self::construct(geoms_right);
 

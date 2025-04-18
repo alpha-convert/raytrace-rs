@@ -8,7 +8,7 @@ use crate::{
     math::{interval::Interval, ray::Ray},
 };
 
-use super::{aabb::AABB, bbox::Bbox, Geom, Geomable};
+use super::{Geom, Geomable, aabb::AABB, bbox::Bbox};
 
 pub struct Sphere {
     center: Vector3<f64>,
@@ -77,8 +77,6 @@ impl Intersectable for Sphere {
             uv,
         ))
     }
-
-    
 }
 
 impl Geomable for Sphere {
@@ -92,5 +90,3 @@ impl Bbox for Sphere {
         self.bbox.clone()
     }
 }
-
-
