@@ -1,6 +1,6 @@
 use nalgebra::{Unit, Vector3};
 use rand::Rng;
-use rayon::iter::{IntoParallelIterator, IntoParallelRefMutIterator, ParallelIterator};
+use rayon::iter::{IndexedParallelIterator, IntoParallelIterator, IntoParallelRefMutIterator, ParallelIterator};
 
 // use itertools::Itertools;
 use crate::{
@@ -45,18 +45,14 @@ impl Renderer {
         let mut rng = rand::rng();
         let du: f64 = rng.random::<f64>() - 0.5;
         let dv: f64 = rng.random::<f64>() - 0.5;
-        assert!(-0.5 <= du && du <= 0.5);
-        assert!(-0.5 <= dv && dv <= 0.5);
         (du, dv)
     }
 
     pub fn render(&self, camera: &Camera, scene: &Scene) -> ParBuffer {
         let mut buffer = ParBuffer::new(self.window_height as usize, self.window_width as usize);
 
-        buffer.par_iter_mut().for_each(|(y_idx, row)| {
-            for (x_idx, c) in row.iter_mut().enumerate() {
-                *c = self.render_px(camera, scene, x_idx, y_idx)
-            }
+        buffer.par_iter_mut().for_each(|((x_idx,y_idx), c)| {
+            *c = self.render_px(camera, scene, x_idx, y_idx)
         });
         buffer
     }

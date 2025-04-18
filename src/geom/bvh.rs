@@ -9,7 +9,7 @@ use crate::{
     },
 };
 
-use super::intersection::Intersection;
+use super::{bvhcache::BVHCache, intersection::Intersection};
 
 struct BVHLeaf<T> {
     bbox: AABB,

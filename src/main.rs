@@ -1,3 +1,5 @@
+#![feature(type_alias_impl_trait)]
+#![feature(impl_trait_in_assoc_type)]
 extern crate sdl2;
 
 use geom::Geom;
@@ -169,7 +171,7 @@ fn main() {
         window_width as usize,
         window_height as usize,
         samples_per_batch,
-        0.000000001,
+        0.00000001,
     );
 
     let start = Instant::now();

@@ -1,6 +1,6 @@
 use std::sync::{Mutex, MutexGuard};
 
-use rayon::iter::{IndexedParallelIterator, IntoParallelIterator, IntoParallelRefMutIterator};
+use rayon::{iter::{Enumerate, IndexedParallelIterator, IntoParallelIterator, IntoParallelRefMutIterator, ParallelIterator}, slice::{IterMut, ParallelSliceMut}};
 
 use crate::lighting::color::Color;
 
@@ -10,34 +10,35 @@ use super::render_surface::RenderSurface;
 pub struct ParBuffer {
     rows: usize,
     cols: usize,
-    data: Vec<Vec<Color>>,
+    data: Box<[Color]>, //stored row-major
 }
 
 impl<'data> IntoParallelRefMutIterator<'data> for ParBuffer {
-    type Iter = rayon::iter::Enumerate<<&'data mut Vec<Vec<Color>> as IntoParallelIterator>::Iter>;
+    type Iter = rayon::iter::Map<Enumerate<IterMut<'data,Color>>,
+        impl Fn((usize, &'data mut Color)) -> ((usize,usize), &'data mut Color)
+    >;
 
-    type Item = (usize, &'data mut Vec<Color>);
+    type Item = ((usize,usize), &'data mut Color);
 
     fn par_iter_mut(&'data mut self) -> Self::Iter {
-        self.data.par_iter_mut().enumerate()
+        self.data.as_parallel_slice_mut().par_iter_mut().enumerate().map(|(i,c)| {
+            let x = i % self.cols;
+            let y = i / self.cols;
+            ((x,y),c)
+        })
     }
 }
 
 impl ParBuffer {
     pub fn new(rows: usize, cols: usize) -> Self {
-        let single_row = vec![Color::black(); cols];
-        let mut data = Vec::with_capacity(rows);
-        for _ in 0..rows {
-            data.push(single_row.clone());
-        }
+        let data = vec![Color::black(); rows * cols].into_boxed_slice();
         ParBuffer { rows, cols, data }
     }
 
     pub fn blit_to<T: RenderSurface>(&mut self, surf: &mut T) {
         for y in 0..self.rows {
-            let row = self.data.get(y).unwrap();
             for x in 0..self.cols {
-                let color = row.get(x).unwrap();
+                let color = self.data.get(y * self.cols + x).unwrap();
                 surf.draw_point(x as u64, y as u64, color.gamma());
             }
         }

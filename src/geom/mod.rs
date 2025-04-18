@@ -18,10 +18,11 @@ pub mod sphere;
 pub mod translation;
 pub mod triangle;
 pub mod trimesh;
+pub mod bvhcache;
 
 pub trait Geom: Send + Sync {
-    // It might be more efficient to pass in a &mut Option<Intersectoin>, but that's ugly.
     fn intersect<'r>(&'r self, ray: Ray, i: Interval) -> Option<Intersection<'r>>;
+
     fn intersect_packet<'r>(
         &'r self,
         raypacket: RayPacket,
