@@ -2,8 +2,7 @@ use std::{collections::HashMap, fs::File, sync::Arc};
 
 use crate::{
     geom::{
-        Geom, Geomable, aabb::AABB, bvh::BVH, cube::Cube, intersectable::Intersectable,
-        intersection::Intersection, quad::Quad, sphere::Sphere, translation::Translation,
+        aabb::AABB, bvh::BVH, cube::Cube, intersectable::Intersectable, intersection::Intersection, quad::Quad, sphere::Sphere, translation::Translation, Geom, Geomable
     },
     lighting::{
         color::Color,
@@ -12,32 +11,24 @@ use crate::{
         material::Material,
         metal::Metal,
         texture::{
-            Texture, checkerboard::Checkerboard, image::Image, scaletex::ScaleTex,
-            solidcolor::SolidColor,
+            checkerboard::Checkerboard, image::Image, scaletex::ScaleTex, solidcolor::SolidColor, Texture
         },
     },
     math::{interval::Interval, ray::Ray},
 };
 
-use super::scenedesc::{GeomDesc, MaterialDesc, SceneDesc, TextureDesc};
+use super::{scenedesc::{GeomDesc, MaterialDesc, SceneDesc, TextureDesc}};
 
 pub struct Scene {
-    geoms: BVH<Geom>,
+    bvh : BVH<Geom>,
     background_color: Color,
 }
 
 impl Scene {
-    // pub fn from_fname(fname: &str) -> Self {
-    //     let f = File::open(fname).unwrap();
-    //     let val: serde_json::Value = serde_json::from_reader(f).unwrap();
-    //     let scene_desc = SceneDesc::from(val);
-    //     Scene::from(&scene_desc)
-    // }
-
-    pub fn new(geoms: impl Geomable, background_color: Color) -> Self {
+    pub fn new(geoms: impl Geomable , background_color: Color) -> Self {
         let geoms = geoms.into_geoms().collect();
         Scene {
-            geoms: BVH::construct(geoms),
+            bvh : BVH::construct(geoms),
             background_color,
         }
     }
@@ -45,13 +36,14 @@ impl Scene {
     pub fn background_color(&self) -> Color {
         self.background_color
     }
+
+    pub fn bvh(&self) -> &BVH<Geom> {
+        &self.bvh
+    }
+
 }
 
-impl Intersectable for Scene {
-    fn intersect<'r>(&'r self, ray: Ray, i: Interval) -> Option<Intersection<'r>> {
-        self.geoms.intersect(ray, i)
-    }
-}
+
 
 // fn construct_geom(gd: &GeomDesc, mat_map: &HashMap<String, Arc<dyn Material>>) -> Arc<dyn Intersectable> {
 //     match gd {

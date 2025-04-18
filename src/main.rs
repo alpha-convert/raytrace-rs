@@ -79,7 +79,7 @@ fn main() {
         (Scaling::new(
             Vector3::new(10.0, 10.0, 10.0),
             (Rotation::from_euler(
-                1.0,
+                0.0,
                 0.0,
                 0.0,
                 (TriMesh::from_fname("scenes/teapot.obj", point8lambert.clone())),

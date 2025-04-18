@@ -9,7 +9,7 @@ use crate::{
     },
 };
 
-use super::{Geom, Geomable, bbox::Bbox, bvhcache::BVHCache, intersection::Intersection};
+use super::{Geom, Geomable, bbox::Bbox, intersection::Intersection};
 
 struct BVHLeaf<T> {
     bbox: AABB,
@@ -27,21 +27,22 @@ impl<T> BVHLeaf<T> {
             inner: inner,
         }
     }
-}
 
-impl<T: Intersectable> Intersectable for BVHLeaf<T> {
-    fn intersect<'r>(&'r self, ray: Ray, i: Interval) -> Option<Intersection<'r>> {
+    pub fn intersect<'r>(&'r self, ray: Ray, i: Interval) -> Option<(Intersection<'r>)>
+        where T : Intersectable
+    {
         if self.bbox.intersect(&ray, i) {
             self.inner.intersect(ray, i)
         } else {
             None
         }
     }
+}
+
 
     // fn bbox(&self) -> AABB {
     //     self.bbox.clone()
     // }
-}
 
 struct BVHNode<T> {
     phantom: PhantomData<T>,
@@ -70,10 +71,10 @@ impl<T> BVHNode<T> {
             right: Box::new(right),
         }
     }
-}
 
-impl<T: Intersectable> Intersectable for BVHNode<T> {
-    fn intersect<'r>(&'r self, ray: Ray, i: Interval) -> Option<Intersection<'r>> {
+    pub fn intersect<'r>(&'r self, ray: Ray, i: Interval) -> Option<Intersection<'r>>
+        where T : Intersectable
+    {
         let in_left = self.bbox_left.intersect(&ray, i);
         let in_right = self.bbox_right.intersect(&ray, i);
 
@@ -93,34 +94,23 @@ impl<T: Intersectable> Intersectable for BVHNode<T> {
             None
         }
     }
-
-    // fn bbox(&self) -> AABB {
-    //     self.bbox_union.clone()
-    // }
 }
 
-enum BVHTree<T> {
+pub enum BVHTree<T> {
     Leaf(BVHLeaf<T>),
     Node(BVHNode<T>),
 }
 
-impl<T: Intersectable> Intersectable for BVHTree<T> {
-    fn intersect<'r>(&'r self, ray: Ray, i: Interval) -> Option<Intersection<'r>> {
+impl<T> BVHTree<T> {
+    pub fn intersect<'r>(&'r self, ray: Ray, i: Interval) -> Option<Intersection<'r>>
+        where T : Intersectable
+    {
         match self {
             BVHTree::Leaf(leaf) => leaf.intersect(ray, i),
-            BVHTree::Node(node) => node.intersect(ray, i),
+            BVHTree::Node(node) => node.intersect(ray, i)
         }
     }
 
-    // fn bbox(&self) -> AABB {
-    //     match self {
-    //         BVHTree::Leaf(leaf) => leaf.bbox(),
-    //         BVHTree::Node(node) => node.bbox(),
-    //     }
-    // }
-}
-
-impl<T> BVHTree<T> {
     pub fn bbox(&self) -> AABB {
         match self {
             BVHTree::Leaf(bvhleaf) => bvhleaf.bbox.clone(),
@@ -203,14 +193,22 @@ impl<T> BVH<T> {
         dbg!(t.size());
         BVH { tree: t }
     }
-}
 
-impl<T: Intersectable> Intersectable for BVH<T> {
-    fn intersect<'r>(&'r self, ray: Ray, i: Interval) -> Option<Intersection<'r>> {
+    pub fn top(&self) -> &BVHTree<T> {
+        &self.tree
+    }
+        
+    pub fn intersect<'r>(&'r self, ray: Ray, i: Interval) -> Option<Intersection<'r>>
+        where T : Intersectable
+    {
         self.tree.intersect(ray, i)
     }
-
-    // fn bbox(&self) -> AABB {
-    //     self.tree.bbox()
-    // }
 }
+
+// impl<T: Intersectable> Intersectable for BVH<T> {
+//     
+
+//     // fn bbox(&self) -> AABB {
+//     //     self.tree.bbox()
+//     // }
+// }

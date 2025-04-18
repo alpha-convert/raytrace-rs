@@ -18,7 +18,6 @@ use triangle::Triangle;
 pub mod aabb;
 pub mod bbox;
 pub mod bvh;
-pub mod bvhcache;
 pub mod cube;
 pub mod intersectable;
 pub mod intersection;
