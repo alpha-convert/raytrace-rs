@@ -4,40 +4,40 @@ use nalgebra::{Matrix3, Rotation3, Unit, Vector3};
 
 use crate::math::{interval::Interval, ray::Ray};
 
-use super::{Geom, aabb::AABB, intersection::Intersection};
+use super::{aabb::AABB, bbox::Bbox, intersectable::Intersectable, intersection::Intersection, Geomable};
 
-pub struct Rotation {
+pub struct Rotation<T> {
     rotation: Rotation3<f64>,
     rotation_inv: Rotation3<f64>,
-    geom: Arc<dyn Geom>,
+    inner : T,
 }
 
-impl Rotation {
-    pub fn from_axis_angle(axis: Unit<Vector3<f64>>, angle_rad: f64, geom: Arc<dyn Geom>) -> Self {
+impl<T> Rotation<T> {
+    pub fn from_axis_angle(axis: Unit<Vector3<f64>>, angle_rad: f64, inner : T) -> Self {
         let rotation = Rotation3::from_axis_angle(&axis, angle_rad);
         let rotation_inv = rotation.inverse();
 
         Rotation {
             rotation,
             rotation_inv,
-            geom,
+            inner,
         }
     }
 
     // Alternative constructor using Euler angles (roll, pitch, yaw)
-    pub fn from_euler(roll: f64, pitch: f64, yaw: f64, geom: Arc<dyn Geom>) -> Self {
+    pub fn from_euler(roll: f64, pitch: f64, yaw: f64, inner : T) -> Self {
         let rotation = Rotation3::from_euler_angles(roll, pitch, yaw);
         let rotation_inv = rotation.inverse();
 
         Rotation {
             rotation,
             rotation_inv,
-            geom,
+            inner,
         }
     }
 }
 
-impl Geom for Rotation {
+impl<T : Intersectable> Intersectable for Rotation<T> {
     fn intersect<'r>(&'r self, ray: Ray, i: Interval) -> Option<Intersection<'r>> {
         // Transform ray to object space
         let rotated_origin = self.rotation_inv * ray.origin();
@@ -47,7 +47,7 @@ impl Geom for Rotation {
         let rotated_ray = Ray::new(rotated_origin, rotated_dir);
 
         // Intersect with the underlying geometry
-        let int = self.geom.intersect(rotated_ray, i)?;
+        let int = self.inner.intersect(rotated_ray, i)?;
 
         // Transform intersection point and normal back to world space
         let point = self.rotation * int.point();
@@ -67,8 +67,21 @@ impl Geom for Rotation {
         ))
     }
 
+}
+
+impl<T : Geomable> Geomable for Rotation<T> {
+
+    fn into_geoms(self) -> impl Iterator<Item = super::Geom> {
+        //NOTE: this makes stupid numbers of copies of the rotation matrices
+        self.inner.into_geoms().map(move |g| { super::Geom::Rot(Box::new(Rotation { rotation: self.rotation, rotation_inv: self.rotation_inv, inner: g }))})
+    }
+    
+}
+
+
+impl<T : Bbox> Bbox for Rotation<T> {
     fn bbox(&self) -> AABB {
-        let inner_bbox = self.geom.bbox();
+        let inner_bbox = self.inner.bbox();
 
         // Get the corners of the inner bounding box
         let min = inner_bbox.min();
@@ -108,4 +121,5 @@ impl Geom for Rotation {
 
         AABB::from_points(new_min, new_max)
     }
+
 }

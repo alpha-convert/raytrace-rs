@@ -1,7 +1,7 @@
 use std::marker::PhantomData;
 
 use crate::{
-    geom::{Geom, aabb::AABB},
+    geom::{intersectable::Intersectable, aabb::AABB},
     math::{
         axis::Axis,
         interval::Interval,
@@ -9,45 +9,38 @@ use crate::{
     },
 };
 
-use super::{bvhcache::BVHCache, intersection::Intersection};
+use super::{bbox::Bbox, bvhcache::BVHCache, intersection::Intersection, Geom, Geomable};
 
 struct BVHLeaf<T> {
     bbox: AABB,
-    geom: T,
+    inner: T,
 }
 
 impl<T> BVHLeaf<T> {
-    pub fn new(geom: T) -> Self
+    pub fn new(inner : T) -> Self
     where
-        T: Geom,
+        T: Bbox,
     {
+        let bb = inner.bbox();
         BVHLeaf {
-            bbox: geom.bbox().clone(),
-            geom: geom,
+            bbox: bb,
+            inner: inner,
         }
     }
 }
 
-impl<T: Geom> Geom for BVHLeaf<T> {
+impl<T: Intersectable> Intersectable for BVHLeaf<T> {
     fn intersect<'r>(&'r self, ray: Ray, i: Interval) -> Option<Intersection<'r>> {
         if self.bbox.intersect(&ray, i) {
-            self.geom.intersect(ray, i)
+            self.inner.intersect(ray, i)
         } else {
             None
         }
     }
 
-    fn intersect_packet<'r>(
-        &'r self,
-        raypacket: crate::math::raypacket::RayPacket,
-        i: Interval,
-    ) -> Vec<(usize, Intersection<'r>)> {
-        self.geom.intersect_packet(raypacket, i)
-    }
-
-    fn bbox(&self) -> AABB {
-        self.bbox.clone()
-    }
+    // fn bbox(&self) -> AABB {
+    //     self.bbox.clone()
+    // }
 }
 
 struct BVHNode<T> {
@@ -62,7 +55,7 @@ struct BVHNode<T> {
 impl<T> BVHNode<T> {
     pub fn new(left: BVHTree<T>, right: BVHTree<T>) -> Self
     where
-        T: Geom,
+        T: Bbox,
     {
         let bbl = left.bbox();
         let bbr = right.bbox();
@@ -77,9 +70,10 @@ impl<T> BVHNode<T> {
             right: Box::new(right),
         }
     }
+
 }
 
-impl<T: Geom> Geom for BVHNode<T> {
+impl<T: Intersectable> Intersectable for BVHNode<T> {
     fn intersect<'r>(&'r self, ray: Ray, i: Interval) -> Option<Intersection<'r>> {
         let in_left = self.bbox_left.intersect(&ray, i);
         let in_right = self.bbox_right.intersect(&ray, i);
@@ -101,9 +95,9 @@ impl<T: Geom> Geom for BVHNode<T> {
         }
     }
 
-    fn bbox(&self) -> AABB {
-        self.bbox_union.clone()
-    }
+    // fn bbox(&self) -> AABB {
+    //     self.bbox_union.clone()
+    // }
 }
 
 enum BVHTree<T> {
@@ -111,7 +105,7 @@ enum BVHTree<T> {
     Node(BVHNode<T>),
 }
 
-impl<T: Geom> Geom for BVHTree<T> {
+impl<T: Intersectable> Intersectable for BVHTree<T> {
     fn intersect<'r>(&'r self, ray: Ray, i: Interval) -> Option<Intersection<'r>> {
         match self {
             BVHTree::Leaf(leaf) => leaf.intersect(ray, i),
@@ -119,36 +113,33 @@ impl<T: Geom> Geom for BVHTree<T> {
         }
     }
 
-    fn intersect_packet<'r>(
-        &'r self,
-        raypacket: crate::math::raypacket::RayPacket,
-        i: Interval,
-    ) -> Vec<(usize, Intersection<'r>)> {
-        match self {
-            BVHTree::Leaf(leaf) => leaf.intersect_packet(raypacket, i),
-            BVHTree::Node(node) => node.intersect_packet(raypacket, i),
-        }
-    }
 
-    fn bbox(&self) -> AABB {
-        match self {
-            BVHTree::Leaf(leaf) => leaf.bbox(),
-            BVHTree::Node(node) => node.bbox(),
-        }
-    }
+    // fn bbox(&self) -> AABB {
+    //     match self {
+    //         BVHTree::Leaf(leaf) => leaf.bbox(),
+    //         BVHTree::Node(node) => node.bbox(),
+    //     }
+    // }
 }
 
 impl<T> BVHTree<T> {
-    pub fn leaf(geom: T) -> Self
+    pub fn bbox(&self) -> AABB {
+        match self {
+            BVHTree::Leaf(bvhleaf) => bvhleaf.bbox.clone(),
+            BVHTree::Node(bvhnode) => bvhnode.bbox_union.clone(),
+        }
+    }
+
+    pub fn leaf(inner : T) -> Self
     where
-        T: Geom,
+        T: Bbox,
     {
-        BVHTree::Leaf(BVHLeaf::new(geom))
+        BVHTree::Leaf(BVHLeaf::new(inner))
     }
 
     pub fn node(left: BVHTree<T>, right: BVHTree<T>) -> Self
     where
-        T: Geom,
+        T: Bbox,
     {
         BVHTree::Node(BVHNode::new(left, right))
     }
@@ -167,30 +158,32 @@ impl<T> BVHTree<T> {
         }
     }
 
-    fn construct(mut geoms: Vec<T>) -> Self
-    where
-        T: Geom + Clone,
+    fn construct(mut from : Vec<T>) -> Self
+        where T : Bbox
     {
-        let n = geoms.len();
+        let n = from.len();
         assert!(n > 0);
         if n == 1 {
-            let geom = geoms.remove(0);
+            let geom = from.remove(0);
             return BVHTree::Leaf(BVHLeaf::new(geom));
         } else if n == 2 {
-            let gr = geoms.remove(1);
-            let gl = geoms.remove(0);
+            let gr = from.remove(1);
+            let gl = from.remove(0);
             let left = BVHTree::leaf(gl);
             let right = BVHTree::leaf(gr);
             BVHTree::node(left, right)
         } else {
             let axis = Axis::random();
 
-            geoms.sort_by(|this, that| AABB::axis_compare(axis, &this.bbox(), &that.bbox()));
+            from.sort_by(|this, that| AABB::axis_compare(axis, &this.bbox(), &that.bbox()));
 
             let mid = n / 2;
-            let (geoms_left, geoms_right) = geoms.split_at_mut(mid);
-            let left = Self::construct(geoms_left.to_vec());
-            let right = Self::construct(geoms_right.to_vec());
+
+            let geoms_right = from.split_off(mid);
+            let geoms_left = from;
+             
+            let left = Self::construct(geoms_left);
+            let right = Self::construct(geoms_right);
 
             BVHTree::node(left, right)
         }
@@ -204,7 +197,7 @@ pub struct BVH<T> {
 impl<T> BVH<T> {
     pub fn construct(geoms: Vec<T>) -> Self
     where
-        T: Geom + Clone,
+        T: Bbox,
     {
         let t = BVHTree::construct(geoms);
         dbg!(t.depth());
@@ -213,12 +206,12 @@ impl<T> BVH<T> {
     }
 }
 
-impl<T: Geom> Geom for BVH<T> {
+impl<T: Intersectable> Intersectable for BVH<T> {
     fn intersect<'r>(&'r self, ray: Ray, i: Interval) -> Option<Intersection<'r>> {
         self.tree.intersect(ray, i)
     }
 
-    fn bbox(&self) -> AABB {
-        self.tree.bbox()
-    }
+    // fn bbox(&self) -> AABB {
+    //     self.tree.bbox()
+    // }
 }

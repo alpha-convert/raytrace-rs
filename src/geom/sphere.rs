@@ -3,12 +3,12 @@ use std::{f64::consts::PI, sync::Arc};
 use nalgebra::{Unit, UnitVector3, Vector2, Vector3};
 
 use crate::{
-    geom::{Geom, intersection::Intersection},
+    geom::{intersectable::Intersectable, intersection::Intersection},
     lighting::material::Material,
     math::{interval::Interval, ray::Ray},
 };
 
-use super::aabb::AABB;
+use super::{aabb::AABB, bbox::Bbox, Geom, Geomable};
 
 pub struct Sphere {
     center: Vector3<f64>,
@@ -42,7 +42,7 @@ impl Sphere {
     }
 }
 
-impl Geom for Sphere {
+impl Intersectable for Sphere {
     fn intersect<'r>(&'r self, ray: Ray, i: Interval) -> Option<Intersection<'r>> {
         let oc = self.center - ray.origin();
 
@@ -78,7 +78,19 @@ impl Geom for Sphere {
         ))
     }
 
+    
+}
+
+impl Geomable for Sphere {
+    fn into_geoms(self) -> impl Iterator<Item = super::Geom> {
+        std::iter::once(Geom::Sphere(Box::new(self)))
+    }
+}
+
+impl Bbox for Sphere {
     fn bbox(&self) -> AABB {
         self.bbox.clone()
     }
 }
+
+

@@ -2,7 +2,7 @@
 #![feature(impl_trait_in_assoc_type)]
 extern crate sdl2;
 
-use geom::Geom;
+use geom::intersectable::Intersectable;
 use geom::quad::Quad;
 use geom::rotation::Rotation;
 use geom::scaling::Scaling;
@@ -10,6 +10,7 @@ use geom::sphere::Sphere;
 use geom::translation::Translation;
 use geom::triangle::Triangle;
 use geom::trimesh::TriMesh;
+use geom::{Geom, Geomable};
 use lighting::color::Color;
 use lighting::diffuselight::DiffuseLight;
 use lighting::lambertian::Lambertian;
@@ -73,21 +74,21 @@ fn main() {
     //     )),
     // ));
 
-    let bunny = Arc::new(Translation::new(
+    let bunny = (Translation::new(
         Vector3::new(0.0, -10.0, 0.0),
-        Arc::new(Scaling::new(
+        (Scaling::new(
             Vector3::new(10.0, 10.0, 10.0),
-            Arc::new(Rotation::from_euler(
+            (Rotation::from_euler(
+                1.0,
                 0.0,
                 0.0,
-                0.0,
-                Arc::new(TriMesh::from_fname(
+                (TriMesh::from_fname(
                     "scenes/teapot.obj",
                     point8lambert.clone(),
                 )),
             )),
         )),
-    ));
+    )).into_geoms();
 
     // let checkertex: Arc<dyn Texture> =
     // Arc::new(Checkerboard::new(
@@ -141,15 +142,15 @@ fn main() {
         point8metal,
     ));
 
-    let tri0 = Arc::new(Triangle::new(
+    let tri0 = Triangle::new(
         Vector3::new(10.0, 10.0, 0.0),
         Vector3::new(-10.0, 0.0, 0.0),
         Vector3::new(-10.0, 10.0, 0.0),
         Unit::new_normalize(Vector3::new(0.0, 0.0, 1.0)),
         birdlight.clone(),
-    ));
+    );
 
-    let objects: Vec<Arc<dyn Geom>> = vec![bunny, ground, sphere1];
+    let objects= bunny;
 
     let scene = Scene::new(objects, Color::white());
 

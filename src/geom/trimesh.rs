@@ -4,14 +4,13 @@ use nalgebra::{Unit, Vector3};
 use obj::{IndexTuple, SimplePolygon};
 
 use crate::{
-    lighting::material::Material,
-    math::{interval::Interval, ray::Ray},
+    geom::aabb::AABB, lighting::material::Material, math::{interval::Interval, ray::Ray}
 };
 
-use super::{Geom, bvh::BVH, intersection::Intersection, triangle::Triangle};
+use super::{bvh::BVH, intersectable::Intersectable, intersection::Intersection, triangle::Triangle, Geomable};
 
 pub struct TriMesh {
-    faces: BVH<Triangle>,
+    faces: Vec<Triangle>,
 }
 
 impl TriMesh {
@@ -39,17 +38,22 @@ impl TriMesh {
         }
 
         TriMesh {
-            faces: BVH::construct(tris),
+            faces: tris,
         }
     }
 }
 
-impl Geom for TriMesh {
-    fn intersect<'r>(&'r self, ray: Ray, i: Interval) -> Option<Intersection<'r>> {
-        self.faces.intersect(ray, i)
-    }
-
-    fn bbox(&self) -> super::aabb::AABB {
-        self.faces.bbox()
+impl Geomable for TriMesh {
+    fn into_geoms(self) -> impl Iterator<Item = super::Geom> {
+        self.faces.into_iter().map(|t| {super::Geom::Tri(Box::new(t))})
     }
 }
+// impl Intersectable for TriMesh {
+//     fn intersect<'r>(&'r self, ray: Ray, i: Interval) -> Option<Intersection<'r>> {
+//         self.faces.intersect(ray, i)
+//     }
+
+//     fn bbox(&self) -> super::aabb::AABB {
+//         self.faces.bbox()
+//     }
+// }

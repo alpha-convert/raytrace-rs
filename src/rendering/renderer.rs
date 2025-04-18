@@ -4,7 +4,7 @@ use rayon::iter::{IndexedParallelIterator, IntoParallelIterator, IntoParallelRef
 
 // use itertools::Itertools;
 use crate::{
-    geom::Geom,
+    geom::intersectable::{self, Intersectable},
     lighting::color::Color,
     math::{interval::Interval, onlinemean::OnlineMean, ray::Ray},
 };

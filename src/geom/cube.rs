@@ -7,7 +7,7 @@ use crate::{
     math::{interval::Interval, ray::Ray},
 };
 
-use super::{Geom, aabb::AABB, intersection::Intersection, quad::Quad};
+use super::{aabb::AABB, intersectable::{self, Intersectable}, intersection::Intersection, quad::Quad};
 
 pub struct Cube {
     faces: Arc<[Box<Quad>; 6]>,
@@ -82,7 +82,7 @@ impl Cube {
     }
 }
 
-impl Geom for Cube {
+impl Intersectable for Cube {
     fn intersect<'r>(&'r self, ray: Ray, i: Interval) -> Option<Intersection<'r>> {
         (self.faces)
             .as_ref()
@@ -91,7 +91,7 @@ impl Geom for Cube {
             .min_by(Intersection::dist_compare)
     }
 
-    fn bbox(&self) -> AABB {
-        AABB::union_all(self.faces.as_ref().into_iter().map(|obj| obj.bbox()))
-    }
+    // fn bbox(&self) -> AABB {
+    //     AABB::union_all(self.faces.as_ref().into_iter().map(|obj| obj.bbox()))
+    // }
 }

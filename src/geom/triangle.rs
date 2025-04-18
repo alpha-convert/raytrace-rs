@@ -7,7 +7,7 @@ use crate::{
     math::{interval::Interval, ray::Ray},
 };
 
-use super::{Geom, aabb::AABB, intersection::Intersection};
+use super::{aabb::AABB, bbox::Bbox, intersectable::Intersectable, intersection::Intersection, Geom, Geomable};
 
 #[derive(Clone)]
 pub struct Triangle {
@@ -43,7 +43,7 @@ impl Triangle {
     }
 }
 
-impl Geom for Triangle {
+impl Intersectable for Triangle {
     fn intersect<'r>(&'r self, ray: Ray, i: Interval) -> Option<Intersection<'r>> {
         //Stolen from the wiki page on Möller–Trumbore.
 
@@ -80,6 +80,16 @@ impl Geom for Triangle {
         Some(Intersection::new(pt, t, self.normal, self.mat.as_ref(), uv))
     }
 
+    
+}
+
+impl Geomable for Triangle {
+    fn into_geoms(self) -> impl Iterator<Item = super::Geom> {
+        std::iter::once(Geom::Tri(Box::new(self)))
+    }
+}
+
+impl Bbox for Triangle {
     fn bbox(&self) -> super::aabb::AABB {
         self.bbox.clone()
     }

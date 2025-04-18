@@ -3,11 +3,10 @@ use std::sync::Arc;
 use nalgebra::{Unit, UnitVector3, Vector2, Vector3};
 
 use crate::{
-    lighting::material::Material,
-    math::{interval::Interval, ray::Ray},
+    geom::Geom, lighting::material::Material, math::{interval::Interval, ray::Ray}
 };
 
-use super::{Geom, aabb::AABB, intersection::Intersection};
+use super::{aabb::AABB, bbox::Bbox, intersectable::Intersectable, intersection::Intersection, Geomable};
 
 pub struct Quad {
     q: Vector3<f64>,
@@ -52,7 +51,7 @@ impl Quad {
     }
 }
 
-impl Geom for Quad {
+impl Intersectable for Quad {
     fn intersect<'r>(&'r self, ray: Ray, i: Interval) -> Option<Intersection<'r>> {
         let denom = self.normal.dot(&ray.dir());
 
@@ -82,6 +81,16 @@ impl Geom for Quad {
         ));
     }
 
+    
+}
+
+impl Geomable for Quad {
+    fn into_geoms(self) -> impl Iterator<Item = Geom> {
+        std::iter::once(Geom::Quad(Box::new(self)))
+    }
+}
+
+impl Bbox for Quad {
     fn bbox(&self) -> AABB {
         self.bbox.clone()
     }

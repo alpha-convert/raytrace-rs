@@ -4,28 +4,28 @@ use nalgebra::{SimdPartialOrd, Unit, Vector3};
 
 use crate::math::{interval::Interval, ray::Ray};
 
-use super::{Geom, aabb::AABB, intersection::Intersection};
+use super::{aabb::AABB, bbox::Bbox, intersectable::Intersectable, intersection::Intersection, Geomable};
 
-pub struct Scaling {
+pub struct Scaling<T> {
     scale: Vector3<f64>,
     scale_inv: Vector3<f64>,
-    geom: Arc<dyn Geom>,
+    inner : T,
 }
 
-impl Scaling {
-    pub fn new(scale: Vector3<f64>, geom: Arc<dyn Geom>) -> Self {
+impl<T> Scaling<T> {
+    pub fn new(scale: Vector3<f64>, inner : T) -> Self {
         assert!(0.0 < scale.x);
         assert!(0.0 < scale.y);
         assert!(0.0 < scale.z);
         Scaling {
             scale,
             scale_inv: Vector3::new(1.0 / scale.x, 1.0 / scale.y, 1.0 / scale.z),
-            geom: geom,
+            inner
         }
     }
 }
 
-impl Geom for Scaling {
+impl<T : Intersectable> Intersectable for Scaling<T> {
     fn intersect<'r>(&'r self, ray: Ray, i: Interval) -> Option<Intersection<'r>> {
         let scaled_origin = ray.origin().component_mul(&self.scale_inv);
         let scaled_dir = ray.dir().component_mul(&self.scale_inv);
@@ -36,7 +36,7 @@ impl Geom for Scaling {
 
         let scaled_ray = Ray::new(scaled_origin, scaled_dir);
 
-        let int = self.geom.intersect(scaled_ray, i)?;
+        let int = self.inner.intersect(scaled_ray, i)?;
 
         let point = int.point().component_mul(&self.scale);
         let dist = (point - ray.origin()).norm(); //recompute the distance using the point.
@@ -55,8 +55,20 @@ impl Geom for Scaling {
         ))
     }
 
-    fn bbox(&self) -> super::aabb::AABB {
-        let inner_bbox = self.geom.bbox();
+    // fn bbox(&self) -> super::aabb::AABB 
+}
+
+impl<T : Geomable> Geomable for Scaling<T> {
+    fn into_geoms(self) -> impl Iterator<Item = super::Geom> {
+        self.inner.into_geoms().map(move |g| { super::Geom::Scale(Box::new(Scaling { scale: self.scale, scale_inv: self.scale_inv, inner: g }))})
+    }
+
+    
+}
+
+impl<T : Bbox> Bbox for Scaling<T> {
+    fn bbox(&self) -> AABB {
+        let inner_bbox = self.inner.bbox();
         let min = inner_bbox.min();
         let max = inner_bbox.max();
 
