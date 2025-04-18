@@ -2,7 +2,8 @@ use std::{collections::HashMap, fs::File, sync::Arc};
 
 use crate::{
     geom::{
-        aabb::AABB, bvh::BVH, cube::Cube, intersectable::Intersectable, intersection::Intersection, quad::Quad, sphere::Sphere, translation::Translation, Geom, Geomable
+        Geom, Geomable, aabb::AABB, bvh::BVH, cube::Cube, intersectable::Intersectable,
+        intersection::Intersection, quad::Quad, sphere::Sphere, translation::Translation,
     },
     lighting::{
         color::Color,
@@ -11,24 +12,25 @@ use crate::{
         material::Material,
         metal::Metal,
         texture::{
-            checkerboard::Checkerboard, image::Image, scaletex::ScaleTex, solidcolor::SolidColor, Texture
+            Texture, checkerboard::Checkerboard, image::Image, scaletex::ScaleTex,
+            solidcolor::SolidColor,
         },
     },
     math::{interval::Interval, ray::Ray},
 };
 
-use super::{scenedesc::{GeomDesc, MaterialDesc, SceneDesc, TextureDesc}};
+use super::scenedesc::{GeomDesc, MaterialDesc, SceneDesc, TextureDesc};
 
 pub struct Scene {
-    bvh : BVH<Geom>,
+    bvh: BVH<Geom>,
     background_color: Color,
 }
 
 impl Scene {
-    pub fn new(geoms: impl Geomable , background_color: Color) -> Self {
+    pub fn new(geoms: impl Geomable, background_color: Color) -> Self {
         let geoms = geoms.into_geoms().collect();
         Scene {
-            bvh : BVH::construct(geoms),
+            bvh: BVH::construct(geoms),
             background_color,
         }
     }
@@ -40,10 +42,7 @@ impl Scene {
     pub fn bvh(&self) -> &BVH<Geom> {
         &self.bvh
     }
-
 }
-
-
 
 // fn construct_geom(gd: &GeomDesc, mat_map: &HashMap<String, Arc<dyn Material>>) -> Arc<dyn Intersectable> {
 //     match gd {

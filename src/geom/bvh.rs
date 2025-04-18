@@ -29,7 +29,8 @@ impl<T> BVHLeaf<T> {
     }
 
     pub fn intersect<'r>(&'r self, ray: Ray, i: Interval) -> Option<(Intersection<'r>)>
-        where T : Intersectable
+    where
+        T: Intersectable,
     {
         if self.bbox.intersect(&ray, i) {
             self.inner.intersect(ray, i)
@@ -39,10 +40,9 @@ impl<T> BVHLeaf<T> {
     }
 }
 
-
-    // fn bbox(&self) -> AABB {
-    //     self.bbox.clone()
-    // }
+// fn bbox(&self) -> AABB {
+//     self.bbox.clone()
+// }
 
 struct BVHNode<T> {
     phantom: PhantomData<T>,
@@ -73,7 +73,8 @@ impl<T> BVHNode<T> {
     }
 
     pub fn intersect<'r>(&'r self, ray: Ray, i: Interval) -> Option<Intersection<'r>>
-        where T : Intersectable
+    where
+        T: Intersectable,
     {
         let in_left = self.bbox_left.intersect(&ray, i);
         let in_right = self.bbox_right.intersect(&ray, i);
@@ -103,11 +104,12 @@ pub enum BVHTree<T> {
 
 impl<T> BVHTree<T> {
     pub fn intersect<'r>(&'r self, ray: Ray, i: Interval) -> Option<Intersection<'r>>
-        where T : Intersectable
+    where
+        T: Intersectable,
     {
         match self {
             BVHTree::Leaf(leaf) => leaf.intersect(ray, i),
-            BVHTree::Node(node) => node.intersect(ray, i)
+            BVHTree::Node(node) => node.intersect(ray, i),
         }
     }
 
@@ -197,16 +199,17 @@ impl<T> BVH<T> {
     pub fn top(&self) -> &BVHTree<T> {
         &self.tree
     }
-        
+
     pub fn intersect<'r>(&'r self, ray: Ray, i: Interval) -> Option<Intersection<'r>>
-        where T : Intersectable
+    where
+        T: Intersectable,
     {
         self.tree.intersect(ray, i)
     }
 }
 
 // impl<T: Intersectable> Intersectable for BVH<T> {
-//     
+//
 
 //     // fn bbox(&self) -> AABB {
 //     //     self.tree.bbox()
